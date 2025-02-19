@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -16,7 +17,9 @@ public class GameManager : MonoBehaviour
     public Carta triunfo;
     public bool cartasMoviendo, segundaBaraja, arrastre, finRonda;
     public Vector3 ubicacionGanador;
-    private TextMeshProUGUI[] textoPuntuaciones;
+    public UIDocument UIDoc; 
+    private Label m_P_TeamA;
+    private Label m_P_TeamB;
     public int ganador;
 
 
@@ -32,16 +35,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         arrastre = false;
         segundaBaraja = false;
         finRonda = false;
 
-        textoPuntuaciones = Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsSortMode.None);
-        textoPuntuaciones[0].text = "0";
-        textoPuntuaciones[1].text = "0";
+        UIDoc = Object.FindFirstObjectByType<UIDocument>();
+        m_P_TeamA = UIDoc.rootVisualElement.Q<Label>("PointsTeamA");
+        m_P_TeamB = UIDoc.rootVisualElement.Q<Label>("PointsTeamB");
+
+        m_P_TeamA.text = "Equipo A: 0"; 
+        m_P_TeamB.text = "Equipo B: 0"; 
 
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
@@ -358,11 +363,11 @@ public class GameManager : MonoBehaviour
 
     public void ActualizarMarcadores()
     {
-        if (jugadores.Length == 4) textoPuntuaciones[0].text = (jugadores[0].puntos + jugadores[2].puntos).ToString();
-        else textoPuntuaciones[0].text = jugadores[0].puntos.ToString();
+        if (jugadores.Length == 4) m_P_TeamA.text = "Equipo A: " + (jugadores[0].puntos + jugadores[2].puntos).ToString();
+        else m_P_TeamA.text = "Equipo A: " + jugadores[0].puntos.ToString();
 
-        if (jugadores.Length == 4) textoPuntuaciones[1].text = (jugadores[1].puntos + jugadores[3].puntos).ToString();
-        else textoPuntuaciones[1].text = jugadores[1].puntos.ToString();
+        if (jugadores.Length == 4) m_P_TeamB.text = "Equipo B: " + (jugadores[1].puntos + jugadores[3].puntos).ToString();
+        else m_P_TeamB.text = "Equipo B: " + jugadores[1].puntos.ToString();
     }
 
     public void TerminarRonda()
