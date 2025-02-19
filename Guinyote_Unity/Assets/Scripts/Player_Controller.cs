@@ -1,67 +1,30 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player_Controller : Player{
+public class Player_Controller : Player
+{
     public Player_Controller() : base()
     {
     }
 
     public void Update()
     {
-        if (m_CartaDesplazandose)
-        {
-            jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 7.5f * Time.deltaTime);
+        resetInput();
+            
+        if (Keyboard.current.digit1Key.wasPressedThisFrame) input.carta = 0;
+        if (Keyboard.current.digit2Key.wasPressedThisFrame) input.carta = 1;
+        if (Keyboard.current.digit3Key.wasPressedThisFrame) input.carta = 2;
+        if (Keyboard.current.digit4Key.wasPressedThisFrame) input.carta = 3;
+        if (Keyboard.current.digit5Key.wasPressedThisFrame) input.carta = 4;
+        if (Keyboard.current.digit6Key.wasPressedThisFrame) input.carta = 5;
 
-            if (jugada.transform.position == m_MoveTarget)
-            {
-                m_esMiTurno = false;
-                GameManager.Instance.TurnManager.Tick();
-                m_CartaDesplazandose = false;
-            }
-            return;
-        }
-        else if (m_esMiTurno)
-        {
-            int index = 0;
-            bool cartaSeleccionada = false;
-            if (Keyboard.current.digit1Key.wasPressedThisFrame)
-            {
-                index = 0;
-                cartaSeleccionada = true;
-            }
-            else if (Keyboard.current.digit2Key.wasPressedThisFrame)
-            {
-                index = 1;
-                cartaSeleccionada = true;
-            }
-            else if (Keyboard.current.digit3Key.wasPressedThisFrame)
-            {
-                index = 2;
-                cartaSeleccionada = true;
-            }
-            else if (Keyboard.current.digit4Key.wasPressedThisFrame)
-            {
-                index = 3;
-                cartaSeleccionada = true;
-            }
-            else if (Keyboard.current.digit5Key.wasPressedThisFrame)
-            {
-                index = 4;
-                cartaSeleccionada = true;
-            }
-            else if (Keyboard.current.digit6Key.wasPressedThisFrame)
-            {
-                index = 5;
-                cartaSeleccionada = true;
-            }
-            if (cartaSeleccionada)
-            {
-                if (UsarCarta(index))
-                {
-                    cartaSeleccionada = false;
-                    m_CartaDesplazandose = true;
-                }
-            }
-        }
+        input.cambiarSiete = Keyboard.current.digit7Key.wasPressedThisFrame;
+
+        if (Keyboard.current.digit8Key.wasPressedThisFrame) input.cantar = 0;
+        if (Keyboard.current.digit9Key.wasPressedThisFrame) input.cantar = 1;
+        if (Keyboard.current.digit0Key.wasPressedThisFrame) input.cantar = 2;
+        if (Keyboard.current.eKey.wasPressedThisFrame) input.cantar = 3;
+
+        turno();
     }
 }

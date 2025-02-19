@@ -3,55 +3,65 @@ using UnityEngine.InputSystem;
 
 public class IA_Player : Player
 {
+    bool[] cartasIntentadas = new bool[6];
+    bool exito = false, todasIntentadas;
     public IA_Player() : base()
     {
+        for (int i = 0; i < 6; i++)
+        {
+            cartasIntentadas[i] = false;
+        }
     }
 
     public void Update()
     {
-        if (m_CartaDesplazandose)
+        if (exito)
         {
-            jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 7.5f * Time.deltaTime);
-
-            if (jugada.transform.position == m_MoveTarget)
+            for (int i = 0; i < 6; i++)
             {
-                m_esMiTurno = false;
-                GameManager.Instance.TurnManager.Tick();
-                m_CartaDesplazandose = false;
+                if (mano[i] == null)  cartasIntentadas[i] = true;
+                else cartasIntentadas[i] = false;
             }
-            return;
         }
-        else if (m_esMiTurno)
-        {
-            m_esMiTurno = false; 
-            Debug.Log("Turno de la IA");
-            if (soyPrimero())
+            resetInput();
+            todasIntentadas = true;
+            for (int i = 0; i < 6; i++)
             {
-                Debug.Log("IA primera");
-                UsarCarta(peorCartaIndex());
-                m_CartaDesplazandose = true;
-            }
-            else
-            { //No soy primero
-                Debug.Log("IA no primera");
-                int index = 0;
-                bool hayPuntos = false;
-                ganadoraEnMesa(hayPuntos, index);
-                Debug.Log("Carta ganadora es " + GameManager.Instance.cartasJugadas[index].Numero.ToString() + " hay puntos ?" + hayPuntos);
-                if (tengoMejorCarta(index) && hayPuntos)
+                if (!cartasIntentadas[i] && mano[i] != null)
                 {
-                    Debug.Log("Uso carta buena");
-                    UsarCarta(index);
-                    m_CartaDesplazandose = true;
+                    todasIntentadas = false;
+                    break;
+                }
+            }
+            if (todasIntentadas) input.carta = peorCartaIndex();
+            else if (m_esMiTurno && !m_CartaDesplazandose) {
+                //Debug.Log("Turno de la IA");
+                if (soyPrimero())
+                {
+                    //Debug.Log("IA primera");
+                    input.carta = peorCartaIndex();
                 }
                 else
-                {
-                    Debug.Log("Uso carta mala " + peorCartaIndex().ToString());
-                    UsarCarta(peorCartaIndex());
-                    m_CartaDesplazandose = true;
+                { //No soy primero
+                    //Debug.Log("IA no primera");
+                    int index = 0;
+                    bool hayPuntos = false;
+                    ganadoraEnMesa(hayPuntos, index);
+                    //Debug.Log("Carta ganadora es " + GameManager.Instance.cartasJugadas[index].Numero.ToString() + " hay puntos ?" + hayPuntos);
+                    if (tengoMejorCarta(index) && hayPuntos)
+                    {
+                        //Debug.Log("Uso carta buena");
+                        input.carta = index;
+                    }
+                    else
+                    {
+                        input.carta = peorCartaIndex();
+                        //Debug.Log("Uso carta mala " + input.carta.ToString());
+                    }
                 }
+                cartasIntentadas[input.carta] = true;
             }
-        }
+        exito = turno();
     }
 
     bool soyPrimero()
@@ -64,7 +74,7 @@ public class IA_Player : Player
         int menorValor = 12; //Valor maximo de carta
         for (int i = 0; i < mano.Length; i++)
         {
-            if (mano[i] != null)
+            if (mano[i] != null && (!cartasIntentadas[i] || todasIntentadas))
             {
                 int valor = mano[i].Puntos;
                 if (valor < menorValor)
@@ -148,7 +158,7 @@ public class IA_Player : Player
             int puntosASuperar = GameManager.Instance.cartasJugadas[index].Puntos;
             for (int i = 0; i < mano.Length; i++)
             {
-                if (mano[i] != null)
+                if (mano[i] != null && !cartasIntentadas[i])
                 {
                     int valor = mano[i].Puntos;
                     if (valor > puntosASuperar)

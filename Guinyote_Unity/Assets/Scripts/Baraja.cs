@@ -15,6 +15,15 @@ public class Baraja : MonoBehaviour
         }
     }
 
+    public void RecogerCartas()
+    {
+        cartas.Clear();
+        GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
+        for (int i = 0; i < 40; i++)
+        {
+            cartas.Add((i % 4, i / 4));
+        }
+    }
     public void Barajar()
     {
         for (int i = 0; i < cartas.Count; i++)
@@ -23,22 +32,6 @@ public class Baraja : MonoBehaviour
             (int, int) temp = cartas[i];
             cartas[i] = cartas[index];
             cartas[index] = temp;
-        }
-    }
-
-    public void GenerarCarta()
-    {
-        if (cartas.Count == 0)
-        {
-            int palo = cartas[0].Item1;
-            int num = cartas[0].Item2;
-            cartas.RemoveAt(0);
-            Carta carta = Instantiate(cartaPrefab, transform.position, Quaternion.identity);
-            carta.setCarta(palo, num);
-        }
-        else
-        {
-            Debug.Log("No quedan cartas en la baraja");
         }
     }
 
@@ -51,6 +44,12 @@ public class Baraja : MonoBehaviour
             cartas.RemoveAt(0);
             Carta carta = Instantiate(cartaPrefab, transform.position, Quaternion.identity);
             carta.setCarta(palo, num);
+            if (cartas.Count == 0)
+            {
+                GameManager.Instance.arrastre = true;
+                GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.0f);
+                GameManager.Instance.triunfo.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.0f);
+            }
             return carta;
         }
         else
@@ -58,5 +57,16 @@ public class Baraja : MonoBehaviour
             Debug.Log("No quedan cartas en la baraja");
             return null;
         }
+    }
+
+    public void AnyadirAlFinal(Carta carta)
+    {
+        int numero = (carta.Numero <= 7) ? carta.Numero - 1 : carta.Numero - 3;
+        cartas.Add((carta.Palo, numero));
+    }
+
+    public void EliminarUltima()
+    {
+        cartas.RemoveAt(cartas.Count -1);
     }
 }

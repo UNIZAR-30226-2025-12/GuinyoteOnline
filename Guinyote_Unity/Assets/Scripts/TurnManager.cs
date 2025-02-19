@@ -4,6 +4,7 @@ public class TurnManager
 {
     public event System.Action<int> TurnChange;
     public event System.Action Evaluation;
+    public event System.Action FinRonda;
     private int m_PlayerTurn;
     private int m_PlayerCount;
 
@@ -18,14 +19,17 @@ public class TurnManager
         if(m_PlayerTurn < m_PlayerCount)
         {
             TurnChange?.Invoke(m_PlayerTurn);
-            Debug.Log("Turno del jugador " + m_PlayerTurn);
+            //Debug.Log("Turno del jugador " + m_PlayerTurn);
         }
         else
         {
             m_PlayerTurn = -1;
             Evaluation?.Invoke();
+            if (GameManager.Instance.finRonda) FinRonda?.Invoke();
         }
     }
+
+
 
     public void Reset()
     {
