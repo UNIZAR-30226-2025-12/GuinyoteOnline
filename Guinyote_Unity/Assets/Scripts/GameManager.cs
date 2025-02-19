@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +19,7 @@ public class GameManager : MonoBehaviour
     public UIDocument UIDoc; 
     private Label m_P_TeamA;
     private Label m_P_TeamB;
+    private Label m_FinPartida;
     public int ganador;
 
 
@@ -44,9 +44,12 @@ public class GameManager : MonoBehaviour
         UIDoc = Object.FindFirstObjectByType<UIDocument>();
         m_P_TeamA = UIDoc.rootVisualElement.Q<Label>("PointsTeamA");
         m_P_TeamB = UIDoc.rootVisualElement.Q<Label>("PointsTeamB");
+        m_FinPartida = UIDoc.rootVisualElement.Q<Label>("FinPartida_Label");
 
-        m_P_TeamA.text = "Equipo A: 0"; 
-        m_P_TeamB.text = "Equipo B: 0"; 
+        m_FinPartida.style.visibility = Visibility.Hidden;
+
+        m_P_TeamA.text = "Equipo 1: 0"; 
+        m_P_TeamB.text = "Equipo 1: 0"; 
 
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
@@ -363,11 +366,11 @@ public class GameManager : MonoBehaviour
 
     public void ActualizarMarcadores()
     {
-        if (jugadores.Length == 4) m_P_TeamA.text = "Equipo A: " + (jugadores[0].puntos + jugadores[2].puntos).ToString();
-        else m_P_TeamA.text = "Equipo A: " + jugadores[0].puntos.ToString();
+        if (jugadores.Length == 4) m_P_TeamA.text = "Equipo 1: " + (jugadores[0].puntos + jugadores[2].puntos).ToString();
+        else m_P_TeamA.text = "Equipo 1: " + jugadores[0].puntos.ToString();
 
-        if (jugadores.Length == 4) m_P_TeamB.text = "Equipo B: " + (jugadores[1].puntos + jugadores[3].puntos).ToString();
-        else m_P_TeamB.text = "Equipo B: " + jugadores[1].puntos.ToString();
+        if (jugadores.Length == 4) m_P_TeamB.text = "Equipo 2: " + (jugadores[1].puntos + jugadores[3].puntos).ToString();
+        else m_P_TeamB.text = "Equipo 2: " + jugadores[1].puntos.ToString();
     }
 
     public void TerminarRonda()
@@ -388,18 +391,9 @@ public class GameManager : MonoBehaviour
 
         if (!segundaBaraja) //PARTIDA TERMINADA
         {
-            Canvas canvas = (Canvas)FindAnyObjectByType(typeof(Canvas));
-            var winText = this.gameObject.AddComponent<TextMeshProUGUI>();
-            if (jugadores.Length == 4) winText.text = "Ganador: jugador " + ganador.ToString();
-            else winText.text = "Ganador: equipo " + ganador.ToString();
-            winText.fontSize = 3;
-            winText.color = Color.white;
-            winText.fontStyle = FontStyles.Bold;
-            winText.transform.SetParent(canvas.transform);
-
-            RectTransform rectTransform = winText.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(20, 20);
-            rectTransform.anchoredPosition = new Vector2(0,0);
+            m_FinPartida.style.visibility = Visibility.Visible;
+            if (jugadores.Length == 2) m_FinPartida.text = "Ganador: Jugador " + ganador.ToString();
+            else m_FinPartida.text = "Ganador: Equipo " + ganador.ToString();
             //IR AL MENU DE GANAR CUANDO ESTE HECHO DE MOMENTO NADA
         }
     }
