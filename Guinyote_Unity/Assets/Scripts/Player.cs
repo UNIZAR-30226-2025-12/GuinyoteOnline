@@ -120,7 +120,7 @@ public class Player : MonoBehaviour
         bool cartaValida = true;
         if (mano[input.carta].Palo == paloJugado)
         {
-            if (jugada != null) //COMPROBAR PUNTOS, SI ES NULL LA CARTA ES DE MI COMPAÑERO Y NO HAY QUE MATAR
+            if (jugada != null && jugada.Palo != GameManager.Instance.triunfo.Palo) //COMPROBAR PUNTOS, SI ES NULL LA CARTA ES DE MI COMPAÑERO Y NO HAY QUE MATAR
             {
                 if (mano[input.carta].Puntos < jugada.Puntos || (mano[input.carta].Puntos == jugada.Puntos && mano[input.carta].Numero < jugada.Numero))
                 {
@@ -228,7 +228,7 @@ public class Player : MonoBehaviour
             }
             else if (input.cambiarSiete)
             {
-                if(ganador) cambiarSieteTriunfo();
+                if(ganador && !GameManager.Instance.arrastre) cambiarSieteTriunfo();
             }
             else if (input.cantar > -1 && input.cantar < 4)
             {

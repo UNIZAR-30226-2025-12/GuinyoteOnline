@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -203,6 +204,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (Keyboard.current.enterKey.wasPressedThisFrame && m_FinPartida.style.visibility == Visibility.Visible) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
         if (!cartasMoviendo) return;
         for (int i = 0; i < jugadores.Length; i++)
         {
