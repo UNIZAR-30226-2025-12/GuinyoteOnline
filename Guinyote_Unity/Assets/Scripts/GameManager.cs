@@ -47,10 +47,20 @@ public class GameManager : MonoBehaviour
         m_P_TeamB = UIDoc.rootVisualElement.Q<Label>("PointsTeamB");
         m_FinPartida = UIDoc.rootVisualElement.Q<Label>("FinPartida_Label");
 
-        m_FinPartida.style.visibility = Visibility.Hidden;
+        m_FinPartida = UIDoc.rootVisualElement.Q<Label>("FinPartida_Label");
+        if (m_FinPartida != null)
+        {
+            m_FinPartida.style.visibility = Visibility.Hidden;
+        }
 
-        m_P_TeamA.text = "Equipo 1: 0"; 
-        m_P_TeamB.text = "Equipo 1: 0"; 
+        if (m_P_TeamA != null)
+        {
+            m_P_TeamA.text = "Equipo 1: 0"; 
+        }
+        if (m_P_TeamB != null)
+        {
+            m_P_TeamB.text = "Equipo 1: 0";
+        } 
 
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
@@ -369,11 +379,15 @@ public class GameManager : MonoBehaviour
 
     public void ActualizarMarcadores()
     {
-        if (jugadores.Length == 4) m_P_TeamA.text = "Equipo 1: " + (jugadores[0].puntos + jugadores[2].puntos).ToString();
-        else m_P_TeamA.text = "Equipo 1: " + jugadores[0].puntos.ToString();
-
-        if (jugadores.Length == 4) m_P_TeamB.text = "Equipo 2: " + (jugadores[1].puntos + jugadores[3].puntos).ToString();
-        else m_P_TeamB.text = "Equipo 2: " + jugadores[1].puntos.ToString();
+        if(m_P_TeamA != null){
+            if (jugadores.Length == 4) m_P_TeamA.text = "Equipo 1: " + (jugadores[0].puntos + jugadores[2].puntos).ToString();
+            else m_P_TeamA.text = "Equipo 1: " + jugadores[0].puntos.ToString();
+        }
+        if(m_P_TeamB != null){
+            if (jugadores.Length == 4) m_P_TeamB.text = "Equipo 2: " + (jugadores[1].puntos + jugadores[3].puntos).ToString();
+            else m_P_TeamB.text = "Equipo 2: " + jugadores[1].puntos.ToString();
+        }
+        
     }
 
     public void TerminarRonda()
