@@ -599,7 +599,7 @@ MonoBehaviour:
   arrastre: 0
   finRonda: 0
   ubicacionGanador: {x: 0, y: 0, z: 0}
-  UIDoc: {fileID: 643970}
+  UIDoc: {fileID: 0}
   ganador: 0
 --- !u!4 &2094930379
 Transform:

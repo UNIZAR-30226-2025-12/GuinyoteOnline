@@ -42,6 +42,9 @@ public class Player : MonoBehaviour
         {
             if (mano[i] == null)
             {
+                if(this is Player_Controller){
+                   carta.enMano = true; 
+                }
                 mano[i] = carta;
                 carta.transform.rotation = this.transform.rotation;
                 carta.transform.position = this.transform.position + this.transform.right * posiciones[i];
@@ -56,6 +59,9 @@ public class Player : MonoBehaviour
         {
             Carta carta = mano[index];
             mano[index] = null;
+            if(this is Player_Controller){
+                   carta.enMano = false; 
+            }
             jugada = carta;
             return true;
         }
@@ -191,6 +197,9 @@ public class Player : MonoBehaviour
                     }
                 }
             }
+        }
+        if(this is Player_Controller){
+            if(!cartaValida) mano[input.carta].enMano = true; mano[input.carta].jugada = false; mano[input.carta].OnMouseExit();
         }
         return cartaValida;
     }

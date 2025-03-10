@@ -10,21 +10,45 @@ public class Player_Controller : Player
     public void Update()
     {
         resetInput();
-            
-        if (Keyboard.current.digit1Key.wasPressedThisFrame) input.carta = 0;
-        if (Keyboard.current.digit2Key.wasPressedThisFrame) input.carta = 1;
-        if (Keyboard.current.digit3Key.wasPressedThisFrame) input.carta = 2;
-        if (Keyboard.current.digit4Key.wasPressedThisFrame) input.carta = 3;
-        if (Keyboard.current.digit5Key.wasPressedThisFrame) input.carta = 4;
-        if (Keyboard.current.digit6Key.wasPressedThisFrame) input.carta = 5;
 
-        input.cambiarSiete = Keyboard.current.digit7Key.wasPressedThisFrame;
+        ActualizarColliders();
 
-        if (Keyboard.current.digit8Key.wasPressedThisFrame) input.cantar = 0;
-        if (Keyboard.current.digit9Key.wasPressedThisFrame) input.cantar = 1;
-        if (Keyboard.current.digit0Key.wasPressedThisFrame) input.cantar = 2;
-        if (Keyboard.current.eKey.wasPressedThisFrame) input.cantar = 3;
+        if (m_esMiTurno)
+        {
+            for (int i = 0; i < mano.Length; i++)
+            {
+                if (mano[i] != null && mano[i].jugada)
+                {
+                    input.carta = i;
+                    break;
+                }
+            }
+
+            input.cambiarSiete = Keyboard.current.digit7Key.wasPressedThisFrame;
+
+            if (Keyboard.current.digit8Key.wasPressedThisFrame) input.cantar = 0;
+            if (Keyboard.current.digit9Key.wasPressedThisFrame) input.cantar = 1;
+            if (Keyboard.current.digit0Key.wasPressedThisFrame) input.cantar = 2;
+            if (Keyboard.current.eKey.wasPressedThisFrame) input.cantar = 3;
+        }
+
 
         turno();
+    }
+
+    public void ActualizarColliders()
+    {
+        foreach (Carta carta in mano)
+        {
+            if (carta != null)
+            {
+                Collider2D col = carta.GetComponent<Collider2D>();
+                if (col != null)
+                {
+                    col.enabled = m_esMiTurno; // Activa el collider solo si es el turno
+                }
+            }
+        }
+
     }
 }
