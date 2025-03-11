@@ -1,0 +1,18 @@
+.cm_long_button {
+    display: flex;
+    align-items: center;
+    width: 400px;
+    height: 75px;
+    justify-content: center;
+    padding: 15px 30px;
+    background-color: white;
+    color: #333;
+    border: none;
+    font-size: 40px;
+}
+
+
+.cm_long_button:hover {
+    background-color: #d7dbdf;
+    color: #4866f8;
+}

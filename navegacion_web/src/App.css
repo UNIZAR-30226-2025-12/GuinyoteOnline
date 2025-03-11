@@ -1,0 +1,34 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  background-image: url('path/to/your/image.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.login-button-position {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.gb-container-position {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.gab-container-position {
+  position: fixed;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.rules-button-position {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}

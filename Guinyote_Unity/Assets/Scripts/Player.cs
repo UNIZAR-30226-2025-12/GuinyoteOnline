@@ -247,10 +247,12 @@ public class Player : MonoBehaviour
                     bool haySota = false;
                     foreach (var c in mano)
                     {
+                        if (c == null) continue;
+
                         if (c.Numero == 10 && c.Palo == input.cantar) haySota = true;
                         if (c.Numero == 12 && c.Palo == input.cantar) hayRey = true;
                     }
-                    if (hayRey && haySota) 
+                    if (hayRey && haySota)
                     {
                         cantar(input.cantar);
                         palosCantados[input.cantar] = true;

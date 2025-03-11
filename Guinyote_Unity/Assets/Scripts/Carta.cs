@@ -68,6 +68,10 @@ public class Carta : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(enMano) jugada = true; enMano = false;
+        if(enMano)
+        {
+            jugada = true;
+            enMano = false;
+        }
     }
 }

@@ -49,8 +49,8 @@ public class GameManager : MonoBehaviour
 
         m_FinPartida.style.visibility = Visibility.Hidden;
 
-        m_P_TeamA.text = "Equipo 1: 0"; 
-        m_P_TeamB.text = "Equipo 1: 0"; 
+        m_P_TeamA.text = ""; 
+        m_P_TeamB.text = ""; 
 
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
@@ -369,11 +369,31 @@ public class GameManager : MonoBehaviour
 
     public void ActualizarMarcadores()
     {
-        if (jugadores.Length == 4) m_P_TeamA.text = "Equipo 1: " + (jugadores[0].puntos + jugadores[2].puntos).ToString();
-        else m_P_TeamA.text = "Equipo 1: " + jugadores[0].puntos.ToString();
+        if (!segundaBaraja)
+        {
+            m_P_TeamA.text = "";
+            m_P_TeamB.text = "";
+            return;
+        }
 
-        if (jugadores.Length == 4) m_P_TeamB.text = "Equipo 2: " + (jugadores[1].puntos + jugadores[3].puntos).ToString();
-        else m_P_TeamB.text = "Equipo 2: " + jugadores[1].puntos.ToString();
+        int puntosA = jugadores[0].puntos;
+        int puntosB = jugadores[1].puntos;
+        if (jugadores.Length == 4)
+        {
+            puntosA += jugadores[2].puntos;
+            puntosB += jugadores[3].puntos;
+        }
+        string buenasA = (puntosA >= 50) ? "Buenas" : "Malas";
+        string buenasB = (puntosB >= 50) ? "Buenas" : "Malas";
+
+        puntosA = (puntosA < 100) ? puntosA % 50 : puntosA - 50;
+        puntosB = (puntosB < 100) ? puntosB % 50 : puntosB - 50;
+
+        if (jugadores.Length == 4) m_P_TeamA.text = "Equipo 1\n" + (puntosA).ToString() + "\n" + buenasA;
+        else m_P_TeamA.text = "Jugador 1\n" + (puntosA).ToString() + "\n" + buenasA;
+
+        if (jugadores.Length == 4) m_P_TeamB.text = "Equipo 2\n" + (puntosB).ToString() + "\n" + buenasB;
+        else m_P_TeamB.text = "Jugador 2\n" + (puntosB).ToString() + "\n" + buenasB;
     }
 
     public void TerminarRonda()
@@ -391,6 +411,7 @@ public class GameManager : MonoBehaviour
             else if (jugadores[1].puntos > 100) ganador = 2;
             else segundaBaraja = true;
         }
+        ActualizarMarcadores();
 
         if (!segundaBaraja) //PARTIDA TERMINADA
         {

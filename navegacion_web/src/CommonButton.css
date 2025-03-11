@@ -1,0 +1,29 @@
+.cb_button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cb_img {
+    width: 40px;
+    height: 40px;
+    display: block;
+    margin: 0 auto 5px auto;
+    margin-bottom: 5px;
+}
+
+.button span {
+    font-size: 14px;
+}
+
+.cb_button:hover {
+    background-color: #d7dbdf;
+    color: black;
+}
