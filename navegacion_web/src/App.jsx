@@ -88,7 +88,7 @@ function App() {
       <GameButtons className='gab-container-position' onClickSoloPlay={tryButtons} onClickOnlinePlay={tryButtons}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
-      <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit}/>
+      {/* <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit}/> */}
     </>
   )
 }
