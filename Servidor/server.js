@@ -35,22 +35,12 @@ const timeoutsReconexion = new Map();
 // Puerto para Render
 const PORT = process.env.PORT || 10000;
 
-// Antes de iniciar el servidor
-console.log('Iniciando servidor...');
-console.log('Variables de entorno:');
-console.log('MONGO_URI:', process.env.MONGO_URI ? 'Configurada' : 'No configurada');
-console.log('NODE_ENV:', process.env.NODE_ENV || 'No configurado');
-console.log('Hostname:', require('os').hostname());
-
 // Conectar a MongoDB y arrancar servidor
 connectDB()
   .then(() => {
     console.log('Base de datos conectada correctamente');
     server.listen(PORT, () => {
       console.log(`Servidor corriendo en el puerto ${PORT}`);
-      console.log('Información del servidor:');
-      const address = server.address();
-      console.log('Dirección:', typeof address === 'string' ? address : JSON.stringify(address));
     });
   })
   .catch((err) => {
