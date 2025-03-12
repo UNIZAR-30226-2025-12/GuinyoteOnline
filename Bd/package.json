@@ -2,7 +2,7 @@
   "name": "guinyote-database",
   "version": "1.0.0",
   "description": "Base de datos para el juego Guinyote Online",
-  "main": "index.js",
+  "main": "db.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
