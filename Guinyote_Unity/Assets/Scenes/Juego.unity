@@ -590,7 +590,7 @@ MonoBehaviour:
   iAPrefab: {fileID: 4957967394400320949, guid: 469f00d525e7dad4790172f8299806f5, type: 3}
   jugadores: []
   orden: 
-  numJugadores: 4
+  numJugadores: 2
   Baraja: {fileID: 2937215891161531676, guid: 14d2df2781666fb4180311dc27c6ce2c, type: 3}
   cartasJugadas: []
   triunfo: {fileID: 0}

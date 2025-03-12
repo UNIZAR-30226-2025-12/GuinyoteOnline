@@ -126,7 +126,7 @@ public class Player : MonoBehaviour
         bool cartaValida = true;
         if (mano[input.carta].Palo == paloJugado)
         {
-            if (jugada != null && jugada.Palo != GameManager.Instance.triunfo.Palo) //COMPROBAR PUNTOS, SI ES NULL LA CARTA ES DE MI COMPAÑERO Y NO HAY QUE MATAR
+            if (jugada != null) //COMPROBAR PUNTOS, SI ES NULL LA CARTA ES DE MI COMPAÑERO Y NO HAY QUE MATAR
             {
                 if (mano[input.carta].Puntos < jugada.Puntos || (mano[input.carta].Puntos == jugada.Puntos && mano[input.carta].Numero < jugada.Numero))
                 {
