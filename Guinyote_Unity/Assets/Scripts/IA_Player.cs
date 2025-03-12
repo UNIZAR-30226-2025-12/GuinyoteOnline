@@ -405,12 +405,12 @@ public class IA_Player : Player
         return index;
     }
 
+    //Devuelve la carta que se usará si la CPU sale primera durante la segunda baraja
     int primeraCartaSegundaBarajaIndex()
     {
         int index = 0;
         int paloTriunfo = GameManager.Instance.triunfo.Palo;
         while(mano[index] == null) index++;
-        bool soloTriunfos = true;
         bool[] reyes = {false, false, false, false};
         bool[] sotas = {false, false, false, false};
         bool[] cantables = {false, false, false, false};
@@ -418,7 +418,6 @@ public class IA_Player : Player
         {
             if (c == null) continue;
 
-            if (c.Palo != paloTriunfo) soloTriunfos = false;
             if (c.Numero == 10) sotas[c.Palo] = true;
             if (c.Numero == 12) reyes[c.Palo] = true;
         }
