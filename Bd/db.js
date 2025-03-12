@@ -9,6 +9,11 @@ const connectDB = async () => {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
+            ssl: true,
+            tls: true,
+            tlsAllowInvalidCertificates: false,
+            retryWrites: true,
+            w: "majority"
         });
 
         // Eventos de conexión
