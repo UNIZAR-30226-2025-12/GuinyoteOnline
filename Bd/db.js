@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const dns = require('dns');
-const os = require('os');
 
 const connectDB = async () => {
     try {
@@ -18,15 +16,6 @@ const connectDB = async () => {
             w: "majority"
         });
 
-        // Mostrar información de conexión inmediatamente después de conectar
-        console.log('Base de datos conectada correctamente');
-        console.log('Información de conexión:');
-        console.log('Host:', conn.connection.host);
-        console.log('Puerto:', conn.connection.port);
-        console.log('Base de datos:', conn.connection.name);
-        console.log('Cliente:', conn.connection.client.address);
-        
-        // Eventos de conexión para monitoreo continuo
         mongoose.connection.on('error', (err) => {
             console.error('Error en la conexión de MongoDB:', err);
         });
