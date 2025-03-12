@@ -67,6 +67,21 @@ button:focus-visible {
   }
 }
 
+
+/* styles.css */
+.carta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carta img {
+  object-fit: contain;
+  width: 100%;
+  max-width: 200px; /* Ajusta el tamaño máximo */
+  max-height: 260px; /* Ajusta el tamaño máximo */
+}
+
 .cartas-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
