@@ -27,17 +27,18 @@ const Amigos = require("../Bd/models/Amigos");
 const JugadorPartida = require("../Bd/models/JugadorPartida");
 const Partida = require("../Bd/models/Partida");
 
-// Estado en memoria de las partidas activas y timeouts de reconexión
+// Estado en memoria
 const partidasActivas = new Map();
 const salasEspera = new Map();
 const timeoutsReconexion = new Map();
 
-// Conectar a MongoDB
+// Puerto para Render
+const PORT = process.env.PORT || 3000;
+
+// Conectar a MongoDB y arrancar servidor
 connectDB()
   .then(() => {
     console.log('Base de datos conectada correctamente');
-    
-    // Iniciar el servidor solo después de conectar a la BD
     server.listen(PORT, "0.0.0.0", () => {
       console.log(`Servidor corriendo en el puerto ${PORT}`);
     });
@@ -244,6 +245,3 @@ io.on('connection', (socket) => {
     }
   });
 });
-
-// Puerto para Render
-const PORT = process.env.PORT || 3000;

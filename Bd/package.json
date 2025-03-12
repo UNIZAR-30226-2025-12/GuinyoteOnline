@@ -1,17 +1,18 @@
 {
-  "name": "bd",
+  "name": "guinyote-database",
   "version": "1.0.0",
+  "description": "Base de datos para el juego Guinyote Online",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@faker-js/faker": "^9.5.0",
-    "dotenv": "^16.4.7",
-    "mongoose": "^8.10.1"
+    "mongoose": "^8.2.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
-}
+} 
