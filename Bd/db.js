@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+const os = require('os');
 
 const connectDB = async () => {
     try {
@@ -19,10 +21,28 @@ const connectDB = async () => {
         // Eventos de conexión
         mongoose.connection.on('connected', () => {
             console.log('MongoDB conectado correctamente');
+            
+            // Obtener información de red
+            const networkInterfaces = os.networkInterfaces();
+            console.log('Interfaces de red:', JSON.stringify(networkInterfaces, null, 2));
+            
+            // Obtener información de la conexión
+            const connectionInfo = mongoose.connection;
+            console.log('Host de conexión:', connectionInfo.host);
+            console.log('Puerto de conexión:', connectionInfo.port);
+            
+            // Resolver el hostname
+            dns.lookup(os.hostname(), (err, address, family) => {
+                if (!err) {
+                    console.log('IP del servidor:', address);
+                }
+            });
         });
 
         mongoose.connection.on('error', (err) => {
             console.error('Error en la conexión de MongoDB:', err);
+            // Log adicional para ver información de conexión en caso de error
+            console.log('Detalles de conexión:', err.connectionGeneration);
         });
 
         mongoose.connection.on('disconnected', () => {
