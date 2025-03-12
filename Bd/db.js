@@ -18,31 +18,17 @@ const connectDB = async () => {
             w: "majority"
         });
 
-        // Eventos de conexión
-        mongoose.connection.on('connected', () => {
-            console.log('MongoDB conectado correctamente');
-            
-            // Obtener información de red
-            const networkInterfaces = os.networkInterfaces();
-            console.log('Interfaces de red:', JSON.stringify(networkInterfaces, null, 2));
-            
-            // Obtener información de la conexión
-            const connectionInfo = mongoose.connection;
-            console.log('Host de conexión:', connectionInfo.host);
-            console.log('Puerto de conexión:', connectionInfo.port);
-            
-            // Resolver el hostname
-            dns.lookup(os.hostname(), (err, address, family) => {
-                if (!err) {
-                    console.log('IP del servidor:', address);
-                }
-            });
-        });
-
+        // Mostrar información de conexión inmediatamente después de conectar
+        console.log('Base de datos conectada correctamente');
+        console.log('Información de conexión:');
+        console.log('Host:', conn.connection.host);
+        console.log('Puerto:', conn.connection.port);
+        console.log('Base de datos:', conn.connection.name);
+        console.log('Cliente:', conn.connection.client.address);
+        
+        // Eventos de conexión para monitoreo continuo
         mongoose.connection.on('error', (err) => {
             console.error('Error en la conexión de MongoDB:', err);
-            // Log adicional para ver información de conexión en caso de error
-            console.log('Detalles de conexión:', err.connectionGeneration);
         });
 
         mongoose.connection.on('disconnected', () => {
