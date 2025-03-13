@@ -2,18 +2,18 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/guinyote", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            // Configuraciones adicionales para mejor rendimiento y estabilidad
+        if (!process.env.MONGO_URI) {
+            throw new Error('La variable de entorno MONGO_URI no está configurada');
+        }
+
+        const conn = await mongoose.connect(process.env.MONGO_URI, {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
-        });
-
-        // Eventos de conexión
-        mongoose.connection.on('connected', () => {
-            console.log('MongoDB conectado correctamente');
+            ssl: true,
+            tls: true,
+            retryWrites: true,
+            w: "majority"
         });
 
         mongoose.connection.on('error', (err) => {
