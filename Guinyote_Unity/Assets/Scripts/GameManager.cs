@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public IA_Player iAPrefab;
     public Player[] jugadores;
     public int[] orden;
-    public int numJugadores = 2; 
+    public static int numJugadores = 2; 
     public Baraja Baraja;
     public Carta[] cartasJugadas;
     public Carta triunfo;
@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     {
         if (Instance == null)
         {
+            DontDestroyOnLoad(gameObject);
             Instance = this;
         }
         else

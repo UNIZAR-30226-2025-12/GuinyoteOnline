@@ -1,0 +1,18 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:Button text="Partida online" name="Button" style="-unity-text-align: middle-center; bottom: 70%; height: 40px; position: absolute; width: 126px; top: 30%; left: 5%; right: 95%;" />
+    <engine:Button name="Button" style="position: absolute; height: 72px; width: 144px; opacity: 1; top: -3px; left: -5px; background-color: rgba(188, 188, 188, 0.61);">
+        <engine:VisualElement style="flex-grow: 1; height: 26px; width: 56px; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;);" />
+        <engine:Label text="Iniciar &#10;sesión" style="height: 24px; width: 64px; position: absolute; top: 22px; left: 72px;" />
+    </engine:Button>
+    <engine:Button text="Partida IA" name="IA_Button" style="position: absolute; top: 50%; left: 5%; width: 128px; bottom: auto; right: auto;" />
+    <engine:Button style="position: absolute; top: 5%; left: 55%; height: 83px; width: 58px; background-color: rgba(70, 70, 70, 0); -unity-background-image-tint-color: rgb(255, 255, 255); border-left-color: rgba(55, 55, 55, 0); border-right-color: rgba(55, 55, 55, 0); border-top-color: rgba(55, 55, 55, 0); border-bottom-color: rgba(55, 55, 55, 0);">
+        <engine:Label text="Amigos" style="position: absolute; top: 50px; left: -1px;" />
+    </engine:Button>
+    <engine:Button text="Reglas" style="left: 85%; width: 76px; top: 90%;" />
+    <engine:Button style="position: absolute; top: 5%; left: 70%; height: 80px; width: 58px; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); color: rgb(27, 27, 27); background-color: rgba(188, 188, 188, 0);">
+        <engine:Label text="Ranking" style="position: absolute; top: 50px; left: -1px;" />
+    </engine:Button>
+    <engine:Button style="position: absolute; top: 5%; left: 85%; height: 83px; width: 58px; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); background-color: rgba(255, 255, 255, 0);">
+        <engine:Label text="Amigos" style="position: absolute; top: 50px; left: -1px;" />
+    </engine:Button>
+</engine:UXML>
