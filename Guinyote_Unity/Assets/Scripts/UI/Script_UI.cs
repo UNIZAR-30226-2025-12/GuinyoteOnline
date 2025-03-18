@@ -7,7 +7,7 @@ public class Script_UI : MonoBehaviour
 {
     public static Script_UI Instance { get; private set; }
    
-   Stack<string> lastScene = new Stack<string>();
+   public static Stack<string> lastScene = new Stack<string>();
    private Button boton_IA;
     private Button boton_atras;
     private Button boton_1vs1;
@@ -75,13 +75,13 @@ public class Script_UI : MonoBehaviour
         ChangeScene("Juego");
     }
 
-    void goBack()
+    public static void goBack()
     {   
         Debug.Log("Button Clicked");
         SceneManager.LoadScene(lastScene.Pop());
     }
 
-    void ChangeScene(string sceneName)
+    public static void ChangeScene(string sceneName)
     {   
         Debug.Log("Button Clicked");
         lastScene.Push(SceneManager.GetActiveScene().name);

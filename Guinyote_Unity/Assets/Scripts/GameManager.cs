@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     private Label m_P_TeamA;
     private Label m_P_TeamB;
     private Label m_FinPartida;
+    private Button m_FinPartidaButton;
     public int ganador;
 
 
@@ -28,7 +29,7 @@ public class GameManager : MonoBehaviour
     {
         if (Instance == null)
         {
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             Instance = this;
         }
         else
@@ -47,6 +48,8 @@ public class GameManager : MonoBehaviour
         m_P_TeamA = UIDoc.rootVisualElement.Q<Label>("PointsTeamA");
         m_P_TeamB = UIDoc.rootVisualElement.Q<Label>("PointsTeamB");
         m_FinPartida = UIDoc.rootVisualElement.Q<Label>("FinPartida_Label");
+        m_FinPartidaButton = UIDoc.rootVisualElement.Q<Button>("atras");
+        m_FinPartidaButton.RegisterCallback<ClickEvent>(ev => Script_UI.goBack());
 
         m_FinPartida.style.visibility = Visibility.Hidden;
 
@@ -420,6 +423,12 @@ public class GameManager : MonoBehaviour
             if (jugadores.Length == 2) m_FinPartida.text = "Ganador: Jugador " + ganador.ToString();
             else m_FinPartida.text = "Ganador: Equipo " + ganador.ToString();
             //IR AL MENU DE GANAR CUANDO ESTE HECHO DE MOMENTO NADA
+            m_FinPartidaButton.SetEnabled(true);
+            m_FinPartidaButton.style.display = DisplayStyle.Flex;
+            
+
+
+
         }
     }
 
