@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import settingsButtonIcon from './assets/settings_button.png';
+import settingsButtonIcon from '../assets/settings_button.png';
 import CommonButton from './CommonButton';
 
 class SettingsButton extends Component {

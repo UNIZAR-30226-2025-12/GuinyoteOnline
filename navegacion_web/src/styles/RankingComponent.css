@@ -1,0 +1,84 @@
+/* RankingComponent.css */
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.ranking-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 550px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.ranking-modal.show {
+    animation: slideIn 0.5s forwards;
+}
+
+.ranking-modal.hide {
+    animation: slideOut 0.5s forwards;
+}
+
+.modal-exit-button {
+    position: absolute;
+    background-color: white;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+}
+
+.ranking-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: block;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.ranking-table th, .ranking-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.ranking-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: center;
+}
+
+.ranking-table td {
+    text-align: center;
+    align-items: center;
+}
+
+.ranking-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

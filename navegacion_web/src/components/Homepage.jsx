@@ -4,15 +4,19 @@ import GroupButtons from './GroupButtons'
 import GameButtons from './GameButtons'
 import RulesButton from './RulesButton'
 import LoginModal from './LoginModal'
-import './App.css'
+import RegisterModal from './RegisterModal';
+import RankingComponent from './RankingComponent';
 
 
-function App() {
+import '../styles/Homepage.css'
+
+function Homepage() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [isUserRegistered, setIsUserRegistered] = useState(false); // Simulación de estado de registro del usuario
+  const [isUserRegistered, setIsUserRegistered] = useState(false);
   const [username, setUsername] = useState('');
+  const [showRanking, setShowRanking] = useState(false);
 
   const handleLoginClick = () => {
     if (!isUserRegistered) {
@@ -26,13 +30,25 @@ function App() {
     setShowLoginModal(false);
   };
 
-  const handleRegisterModal = () => {
-    setShowRegisterModal(true);
+  const handleLoginModal = () => {
+    setShowLoginModal(true);
   };
 
   const handleRegisterModalClose = () => {
     setShowRegisterModal(false);
   };
+
+  const handleRegisterModal = () => {
+    setShowRegisterModal(true);
+  };
+
+  const handleRankingModalOpen = () => {
+    setShowRanking(true);
+  }
+
+  const handleRankingModalClose = () => {
+    setShowRanking(false);
+  }
 
   const redirigirReglas = () => {
     window.location.href = 'https://www.nhfournier.es/como-jugar/guinote/';
@@ -74,7 +90,7 @@ function App() {
     if (username === 'usuario' && password === 'contraseña') {
       setIsUserRegistered(true);
       setShowLoginModal(false);
-      setUsername(username);
+      setUsername(event.target.username.value);
       alert('Inicio de sesión correcto');
     } else {
       alert('Error en el inicio de sesión');
@@ -84,13 +100,14 @@ function App() {
   return (
     <>
       <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
-      <GroupButtons className='gb-container-position' onClickFriends={tryButtons} onClickSettings={tryButtons} onClickRanking={tryButtons}/>
+      <GroupButtons className='gb-container-position' onClickFriends={tryButtons} onClickSettings={tryButtons} onClickRanking={handleRankingModalOpen}/>
       <GameButtons className='gab-container-position' onClickSoloPlay={tryButtons} onClickOnlinePlay={tryButtons}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
-      {/* <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit}/> */}
+      <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
+      <RankingComponent show={showRanking} handleClose={handleRankingModalClose} username={username}/>
     </>
   )
 }
 
-export default App
+export default Homepage

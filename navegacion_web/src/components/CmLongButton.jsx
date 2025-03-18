@@ -1,5 +1,5 @@
 import React from 'react';
-import './CmLongButton.css';
+import '../styles/CmLongButton.css';
 
 class CmLongButton extends React.Component {
     render() {

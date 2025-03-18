@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CommonButton from './CommonButton';
-import rankingButtonIcon from './assets/ranking_button.png';
+import rankingButtonIcon from '../assets/ranking_button.png';
 
 class RankingButton extends Component {
     render() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import friendsButtonIcon from './assets/friends_button.png';
+import friendsButtonIcon from '../assets/friends_button.png';
 import CommonButton from './CommonButton';
 
 class FriendButton extends Component {

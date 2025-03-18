@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import loginButtonIcon from './assets/login_button.png';
-import './Login_button.css';
+import loginButtonIcon from '../assets/login_button.png';
+import '../styles/Login_button.css';
 
 const LoginButton = ({ className, loginButtonText, onClick }) => {
 

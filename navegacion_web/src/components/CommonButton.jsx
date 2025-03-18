@@ -1,5 +1,5 @@
 import React from 'react';
-import './CommonButton.css';
+import '../styles/CommonButton.css';
 
 class CommonButton extends React.Component {
     render() {
