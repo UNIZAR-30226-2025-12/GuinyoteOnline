@@ -22,9 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Importar modelos
 const Usuario = require("../Bd/models/Usuario");
-const Ranking = require("../Bd/models/Ranking");
-const Amigos = require("../Bd/models/Amigos");
-const JugadorPartida = require("../Bd/models/JugadorPartida");
 const Partida = require("../Bd/models/Partida");
 
 // Estado en memoria
@@ -153,9 +150,8 @@ app.post("/salas/crear", async (req, res) => {
 
 app.get("/partidas/historial/:userId", async (req, res) => {
   try {
-    const partidas = await Partida.find({
-      jugadores: req.params.userId
-    }).sort({ fecha: -1 });
+    const partidas = await Partida.find( { "jugadores.idUsuario": req.params.userId }, {"jugadores.timestamp_ult_act": 0, "jugadores.estado_conexion": 0, "__v": 0} ).sort({fecha_inicio: -1});
+    console.log(partidas);
     res.json(partidas);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo historial", error: error.message });

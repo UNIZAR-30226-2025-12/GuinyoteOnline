@@ -9,7 +9,6 @@ const {
 } = require('./gameLogic');
 
 const Partida = require('../Bd/models/Partida');
-const JugadorPartida = require('../Bd/models/JugadorPartida');
 
 async function iniciarPartida(sala) {
     const baraja = mezclarBaraja(crearBaraja());
