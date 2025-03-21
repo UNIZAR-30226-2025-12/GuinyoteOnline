@@ -3,10 +3,14 @@ using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
+//using UnityEngine.UI;
 
-public class Script_UI : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
-    public static Script_UI Instance { get; private set; }
+    public static UIManager Instance { get; private set; }
+
+    private bool isLogged = false;
+    private String username;
 
     private Tab tab_login;
     private Tab tab_register;
@@ -23,11 +27,15 @@ public class Script_UI : MonoBehaviour
     private Button login_button_register;
     private Button register_button_accept;
     private Button login_button_accept;
+    private TextField register_field_mail;
     private TextField register_field_username;
     private TextField register_field_password;
     private TextField register_field_password2;
     private TextField login_field_username;
     private TextField login_field_password;
+    private Button boton_perfil;
+    private Button boton_historial;
+    private ScrollView scroll_historial;
 
     void Awake()
     {
@@ -53,7 +61,7 @@ public class Script_UI : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
 
-        if(currentScene.name == "Partida_IA" || currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2"){   
+        if(currentScene.name == "Partida_IA" || currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name == "Perfil"){   
             boton_atras = root.rootVisualElement.Q<Button>("atras");
             boton_atras.RegisterCallback<ClickEvent>(ev => goBack());
         }
@@ -69,11 +77,12 @@ public class Script_UI : MonoBehaviour
             register_button_close.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.None);
 
             register_button_accept = tab_register.Q<Button>("accept_Button");
-            register_button_accept.RegisterCallback<ClickEvent>(ev => Registrar(register_field_username.value, register_field_password.value, register_field_password2.value));
+            register_button_accept.RegisterCallback<ClickEvent>(ev => Registrar(register_field_mail.value, register_field_username.value, register_field_password.value, register_field_password2.value));
 
             boton_login = root.rootVisualElement.Q<Button>("Login_Button");
             boton_login.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
 
+            register_field_mail = tab_register.Q<TextField>("mail_Field");
             register_field_username = tab_register.Q<TextField>("user_Field");
             register_field_password = tab_register.Q<TextField>("Password_Field");
             register_field_password2 = tab_register.Q<TextField>("Password2_Field");
@@ -93,7 +102,14 @@ public class Script_UI : MonoBehaviour
             login_button_accept.RegisterCallback<ClickEvent>(ev => Login(login_field_username.value, login_field_password.value));
 
             boton_login = root.rootVisualElement.Q<Button>("Login_Button");
-            boton_login.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
+            if(isLogged){
+                boton_login.Q<Label>("Login_Label").text = username;
+                //boton_login.UnregisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
+                boton_login.RegisterCallback<ClickEvent>(ev => ChangeScene("Perfil"));
+
+            }else{
+                boton_login.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
+            }
              
             boton_reglas = root.rootVisualElement.Q<Button>("reglas_Button");
             boton_reglas.RegisterCallback<ClickEvent>(ev => Application.OpenURL("https://es.wikipedia.org/wiki/Guiñote"));
@@ -113,12 +129,71 @@ public class Script_UI : MonoBehaviour
             boton_start = root.rootVisualElement.Q<Button>("Start");
             boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
         }
+        else if (currentScene.name == "Perfil")
+        {
+            //PERFIL
+            boton_perfil = root.rootVisualElement.Q<Button>("Profile_Button");
+            boton_perfil.RegisterCallback<ClickEvent>(ev => MostrarPerfil());
+            boton_historial = root.rootVisualElement.Q<Button>("History_Button");
+            boton_historial.RegisterCallback<ClickEvent>(ev => MostrarHistorial());
+
+            
+            scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
+            
+            UpdateHistorial();
+        }
     }
 
-    void Registrar(String email, String password, String password2)
+    void UpdateHistorial()
+    {
+        VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Historial_elemento");
+
+        VisualElement resultado = resultadoAsset.CloneTree();
+
+
+        //ENLAZAR CON LA BASE DE DATOS
+
+         //Prueba
+        SetHistoryElementInfo(resultado, "2021-06-01", true, "Juan", "Pepe", "Maria", "Luis");
+        scroll_historial.Add(resultado);
+        resultado = resultadoAsset.CloneTree();
+        SetHistoryElementInfo(resultado, "2021-06-02", false, "Juan", "Pepe", "Maria", "Luis");
+        scroll_historial.Add(resultado);
+    }
+
+    void SetHistoryElementInfo(VisualElement element, String fecha, bool ganada, String nombre1, String nombre2, String nombre3, String nombre4)
+    {
+        element.Q<Label>("Fecha").text = "Fecha: " + fecha;
+        element.Q<Label>("WIN_LOOSE").text = ganada ? "WIN" : "LOOSE";
+        element.Q<Label>("Name1").text = nombre1;
+        element.Q<Label>("Name2").text = nombre2;
+        element.Q<Label>("Name3").text = nombre3;
+        element.Q<Label>("Name4").text = nombre4;
+    }
+
+
+    void MostrarPerfil()
+    {
+        Debug.Log("Button Clicked");
+        boton_historial.SetEnabled(true);
+        boton_perfil.SetEnabled(false);
+        scroll_historial.style.display = DisplayStyle.None;
+    }
+
+    void MostrarHistorial()
+    {
+        Debug.Log("Button Clicked");
+        boton_historial.SetEnabled(false);
+        boton_perfil.SetEnabled(true);
+        scroll_historial.style.display = DisplayStyle.Flex;
+    }
+
+
+    void Registrar(String email, String name, String password, String password2)
     {
 
-        Debug.Log("Username: " + email);
+        Debug.Log("email: " + email);
+        Debug.Log("Username: " + name);
         Debug.Log("Password: " + password);
         Debug.Log("Password2: " + password2);
          //IMPLEMENTAR REGISTRO
@@ -127,11 +202,18 @@ public class Script_UI : MonoBehaviour
 
     }
 
-    void Login(String email, String password)
+    void Login(String name, String password)
     {
-        Debug.Log("Username: " + email);
+        Debug.Log("Username: " + name);
         Debug.Log("Password: " + password);
         //IMPLEMENTAR LOGIN
+
+        //LOGIN CORRECTO
+        isLogged = true;
+        username = name;
+        updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+
+
         tab_login.style.display = DisplayStyle.None;
     }
 

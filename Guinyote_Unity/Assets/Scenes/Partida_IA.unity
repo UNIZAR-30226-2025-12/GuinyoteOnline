@@ -329,9 +329,9 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 7ae80cd83777f934493d964d2eaaf493, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: d9cd7647358cd14458c492d4e6ff3efe, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 0337d9c635e3e174fb3ffdd8449daf5f, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 62543685656fd5143ac62f4824a7c5bc, type: 3}
   m_SortingOrder: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920

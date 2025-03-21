@@ -1,0 +1,10 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="Resultado" style="flex-grow: 1; position: relative; top: auto; left: auto; height: 112px; width: 340px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); bottom: auto;">
+        <engine:Label text="Fecha:" name="Fecha" style="position: absolute;" />
+        <engine:Label text="Nan" name="WIN_LOOSE" style="position: absolute; top: 1px; left: 291px;" />
+        <engine:Label text="Nombre" name="Name1" style="position: absolute; top: 46px; left: 11px;" />
+        <engine:Label text="Nombre" name="Name4" style="position: absolute; top: 44px; left: 269px;" />
+        <engine:Label text="Nombre" name="Name3" style="position: absolute; top: 44px; left: 185px;" />
+        <engine:Label text="Nombre" name="Name2" style="position: absolute; top: 45px; left: 91px;" />
+    </engine:VisualElement>
+</engine:UXML>

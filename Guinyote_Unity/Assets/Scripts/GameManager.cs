@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         m_P_TeamB = UIDoc.rootVisualElement.Q<Label>("PointsTeamB");
         m_FinPartida = UIDoc.rootVisualElement.Q<Label>("FinPartida_Label");
         m_FinPartidaButton = UIDoc.rootVisualElement.Q<Button>("atras");
-        m_FinPartidaButton.RegisterCallback<ClickEvent>(ev => Script_UI.goBack());
+        m_FinPartidaButton.RegisterCallback<ClickEvent>(ev => UIManager.goBack());
 
         m_FinPartida.style.visibility = Visibility.Hidden;
 
