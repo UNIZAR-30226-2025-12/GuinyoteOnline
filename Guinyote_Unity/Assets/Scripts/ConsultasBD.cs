@@ -4,7 +4,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Reflection;
-using Historial;
 
 namespace ConsultasBD
 {
