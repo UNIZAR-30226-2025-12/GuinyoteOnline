@@ -2,7 +2,7 @@ import React from 'react';
 import FriendButton from './FriendButton';
 import RankingButton from './RankingButton';
 import SettingsButton from './SettingsButton';
-import '../styles/GroupButtons.css';
+import '/src/styles/GroupButtons.css';
 
 class GroupButtons extends React.Component {
 

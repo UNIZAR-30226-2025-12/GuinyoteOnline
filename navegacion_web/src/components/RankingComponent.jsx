@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../styles/RankingComponent.css';
+import '/src/styles/RankingComponent.css';
 import RankingRow from './RankingRow';
 
 class RankingComponent extends Component {

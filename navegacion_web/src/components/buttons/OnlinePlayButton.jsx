@@ -1,5 +1,5 @@
 import React from 'react';
-import CmLongButton from './CmLongButton';
+import CmLongButton from './base_buttons/CmLongButton';
 
 class OnlinePlayButton extends React.Component {
 

@@ -1,4 +1,4 @@
-import '../styles/Modal.css';
+import '/src/styles/LogRegModal.css';
 import React, { Component } from 'react';
 
 class LoginModal extends Component {

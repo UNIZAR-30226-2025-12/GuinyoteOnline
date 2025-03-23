@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CmLongButton from './CmLongButton';
+import CmLongButton from './base_buttons/CmLongButton';
 
 class SoloPlayButton extends Component {
 

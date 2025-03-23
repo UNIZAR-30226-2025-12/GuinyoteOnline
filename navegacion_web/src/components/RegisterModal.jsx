@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../styles/Modal.css';
+import '/src/styles/LogRegModal.css';
 
 class RegisterModal extends Component {
 

@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
-import LoginButton from './Login_button'
-import GroupButtons from './GroupButtons'
-import GameButtons from './GameButtons'
-import RulesButton from './RulesButton'
+import LoginButton from './buttons/Login_button'
+import GroupButtons from './buttons/GroupButtons'
+import GameButtons from './buttons/GameButtons'
+import RulesButton from './buttons/RulesButton'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal';
 import RankingComponent from './RankingComponent';
+import FriendsModal from './FriendsModal';
 
 
-import '../styles/Homepage.css'
+import '/src/styles/Homepage.css'
 
 function Homepage() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [isUserRegistered, setIsUserRegistered] = useState(false);
-  const [username, setUsername] = useState('');
   const [showRanking, setShowRanking] = useState(false);
+  const [showFriends, setShowFriends] = useState(false);
 
-  const handleLoginClick = () => {
-    if (!isUserRegistered) {
-      setShowLoginModal(true);
-    } else {
-      // Lógica para usuarios registrados
-    }
-  };
+  // Almacenamos los datos del usuario para la correcta ejecución de la aplicación
+  const [username, setUsername] = useState('');
+  const [mail, setMail] = useState('');
 
   const handleLoginModalClose = () => {
     setShowLoginModal(false);
@@ -50,12 +47,30 @@ function Homepage() {
     setShowRanking(false);
   }
 
+  const handleFriendsModalOpen = () => {
+    setShowFriends(true);
+  }
+
+  const handleFriendsModalClose = () => {
+    setShowFriends(false);
+  }
+
+  const handleLoginClick = () => {
+    if (!isUserRegistered) {
+      setShowLoginModal(true);
+    } else {
+      // Lógica para usuarios registrados
+    }
+  };
+
+ 
+
   const redirigirReglas = () => {
     window.location.href = 'https://www.nhfournier.es/como-jugar/guinote/';
   }
 
   const tryButtons = () => {
-    alert('Try buttons');
+    alert('Funcionalidad no disponible');
   }
 
   const handleRegisterSubmit = (event) => {
@@ -100,12 +115,13 @@ function Homepage() {
   return (
     <>
       <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
-      <GroupButtons className='gb-container-position' onClickFriends={tryButtons} onClickSettings={tryButtons} onClickRanking={handleRankingModalOpen}/>
+      <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickSettings={tryButtons} onClickRanking={handleRankingModalOpen}/>
       <GameButtons className='gab-container-position' onClickSoloPlay={tryButtons} onClickOnlinePlay={tryButtons}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
       <RankingComponent show={showRanking} handleClose={handleRankingModalClose} username={username}/>
+      <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
     </>
   )
 }

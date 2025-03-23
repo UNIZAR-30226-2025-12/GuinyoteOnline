@@ -1,0 +1,18 @@
+.friends-common-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    border-radius: 0;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 100%;
+}
+
+.friends-common-button-icon {
+    margin-left: 10px; /* Ajusta este valor para la distancia deseada entre el texto y la imagen */
+    height: 20px; /* Ajusta el tamaño de la imagen según sea necesario */
+}

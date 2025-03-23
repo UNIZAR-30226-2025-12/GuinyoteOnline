@@ -1,0 +1,79 @@
+/* RankingComponent.css */
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.friends-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.friends-modal.show {
+    animation: slideIn 0.5s forwards;
+}
+
+.friends-modal.hide {
+    animation: slideOut 0.5s forwards;
+}
+
+.modal-exit-button {
+    position: absolute;
+    background-color: white;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+}
+
+.friends-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background-color: white;
+    display: block;
+}
+
+
+.friend-list-back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    cursor: pointer;
+    background-color: white;
+    border: none;
+}
+
+.friend-list-back-button img {
+    width: 24px;
+    height: 24px;
+    background-color: white;
+}
+
+.friend-list-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
