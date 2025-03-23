@@ -18,6 +18,7 @@
     }
 }
 
+/* Estilo para modo claro */
 .ranking-modal {
     position: fixed;
     top: 0;
@@ -81,4 +82,38 @@
 
 .ranking-table tr:nth-child(even) {
     background-color: #f9f9f9;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .ranking-modal {
+        background-color: #242424;
+        box-shadow: -2px 0 5px rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-exit-button {
+        background-color: #242424;
+        color: white;
+    }
+
+    .ranking-overlay {
+        background-color: #242424;
+    }
+
+    .ranking-table th {
+        background-color: #242424;
+        color: white;
+    }
+
+    .ranking-table td {
+        color: white;
+    }
+
+    .ranking-table tr:nth-child(even) {
+        background-color: #444;
+    }
+
+    .ranking-table tr:nth-child(odd) {
+        background-color: #333;
+    }
 }

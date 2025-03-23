@@ -1,14 +1,15 @@
+/* Estilo para modo claro */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .modal-content {
   position: relative;
@@ -36,7 +37,7 @@
   row-gap: 0.75rem;
 }
 
-.modal-form-send  {
+.modal-form-send {
   margin-top: 1rem;
   padding: 0.75rem;
   background-color: #007bff;
@@ -50,7 +51,7 @@
   background-color: #0056b3;
 }
 
-.modal-form-secondary-button  {
+.modal-form-secondary-button {
   padding: 0.75rem;
   background-color: #cbcfd3;
   color: black;
@@ -71,10 +72,51 @@
 }
 
 .modal-form input {
-  width: 100%; /* Ajusta el ancho del input para que ocupe todo el ancho disponible */
+  width: 100%;
   padding: 0.5rem;
   margin-top: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-sizing: border-box; /* Asegura que el padding y el borde se incluyan en el ancho total */
+  box-sizing: border-box;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .modal-overlay {
+      background: (255, 255, 255, 0.1);
+  }
+
+  .modal-content {
+      background: #242424;
+      color: white;
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+  }
+
+  .modal-exit-button img {
+      filter: invert(1);
+  }
+
+  .modal-form-send {
+      background-color: #0056b3;
+      color: white;
+  }
+
+  .modal-form-send:hover {
+      background-color: #003d7a;
+  }
+
+  .modal-form-secondary-button {
+      background-color: #555;
+      color: white;
+  }
+
+  .modal-form-secondary-button:hover {
+      background-color: #444;
+  }
+
+  .modal-form input {
+      background-color: #444;
+      color: white;
+      border: 1px solid #666;
+  }
 }

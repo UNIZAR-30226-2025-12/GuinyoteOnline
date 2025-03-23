@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import '/src/styles/RankingComponent.css';
+import '/src/styles/RankingModal.css';
 import RankingRow from './RankingRow';
 
-class RankingComponent extends Component {
+class RankingModal extends Component {
     constructor(props) {
         super(props);
 
@@ -49,7 +49,7 @@ class RankingComponent extends Component {
                     <button className='modal-exit-button' onClick={handleClose} >
                         <img src="https://img.icons8.com/material-rounded/24/000000/close-window.png" alt="Cerrar" />
                     </button>
-                    <h1>Rankings</h1>
+                    <h1>Ranking</h1>
                     <table className='ranking-table'>
                         <thead>
                         <tr key={0}>
@@ -71,4 +71,4 @@ class RankingComponent extends Component {
     }
 }
 
-export default RankingComponent;
+export default RankingModal;

@@ -5,7 +5,7 @@ import GameButtons from './buttons/GameButtons'
 import RulesButton from './buttons/RulesButton'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal';
-import RankingComponent from './RankingComponent';
+import RankingModal from './RankingModal';
 import FriendsModal from './FriendsModal';
 
 
@@ -120,7 +120,7 @@ function Homepage() {
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
-      <RankingComponent show={showRanking} handleClose={handleRankingModalClose} username={username}/>
+      <RankingModal show={showRanking} handleClose={handleRankingModalClose} username={username}/>
       <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
     </>
   )

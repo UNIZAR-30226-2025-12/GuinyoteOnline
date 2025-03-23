@@ -1,3 +1,4 @@
+/* Estilo para modo claro */
 .cb_button {
     display: flex;
     flex-direction: column;
@@ -26,4 +27,24 @@
 .cb_button:hover {
     background-color: #d7dbdf;
     color: black;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .cb_button {
+        background-color: #242424;
+        color: white;
+    }
+
+    .cb_img {
+        filter: invert(1); /* Ajusta los íconos para que se vean mejor en modo oscuro */
+    }
+
+    .cb_button:hover .cb_img {
+        filter: invert(0); /* Invierte el color del ícono cuando ocurre el hover */
+    }
+
+    .button span {
+        color: white; /* Texto más visible en modo oscuro */
+    }
 }

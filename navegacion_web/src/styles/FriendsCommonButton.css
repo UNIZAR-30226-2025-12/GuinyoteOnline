@@ -1,3 +1,4 @@
+/* Estilo para modo claro */
 .friends-common-button {
     display: flex;
     justify-content: space-between;
@@ -15,4 +16,29 @@
 .friends-common-button-icon {
     margin-left: 10px; /* Ajusta este valor para la distancia deseada entre el texto y la imagen */
     height: 20px; /* Ajusta el tamaño de la imagen según sea necesario */
+    transition: filter 0.3s ease; /* Transición suave para el hover */
+}
+
+/* Estilo para hover en modo claro */
+.friends-common-button:hover {
+    background-color: #d7dbdf; /* Fondo más oscuro */
+    color: black;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .friends-common-button {
+        background-color: #333;
+        color: white;
+        border-top: 1px solid white;
+        border-bottom: 1px solid white;
+    }
+
+    .friends-common-button-icon {
+        filter: invert(1); /* Ajusta si el ícono necesita cambios específicos en modo oscuro */
+    }
+
+    .friends-common-button:hover .friends-common-button-icon {
+        filter: invert(0); /* Invierte el color del ícono en hover en modo oscuro */
+    }
 }

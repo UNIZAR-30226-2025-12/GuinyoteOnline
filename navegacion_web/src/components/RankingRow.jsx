@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import userIcon from '/src/assets/login_button.png';
-import '/src/styles/RankingComponent.css';
+import '/src/styles/RankingModal.css';
 
 class RankingRow extends Component {
     render() {

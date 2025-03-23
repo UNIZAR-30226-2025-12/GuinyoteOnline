@@ -77,3 +77,35 @@
     font-weight: bold;
     text-align: center;
 }
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .friends-modal {
+        background-color: #242424;
+        box-shadow: -2px 0 5px rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-exit-button {
+        background-color: #242424;
+    }
+
+    .modal-exit-button img {
+        filter: invert(1);
+    }
+
+    .friends-overlay {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .friend-list-back-button {
+        background-color: #242424;
+    }
+
+    .friend-list-back-button img {
+        filter: invert(1);
+    }
+
+    .friend-list-title {
+        color: white; /* Texto más visible */
+    }
+}

@@ -1,3 +1,4 @@
+/* Estilo para modo claro */
 .cm_long_button {
     display: flex;
     align-items: center;
@@ -11,8 +12,15 @@
     font-size: 40px;
 }
 
-
 .cm_long_button:hover {
     background-color: #d7dbdf;
     color: #4866f8;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .cm_long_button {
+        background-color: #242424;
+        color: white;
+    }
 }
