@@ -1,0 +1,201 @@
+/*=========================Variables globales=========================*/
+:root {
+    --escala: 0.15;
+    --offsetY: 1500px;
+    --offsetX: 2350px;
+    --offsetBaraja: 2400px;
+}
+
+/*=========================Jugador=========================*/
+.cartaJugada {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(50% - 85px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    scale: var(--escala);
+}
+
+.mano {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(50% - var(--escala) * var(--offsetY));
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cartas {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.mano img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_0=========================*/
+.cartaJugadaIA_0 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - 90px);
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    scale: var(--escala);
+}
+
+.manoIA_0 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - var(--escala) * var(--offsetX));
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+}
+
+.cartasIA_0 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_0 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_1=========================*/
+.cartaJugadaIA_1 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: calc(50% - 90px);
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(180deg);
+    scale: var(--escala);
+}
+
+.manoIA_1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: calc(50% - var(--escala) * var(--offsetY));
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+}
+
+.cartasIA_1 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_1 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_2=========================*/
+.cartaJugadaIA_2 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: calc(50% - 90px);
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    scale: var(--escala);
+}
+
+.manoIA_2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: calc(50% - var(--escala) * var(--offsetX));
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.cartasIA_2 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_2 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================Tapete=========================*/
+.tapete {
+    position: fixed;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.tapete img {
+    scale: var(--escala);
+}
+
+/*=========================Baraja=========================*/
+.baraja {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - var(--escala) * var(--offsetBaraja));
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.baraja img{
+    position: absolute;
+    z-index: 2;
+    scale: var(--escala);
+}
+
+.triunfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - var(--escala) * var(--offsetBaraja) + 20px);
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    z-index: 1;
+}
+
+.triunfo img{
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
