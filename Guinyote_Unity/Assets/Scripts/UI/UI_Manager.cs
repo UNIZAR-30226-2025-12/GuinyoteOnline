@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
+using ConsultasBD;
 //using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -54,6 +55,7 @@ public class UIManager : MonoBehaviour
     {   
         SceneManager.sceneLoaded += updateReference;
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+        Consultas.OnHistorialConsultado += UpdateHistorial;
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -140,25 +142,43 @@ public class UIManager : MonoBehaviour
             
             scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
             
-            UpdateHistorial();
+            //consultar el historial a la BD
+            StartCoroutine(Consultas.GetHistorialUsuario(username));
         }
     }
 
-    void UpdateHistorial()
+    void UpdateHistorial(Partida[] historial)
     {
+        Consultas.MostrarCamposArray(historial);
         VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Historial_elemento");
 
-        VisualElement resultado = resultadoAsset.CloneTree();
+        foreach (Partida partida in historial)
+        {
+            VisualElement resultado = resultadoAsset.CloneTree();
+            if (partida.estado != "terminada") continue;
 
-
-        //ENLAZAR CON LA BASE DE DATOS
-
-         //Prueba
-        SetHistoryElementInfo(resultado, "2021-06-01", true, "Juan", "Pepe", "Maria", "Luis");
-        scroll_historial.Add(resultado);
-        resultado = resultadoAsset.CloneTree();
-        SetHistoryElementInfo(resultado, "2021-06-02", false, "Juan", "Pepe", "Maria", "Luis");
-        scroll_historial.Add(resultado);
+            if (partida.jugadores.Length == 2)
+            {
+                bool win = ((partida.jugadores[0].idUsuario == username && partida.jugadores[0].puntuacion > partida.jugadores[1].puntuacion) ||
+                            (partida.jugadores[1].idUsuario == username && partida.jugadores[1].puntuacion > partida.jugadores[0].puntuacion));
+                SetHistoryElementInfo(resultado, partida.fecha_inicio, win, partida.jugadores[0].idUsuario, "", partida.jugadores[1].idUsuario, "");
+            }
+            else if (partida.jugadores.Length == 4)
+            {
+                int equipo = -1, puntos1 = 0, puntos2 = 0;
+                foreach (Jugador j in partida.jugadores)
+                {
+                    if (j.idUsuario == username) equipo = j.equipo;
+                    if (j.equipo == 1) puntos1 += j.puntuacion;
+                    if (j.equipo == 2) puntos2 += j.puntuacion;
+                }
+                bool win = ((equipo == 1 && puntos1 > puntos2) ||
+                            (equipo == 2 && puntos2 > puntos1));
+                SetHistoryElementInfo(resultado, partida.fecha_inicio, win, partida.jugadores[0].idUsuario, partida.jugadores[1].idUsuario, partida.jugadores[2].idUsuario, partida.jugadores[3].idUsuario);
+            }
+            else continue; //Caso erroneo
+            scroll_historial.Add(resultado);
+        }
     }
 
     void SetHistoryElementInfo(VisualElement element, String fecha, bool ganada, String nombre1, String nombre2, String nombre3, String nombre4)
