@@ -102,6 +102,7 @@
     }
 
     .friend-list-back-button img {
+        background-color: #dbdbdb;
         filter: invert(1);
     }
 
