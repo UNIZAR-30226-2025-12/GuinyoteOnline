@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import backButton from '/src/assets/back_button.png';
 
 class Amigos extends Component {
     render() {
@@ -8,7 +9,7 @@ class Amigos extends Component {
         return (
             <>
                 <button className='friend-list-back-button' onClick={handleBack} >
-                    <img src="https://img.icons8.com/?size=100&id=2889&format=png&color=000000" alt="Volver atrás" />
+                    <img src={backButton} alt="Volver atrás" />
                 </button>
                 <h2 className='friend-list-title'>Lista de amigos</h2>
 
