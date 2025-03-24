@@ -150,7 +150,51 @@ app.post("/salas/crear", async (req, res) => {
 
 app.get("/partidas/historial/:userId", async (req, res) => {
   try {
-    const partidas = await Partida.find( { "jugadores.idUsuario": req.params.userId }, {"jugadores.timestamp_ult_act": 0, "jugadores.estado_conexion": 0, "__v": 0} ).sort({fecha_inicio: -1});
+    console.log("Buscando partidas...");
+    
+    const partidas = await Partida.aggregate([
+      {
+        $match: { "jugadores.idUsuario": req.params.userId } // Filtrar partidas donde el jugador tiene el idUsuario que buscamos
+      },
+      {
+        $unwind: "$jugadores" // Deshacer el array 'jugadores' para trabajar con cada jugador individualmente
+      },
+      {
+        $lookup: {
+          from: "usuarios", // Nombre de la colección de Usuarios
+          localField: "jugadores.idUsuario", // Campo en 'Partida' que corresponde al idUsuario del jugador
+          foreignField: "correo", // Campo en 'Usuarios' que corresponde al correo (que es el idUsuario)
+          as: "usuario_info" // Resultado del lookup se almacenará en 'usuario_info'
+        }
+      },
+      {
+        $unwind: "$usuario_info" // Deshacer el array 'usuario_info' para que solo quede un objeto con la información
+      },
+      {
+        $project: {
+          "idPartida": 1,
+          "fecha_inicio": 1,
+          "estado": 1,
+          "jugadores.nombre": "$usuario_info.nombre", // Agregar nombre desde 'usuario_info'
+          "jugadores.idUsuario": 1, // Mantener el idUsuario
+          "jugadores.equipo": 1, // Mantener el equipo
+          "jugadores.puntuacion": 1 // Mantener la puntuación
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          idPartida: {$first: "$idPartida" },
+          fecha_inicio: { $first: "$fecha_inicio" },
+          estado: { $first: "$estado" },
+          jugadores: { $push: { nombre: "$jugadores.nombre", idUsuario: "$jugadores.idUsuario", equipo: "$jugadores.equipo", puntuacion: "$jugadores.puntuacion" } }
+        }
+      },
+      {
+        $sort: { fecha_inicio: -1 } // Ordenar por fecha_inicio de forma descendente
+      }
+    ]);
+
     console.log(partidas);
     res.json(partidas);
   } catch (error) {

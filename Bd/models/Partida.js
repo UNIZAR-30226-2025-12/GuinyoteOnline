@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const JugadorSchema = new mongoose.Schema({
-    idUsuario: { type: String, required: true, ref: 'Usuario' },
+    idUsuario: { type: String, required: true },
     equipo: { type: Number, required: true },
     puntuacion: { type: Number, default: 0 },
     estado_conexion: { type: Boolean, default: true },

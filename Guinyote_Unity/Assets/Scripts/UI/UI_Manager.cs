@@ -141,6 +141,7 @@ public class UIManager : MonoBehaviour
 
             
             scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
+            scroll_historial.style.display = DisplayStyle.None;
             
             //consultar el historial a la BD
             StartCoroutine(Consultas.GetHistorialUsuario(username));
@@ -150,6 +151,7 @@ public class UIManager : MonoBehaviour
     void UpdateHistorial(Partida[] historial)
     {
         Consultas.MostrarCamposArray(historial);
+        Debug.Log("historial actualizado");
         VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Historial_elemento");
 
         foreach (Partida partida in historial)
@@ -161,7 +163,7 @@ public class UIManager : MonoBehaviour
             {
                 bool win = ((partida.jugadores[0].idUsuario == username && partida.jugadores[0].puntuacion > partida.jugadores[1].puntuacion) ||
                             (partida.jugadores[1].idUsuario == username && partida.jugadores[1].puntuacion > partida.jugadores[0].puntuacion));
-                SetHistoryElementInfo(resultado, partida.fecha_inicio, win,  "", partida.jugadores[0].idUsuario, partida.jugadores[1].idUsuario, "");
+                SetHistoryElementInfo(resultado, partida.fecha_inicio, win,  "", partida.jugadores[0].nombre, partida.jugadores[1].nombre, "", partida.jugadores[0].puntuacion, partida.jugadores[1].puntuacion);
             }
             else if (partida.jugadores.Length == 4)
             {
@@ -175,27 +177,27 @@ public class UIManager : MonoBehaviour
                 {
                     if (j.idUsuario == username) equipo = j.equipo;
                     if (j.equipo == 1) {
-                        if(equipo1_1 == null) equipo1_1 = j.idUsuario;
-                        else equipo1_2 = j.idUsuario;
+                        if(equipo1_1 == null) equipo1_1 = j.nombre;
+                        else equipo1_2 = j.nombre;
                         puntos1 += j.puntuacion;
                     }
                     if (j.equipo == 2) {
-                        if(equipo2_1 == null) equipo2_1 = j.idUsuario;
-                        else equipo2_2 = j.idUsuario;
+                        if(equipo2_1 == null) equipo2_1 = j.nombre;
+                        else equipo2_2 = j.nombre;
                         puntos2 += j.puntuacion;
                     }
                 }
                 bool win = ((equipo == 1 && puntos1 > puntos2) ||
                             (equipo == 2 && puntos2 > puntos1));
 
-                SetHistoryElementInfo(resultado, partida.fecha_inicio, win, equipo1_1, equipo1_2, equipo2_1, equipo2_2);
+                SetHistoryElementInfo(resultado, partida.fecha_inicio, win, equipo1_1, equipo1_2, equipo2_1, equipo2_2, puntos1, puntos2);
             }
             else continue; //Caso erroneo
             scroll_historial.Add(resultado);
         }
     }
 
-    void SetHistoryElementInfo(VisualElement element, String fecha, bool ganada, String nombre1, String nombre2, String nombre3, String nombre4)
+    void SetHistoryElementInfo(VisualElement element, String fecha, bool ganada, String nombre1, String nombre2, String nombre3, String nombre4, int puntos1, int puntos2)
     {
         element.Q<Label>("Fecha").text = "Fecha: " + fecha;
         element.Q<Label>("WIN_LOSE").text = ganada ? "WIN" : "LOSE";
@@ -203,6 +205,8 @@ public class UIManager : MonoBehaviour
         element.Q<Label>("Name2").text = nombre2;
         element.Q<Label>("Name3").text = nombre3;
         element.Q<Label>("Name4").text = nombre4;
+        element.Q<Label>("Puntos1").text = puntos1.ToString();
+        element.Q<Label>("Puntos2").text = puntos2.ToString();
     }
 
 

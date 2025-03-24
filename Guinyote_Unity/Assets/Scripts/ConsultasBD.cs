@@ -32,7 +32,7 @@ namespace ConsultasBD
     [System.Serializable]
     public class Jugador
     {
-        public string idUsuario;
+        public string idUsuario, nombre;
         public int equipo,
                 puntuacion;
     }
@@ -57,6 +57,7 @@ namespace ConsultasBD
         //Obtiene el historial del usuario con correo "id"
         public static IEnumerator GetHistorialUsuario(string id)
         {
+            Debug.Log("Consultando historial...");
             UnityWebRequest www = UnityWebRequest.Get(address + "/partidas/historial/" + id);
             yield return www.SendWebRequest();
 
