@@ -78,6 +78,21 @@ app.post("/usuarios/registro", async (req, res) => {
   }
 });
 
+app.post("/usuarios/inicioSesion", async (req, res) => {
+  try {
+    const { correo, contrasena } = req.body;
+    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { correo: 1 });
+    if (resultado.length > 0) {
+      res.status(202).json(resultado);
+    }
+    else {
+      res.status(401).json({ message: "Correo o contraseña incorrectos"});
+    }
+  } catch (error) {
+    res.status(401).json({ message: "Error en el inicio de sesión", error: error.message });
+  }
+})
+
 app.put("/usuarios/:id/perfil", async (req, res) => {
   try {
     const { nombre, foto_perfil } = req.body;

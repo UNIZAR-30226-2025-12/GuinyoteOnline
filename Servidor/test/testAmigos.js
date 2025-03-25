@@ -10,7 +10,7 @@ const params = {
     idSolicitante: 'pedro.martinez@yahoo.com'
 }
 
-const url = 'http://localhost:10000/amigos/';
+const url = 'https://guinyoteonline-hkio.onrender.com/amigos/';
 
 async function test() {
     //-------------------------------------------------------------//
