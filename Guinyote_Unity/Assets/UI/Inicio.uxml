@@ -1,13 +1,13 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 40px; position: absolute; width: 126px; top: 30%; left: 5%; right: 95%;" />
+    <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 10%; position: absolute; width: 20%; top: 30%; left: 5%; right: -216px;" />
     <engine:Button name="Login_Button" style="position: absolute; height: 72px; width: 144px; opacity: 1; top: -3px; left: -5px; background-color: rgba(188, 188, 188, 0.61);">
         <engine:VisualElement style="flex-grow: 1; height: 26px; width: 56px; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;);" />
-        <engine:Label text="Iniciar &#10;sesión" name="Login_Label" style="height: 24px; width: 64px; position: absolute; top: 22px; left: 72px;" />
+        <engine:Label text="Iniciar &#10;sesión" name="Login_Label" style="height: 24px; width: 64px; position: absolute; top: 22px; left: 72px; white-space: normal;" />
     </engine:Button>
-    <engine:Button text="Partida IA" name="IA_Button" style="position: absolute; top: 50%; left: 5%; width: 128px; bottom: auto; right: auto;" />
+    <engine:Button text="Partida IA" name="IA_Button" style="position: absolute; top: 50%; left: 5%; width: 20%; bottom: auto; right: auto; height: 10%;" />
     <engine:Button style="position: absolute; top: 5%; left: 55%; height: 83px; width: 58px; background-color: rgba(70, 70, 70, 0); -unity-background-image-tint-color: rgb(255, 255, 255); border-left-color: rgba(55, 55, 55, 0); border-right-color: rgba(55, 55, 55, 0); border-top-color: rgba(55, 55, 55, 0); border-bottom-color: rgba(55, 55, 55, 0);">
         <engine:Label text="Amigos" style="position: absolute; top: 50px; left: -1px;" />
-        <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/amigos&apos;); background-size: 100% 100%; width: 37px; height: 44px;" />
+        <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/amigos&apos;); background-size: 100% 100%; width: 36px; height: 41px; position: absolute;" />
     </engine:Button>
     <engine:Button text="Reglas" name="reglas_Button" style="left: 85%; width: 76px; top: 90%;" />
     <engine:Button style="position: absolute; top: 5%; left: 70%; height: 80px; width: 58px; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); color: rgb(27, 27, 27); background-color: rgba(188, 188, 188, 0);">
@@ -24,7 +24,7 @@
             <engine:Button text="Registrarse" name="register_Button" style="position: absolute; top: 310px; left: 41px;" />
             <engine:Button text="Aceptar" name="accept_Button" style="position: absolute; top: 308px; left: 290px;" />
             <engine:Label text="Iniciar sesión" style="position: absolute; top: 41px; left: 174px; -unity-font-style: bold;" />
-            <engine:Label text="Usuario" style="position: absolute; top: 105px; left: 70px;" />
+            <engine:Label text="Correo electrónico" style="position: absolute; top: 105px; left: 70px;" />
             <engine:Label text="Contraseña" style="position: absolute; top: 188px; left: 72px;" />
             <engine:TextField name="user_Field" style="position: absolute; top: 142px; left: 68px; width: 221px;" />
             <engine:TextField name="Password_Field" style="position: absolute; top: 238px; left: 69px; width: 221px;" />
