@@ -53,6 +53,10 @@ namespace ConsultasBD
 
         //EVENTO PARA OBTENER EL HISTORIAL
         public static event Action<Partida[]> OnHistorialConsultado;
+        public static event Action<string> OnInicioSesion;
+        public static event Action OnErrorInicioSesion;
+        public static event Action OnRegistroUsuario;
+        public static event Action OnErrorRegistroUsuario;
 
         //Obtiene el historial del usuario con correo "id"
         public static IEnumerator GetHistorialUsuario(string id)
@@ -69,6 +73,47 @@ namespace ConsultasBD
             {
                 Partida[] historial = JsonHelper.FromJson<Partida>(www.downloadHandler.text);
                 OnHistorialConsultado?.Invoke(historial);
+            }
+        }
+
+        public static IEnumerator InicioDeSesion(string id, string pwd)
+        {
+            Debug.Log("Iniciando sesión...");
+            WWWForm form = new WWWForm();
+            form.AddField("correo", id);
+            form.AddField("contrasena", pwd);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/usuarios/inicioSesion/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorInicioSesion?.Invoke();
+            }
+            else
+            {
+                OnInicioSesion?.Invoke(id);
+            }
+        }
+
+        public static IEnumerator RegistroUsuario(string nombre, string id, string pwd)
+        {
+            Debug.Log("Registrando usuario...");
+            WWWForm form = new WWWForm();
+            form.AddField("nombre", nombre);
+            form.AddField("correo", id);
+            form.AddField("contrasena", pwd);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/usuarios/registro/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorRegistroUsuario?.Invoke();
+            }
+            else
+            {
+                OnRegistroUsuario?.Invoke();
             }
         }
 

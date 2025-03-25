@@ -55,7 +55,12 @@ public class UIManager : MonoBehaviour
     {   
         SceneManager.sceneLoaded += updateReference;
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
+        
         Consultas.OnHistorialConsultado += UpdateHistorial;
+        Consultas.OnInicioSesion += Login;
+        Consultas.OnErrorInicioSesion += LoginFail;
+        Consultas.OnRegistroUsuario += RegistroUsuario;
+        Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -98,7 +103,7 @@ public class UIManager : MonoBehaviour
             login_button_register.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.Flex);
 
             login_button_accept = tab_login.Q<Button>("accept_Button");
-            login_button_accept.RegisterCallback<ClickEvent>(ev => Login(login_field_username.value, login_field_password.value));
+            login_button_accept.RegisterCallback<ClickEvent>(ev => StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value)));
 
             boton_login = root.rootVisualElement.Q<Button>("Login_Button");
             if(isLogged){
@@ -237,24 +242,42 @@ public class UIManager : MonoBehaviour
         Debug.Log("Password: " + password);
         Debug.Log("Password2: " + password2);
          //IMPLEMENTAR REGISTRO
-        tab_register.style.display = DisplayStyle.None;
+        if (password != password2)
+        {
+            Debug.Log("Contraseñas no coinciden");
+            return;
+        }
 
-
+        StartCoroutine(Consultas.RegistroUsuario(name, email, password));
     }
 
-    void Login(String name, String password)
+    void RegistroUsuario()
+    {
+        Debug.Log("Usuario registrado");
+        tab_register.style.display = DisplayStyle.None;
+    }
+
+    void RegistroUsuarioFail()
+    {
+        Debug.Log("Error al registrar usuario");
+    }
+
+    void Login(String name)
     {
         Debug.Log("Username: " + name);
-        Debug.Log("Password: " + password);
-        //IMPLEMENTAR LOGIN
 
-        //LOGIN CORRECTO
         isLogged = true;
         username = name;
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
 
         tab_login.style.display = DisplayStyle.None;
+    }
+
+    void LoginFail()
+    {
+        Debug.Log("Login erroneo");
+        //Acciones login erroneo
     }
 
 
