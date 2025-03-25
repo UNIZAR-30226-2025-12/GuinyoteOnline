@@ -103,12 +103,48 @@ app.get("/rankings", async (req, res) => {
 });
 
 // Rutas de Amigos
-app.post("/amigos/solicitud", async (req, res) => {
+app.post("/amigos/enviarSolicitud", async (req, res) => {
   try {
     const { idUsuario, idAmigo } = req.body;
-    const amistad = new Amigos({ idUsuario, idAmigo, estado: 'pendiente' });
-    await amistad.save();
-    res.status(201).json(amistad);
+    await Usuario.findOneAndUpdate(
+      { correo: idUsuario },
+      { $push: { amigos: {idUsuario: idAmigo, pendiente: true} } }
+    );
+    
+    res.status(201).json({ message: "Solicitud enviada con éxito"});
+  } catch (error) {
+    res.status(400).json({ message: "Error enviando solicitud", error: error.message });
+  }
+});
+
+app.post("/amigos/aceptarSolicitud", async (req, res) => {
+  try {
+    const { idUsuario, idSolicitante } = req.body;
+    await Usuario.findOneAndUpdate(
+      { correo: idSolicitante, "amigos.idUsuario": idUsuario },
+      { $set: { "amigos.$.pendiente": false} }
+    );
+
+    await Usuario.findOneAndUpdate(
+      { correo: idUsuario },
+      { $push: { amigos: {idUsuario: idSolicitante, pendiente: false} } }
+    )
+    
+    res.status(202).json({ message: "Solicitud aceptada con éxito"});
+  } catch (error) {
+    res.status(400).json({ message: "Error enviando solicitud", error: error.message });
+  }
+});
+
+app.post("/amigos/rechazarSolicitud", async (req, res) => {
+  try {
+    const { idUsuario, idSolicitante } = req.body;
+    await Usuario.findOneAndUpdate(
+      { correo: idSolicitante },
+      { $pull: { amigos: {idUsuario: idUsuario, pendiente: true} } }
+    );
+    
+    res.status(203).json({ message: "Solicitud rechazada con éxito"});
   } catch (error) {
     res.status(400).json({ message: "Error enviando solicitud", error: error.message });
   }
@@ -116,13 +152,7 @@ app.post("/amigos/solicitud", async (req, res) => {
 
 app.get("/amigos/:userId", async (req, res) => {
   try {
-    const amigos = await Amigos.find({ 
-      $or: [
-        { idUsuario: req.params.userId },
-        { idAmigo: req.params.userId }
-      ],
-      estado: 'aceptado'
-    });
+    const amigos = await Usuario.find({ correo: req.params.userId }, { correo: 1, amigos: 1 });
     res.json(amigos);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo amigos", error: error.message });
@@ -195,7 +225,6 @@ app.get("/partidas/historial/:userId", async (req, res) => {
       }
     ]);
 
-    console.log(partidas);
     res.json(partidas);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo historial", error: error.message });

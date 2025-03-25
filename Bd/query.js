@@ -140,24 +140,36 @@ const seedDB = async () => {
         
         await Usuario.findOneAndUpdate(
             { correo: usuarioIds[0] },
-            { $push: { amigos: usuarioIds[1] } },
+            { $push: { amigos: { idUsuario: usuarioIds[1], pendiente: false } } },
+          );
+        await Usuario.findOneAndUpdate(
+            { correo: usuarioIds[1] },
+            { $push: { amigos: { idUsuario: usuarioIds[0], pendiente: false } } },
           );
         await Usuario.findOneAndUpdate(
             { correo: usuarioIds[0] },
-            { $push: { amigos: usuarioIds[2] } }
+            { $push: { amigos: { idUsuario: usuarioIds[2], pendiente: false } } }
+          );
+        await Usuario.findOneAndUpdate(
+            { correo: usuarioIds[2] },
+            { $push: { amigos: { idUsuario: usuarioIds[0], pendiente: false } } },
           );
         await Usuario.findOneAndUpdate(
             { correo: usuarioIds[0] },
-            { $push: { amigos: usuarioIds[3] } }
+            { $push: { amigos: { idUsuario: usuarioIds[3], pendiente: true } } }
           );
 
         await Usuario.findOneAndUpdate(
             { correo: usuarioIds[1] },
-            { $push: { amigos: usuarioIds[2] } }
+            { $push: { amigos: { idUsuario: usuarioIds[2], pendiente: false } } }
+          );
+        await Usuario.findOneAndUpdate(
+            { correo: usuarioIds[2] },
+            { $push: { amigos: { idUsuario: usuarioIds[1], pendiente: false } } },
           );
         await Usuario.findOneAndUpdate(
             { correo: usuarioIds[1] },
-            { $push: { amigos: usuarioIds[3] } }
+            { $push: { amigos: { idUsuario: usuarioIds[3], pendiente: true } } }
           );
 
 
