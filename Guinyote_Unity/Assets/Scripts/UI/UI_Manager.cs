@@ -81,9 +81,6 @@ public class UIManager : MonoBehaviour
             register_button_accept = tab_register.Q<Button>("accept_Button");
             register_button_accept.RegisterCallback<ClickEvent>(ev => Registrar(register_field_mail.value, register_field_username.value, register_field_password.value, register_field_password2.value));
 
-            boton_login = root.rootVisualElement.Q<Button>("Login_Button");
-            boton_login.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
-
             register_field_mail = tab_register.Q<TextField>("mail_Field");
             register_field_username = tab_register.Q<TextField>("user_Field");
             register_field_password = tab_register.Q<TextField>("Password_Field");
@@ -106,11 +103,11 @@ public class UIManager : MonoBehaviour
             boton_login = root.rootVisualElement.Q<Button>("Login_Button");
             if(isLogged){
                 boton_login.Q<Label>("Login_Label").text = username;
-                //boton_login.UnregisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
+                boton_login.UnregisterCallback<ClickEvent>(mostrarLogin);
                 boton_login.RegisterCallback<ClickEvent>(ev => ChangeScene("Perfil"));
 
             }else{
-                boton_login.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.Flex);
+                boton_login.RegisterCallback<ClickEvent>(mostrarLogin);
             }
              
             boton_reglas = root.rootVisualElement.Q<Button>("reglas_Button");
@@ -146,6 +143,11 @@ public class UIManager : MonoBehaviour
             //consultar el historial a la BD
             StartCoroutine(Consultas.GetHistorialUsuario(username));
         }
+    }
+
+    private void mostrarLogin(ClickEvent evt)
+    {
+        tab_login.style.display = DisplayStyle.Flex;
     }
 
     void UpdateHistorial(Partida[] historial)
