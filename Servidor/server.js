@@ -93,13 +93,12 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
   }
 })
 
-app.put("/usuarios/:id/perfil", async (req, res) => {
+app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
   try {
     const { nombre, foto_perfil } = req.body;
-    const usuario = await Usuario.findByIdAndUpdate(
-      req.params.id,
-      { nombre, foto_perfil },
-      { new: true }
+    const usuario = await Usuario.findOneAndUpdate(
+      { correo: req.params.id },
+      { $set: { nombre: nombre, foto_perfil: foto_perfil }}
     );
     res.json(usuario);
   } catch (error) {
@@ -107,10 +106,19 @@ app.put("/usuarios/:id/perfil", async (req, res) => {
   }
 });
 
+app.get("/usuarios/perfil/:id", async (req, res) => {
+  try {
+    const usuario = await Usuario.find({correo: req.params.id}, {amigos: 0});
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ message: "Error obteniendo el perfil", error: error.message});
+  }
+});
+
 // Rutas de Ranking
 app.get("/rankings", async (req, res) => {
   try {
-    const rankings = await Ranking.find().sort({ victorias: -1 }).limit(100);
+    const rankings = await Usuario.find({}, {foto_perfil: 1, nombre: 1, nVictorias: 1}).sort({ nVictorias: -1 }).limit(100);
     res.json(rankings);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo rankings", error: error.message });
@@ -195,7 +203,6 @@ app.post("/salas/crear", async (req, res) => {
 
 app.get("/partidas/historial/:userId", async (req, res) => {
   try {
-    console.log("Buscando partidas...");
     
     const partidas = await Partida.aggregate([
       {
