@@ -1,11 +1,8 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  /*background-image: url('path/to/your/image.jpg');
-  background-size: cover;
-  background-position: center;*/
   padding: 2rem;
   text-align: center;
+  width: 100%;  /* Asegura de que el ancho sea 100% */
 }
 
 .login-button-position {
@@ -33,11 +30,20 @@
   right: 10px;
 }
 
-.homepage-background {
-  background-image: url('/Logo_PSoft_Guinyote.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  height: 100vh !important; /* Esto hace que la imagen cubra toda la pantalla */
-  width: 100% !important;
+.background-container {
+  height: 80vh;
+}
+
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/Logo_PSoft_Guinyote.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.5;  /* Aplica opacidad solo a la imagen de fondo */
+  z-index: -1;  /* Coloca la capa de fondo detrás del contenido */
 }

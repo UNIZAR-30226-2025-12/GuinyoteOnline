@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import LoginButton from './buttons/Login_button'
+import LoginButton from './buttons/LoginButton'
 import GroupButtons from './buttons/GroupButtons'
 import GameButtons from './buttons/GameButtons'
 import RulesButton from './buttons/RulesButton'
@@ -112,9 +112,12 @@ function Homepage() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center bg-fixed" style={{ backgroundImage: 'url(/Logo_PSoft_Guinyote.png)', backgroundSize: 'cover', backgroundPosition: 'center', height: '100vh', width: '100%' }}>
+    <div className='background-container'>
+      <div className='background-layer'>
+
+      </div>
       <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
-      <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickSettings={tryButtons} onClickRanking={handleRankingModalOpen}/>
+      <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
       <GameButtons className='gab-container-position' onClickSoloPlay={tryButtons} onClickOnlinePlay={tryButtons}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
