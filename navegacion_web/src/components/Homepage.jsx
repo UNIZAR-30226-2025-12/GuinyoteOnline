@@ -8,7 +8,6 @@ import RegisterModal from './RegisterModal';
 import RankingModal from './RankingModal';
 import FriendsModal from './FriendsModal';
 
-
 import '/src/styles/Homepage.css'
 
 function Homepage() {
@@ -113,7 +112,7 @@ function Homepage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-cover bg-center bg-fixed" style={{ backgroundImage: 'url(/Logo_PSoft_Guinyote.png)', backgroundSize: 'cover', backgroundPosition: 'center', height: '100vh', width: '100%' }}>
       <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
       <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickSettings={tryButtons} onClickRanking={handleRankingModalOpen}/>
       <GameButtons className='gab-container-position' onClickSoloPlay={tryButtons} onClickOnlinePlay={tryButtons}/>
@@ -122,7 +121,7 @@ function Homepage() {
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
       <RankingModal show={showRanking} handleClose={handleRankingModalClose} username={username}/>
       <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
-    </>
+    </div>
   )
 }
 

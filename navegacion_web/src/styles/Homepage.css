@@ -1,9 +1,9 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  background-image: url('path/to/your/image.jpg');
+  /*background-image: url('path/to/your/image.jpg');
   background-size: cover;
-  background-position: center;
+  background-position: center;*/
   padding: 2rem;
   text-align: center;
 }
@@ -31,4 +31,13 @@
   position: fixed;
   bottom: 10px;
   right: 10px;
+}
+
+.homepage-background {
+  background-image: url('/Logo_PSoft_Guinyote.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  height: 100vh !important; /* Esto hace que la imagen cubra toda la pantalla */
+  width: 100% !important;
 }
