@@ -35,6 +35,24 @@ public class Baraja : MonoBehaviour
         }
     }
 
+    /*
+     * Pone en la baraja las cartas que se indiquen en
+     * "line". "line" debe tener el siguiente formato:
+     * numero,palo;numero,palo;...;numero,palo
+     * La primera carta especificada será la primera
+     * que se saque de la baraja.
+     */
+    public void Barajar(string line)
+    {
+        cartas.Clear();
+        string[] cartasTexto = line.Split(';');
+        foreach (string carta in cartasTexto)
+        {
+            string[] numeroPalo = carta.Split(',');
+            cartas.Add((int.Parse(numeroPalo[1]), int.Parse(numeroPalo[0])));
+        }
+    }
+
     public Carta DarCarta()
     {
         if (cartas.Count != 0)

@@ -99,7 +99,7 @@ public class IA_Player : Player
         }
         else //segunda baraja o segunda baraja y arrastre
         {
-            return cartaSegundaBarajaIndex(jugada.Puntos, GameManager.Instance.jugadores[GameManager.Instance.orden[1]].puntos, puntos);
+            return cartaSegundaBarajaIndex(jugada.Puntos, GameManager.Instance.jugadores[GameManager.Instance.orden[0]].puntos, puntos);
         }
     }
 

@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using System.IO;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,6 +26,8 @@ public class GameManager : MonoBehaviour
     private Button m_FinPartidaButton;
     public int ganador;
 
+    public string test_state = "";
+
 
     private void Awake()
     {
@@ -44,7 +48,7 @@ public class GameManager : MonoBehaviour
         segundaBaraja = false;
         finRonda = false;
 
-        UIDoc = Object.FindFirstObjectByType<UIDocument>();
+        UIDoc = UnityEngine.Object.FindFirstObjectByType<UIDocument>();
         m_P_TeamA = UIDoc.rootVisualElement.Q<Label>("PointsTeamA");
         m_P_TeamB = UIDoc.rootVisualElement.Q<Label>("PointsTeamB");
         m_FinPartida = UIDoc.rootVisualElement.Q<Label>("FinPartida_Label");
@@ -58,12 +62,15 @@ public class GameManager : MonoBehaviour
 
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
-        Baraja.Barajar();
+        int[] puntosJugadores = {0, 0, 0, 0};
+        if (test_state == "") Baraja.Barajar();
+        else puntosJugadores = loadTest(ref Baraja);
 
-        InitJugadores();
+        InitJugadores(puntosJugadores);
 
+        if (test_state != "") ActualizarMarcadores();
         triunfo = Baraja.DarCarta();
-        Baraja.AnyadirAlFinal(triunfo);
+        if (triunfo != null) Baraja.AnyadirAlFinal(triunfo);
         triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
         triunfo.transform.rotation = Quaternion.Euler(0,0,90);
         
@@ -81,6 +88,36 @@ public class GameManager : MonoBehaviour
 
         TurnManager.Tick();
         
+    }
+
+    /*
+     * Carga el estado de test del fichero "test_state".
+     * Devuelve un array de enteros con los puntos de 
+     * cada uno de los jugadores en orden (0 a 3).
+     */
+    private int[] loadTest(ref Baraja baraja)
+    {
+        string line;
+        string test_path = Path.Combine(Application.streamingAssetsPath, test_state);
+        StreamReader sr = new StreamReader(test_path);
+        line = sr.ReadLine();
+        baraja.Barajar(line);
+        
+        int[] puntosJugadores = new int[4];
+        line = sr.ReadLine();
+        puntosJugadores[0] = int.Parse(line);
+        line = sr.ReadLine();
+        puntosJugadores[1] = int.Parse(line);
+        line = sr.ReadLine();
+        puntosJugadores[2] = int.Parse(line);
+        line = sr.ReadLine();
+        puntosJugadores[3] = int.Parse(line);
+        line = sr.ReadLine();
+        segundaBaraja = (line == "True");
+
+        sr.Close();
+
+        return puntosJugadores;
     }
 
     /* 
@@ -166,7 +203,7 @@ public class GameManager : MonoBehaviour
         else return null; //CASO IMPOSIBLE, TODOS HABRIAN JUGADO
     }
 
-    private void InitJugadores()
+    private void InitJugadores(int[] puntosJugadores)
     {
         jugadores = new Player[numJugadores];
         jugadores[0] = Instantiate(playerPrefab, new Vector3(0, -12, 0),Quaternion.Euler(0, 0, 0));
@@ -174,6 +211,7 @@ public class GameManager : MonoBehaviour
         {
             jugadores[0].AnyadirCarta(Baraja.DarCarta());
         }
+        jugadores[0].puntos = puntosJugadores[0];
         if(numJugadores == 2)
         {
             jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
@@ -181,6 +219,7 @@ public class GameManager : MonoBehaviour
             {
                 jugadores[1].AnyadirCarta(Baraja.DarCarta());
             }
+            jugadores[1].puntos = puntosJugadores[1];
         }
         else if(numJugadores == 4)
         {
@@ -189,16 +228,19 @@ public class GameManager : MonoBehaviour
             {
                 jugadores[1].AnyadirCarta(Baraja.DarCarta());
             }
+            jugadores[1].puntos = puntosJugadores[1];
             jugadores[2] = Instantiate(iAPrefab, new Vector3(0, 12, 0), Quaternion.Euler(0, 0, 180));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[2].AnyadirCarta(Baraja.DarCarta());
             }
+            jugadores[2].puntos = puntosJugadores[2];
             jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[3].AnyadirCarta(Baraja.DarCarta());
             }
+            jugadores[3].puntos = puntosJugadores[3];
         }
         else Debug.Log("Error numero de jugadores es incorrecto");
 
@@ -373,7 +415,7 @@ public class GameManager : MonoBehaviour
 
     public void ActualizarMarcadores()
     {
-        if (!segundaBaraja)
+        if (!segundaBaraja && test_state != "")
         {
             m_P_TeamA.text = "";
             m_P_TeamB.text = "";
