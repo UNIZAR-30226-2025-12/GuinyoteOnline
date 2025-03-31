@@ -600,7 +600,7 @@ MonoBehaviour:
   ubicacionGanador: {x: 0, y: 0, z: 0}
   UIDoc: {fileID: 0}
   ganador: 0
-  test_state: sampleTest.txt
+  test_state: testArrastre1.txt
 --- !u!4 &2094930379
 Transform:
   m_ObjectHideFlags: 0

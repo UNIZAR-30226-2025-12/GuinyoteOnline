@@ -214,7 +214,8 @@ public class GameManager : MonoBehaviour
         jugadores[0].puntos = puntosJugadores[0];
         if(numJugadores == 2)
         {
-            jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            else jugadores[1] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[1].AnyadirCarta(Baraja.DarCarta());
@@ -223,19 +224,22 @@ public class GameManager : MonoBehaviour
         }
         else if(numJugadores == 4)
         {
-            jugadores[1] = Instantiate(iAPrefab, new Vector3(12, 0, 0), Quaternion.Euler(0, 0, 90));
+            if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(12, 0, 0), Quaternion.Euler(0, 0, 90));
+            else jugadores[1] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 90));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[1].AnyadirCarta(Baraja.DarCarta());
             }
             jugadores[1].puntos = puntosJugadores[1];
-            jugadores[2] = Instantiate(iAPrefab, new Vector3(0, 12, 0), Quaternion.Euler(0, 0, 180));
+            if (test_state == "" || test_state == "testIA") jugadores[2] = Instantiate(iAPrefab, new Vector3(0, 12, 0), Quaternion.Euler(0, 0, 180));
+            else jugadores[2] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[2].AnyadirCarta(Baraja.DarCarta());
             }
             jugadores[2].puntos = puntosJugadores[2];
-            jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
+            if (test_state == "" || test_state == "testIA") jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
+            else jugadores[3] = Instantiate(playerPrefab, new Vector3(0, -12, 0),Quaternion.Euler(0, 0, -90));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[3].AnyadirCarta(Baraja.DarCarta());
@@ -415,7 +419,7 @@ public class GameManager : MonoBehaviour
 
     public void ActualizarMarcadores()
     {
-        if (!segundaBaraja && test_state != "")
+        if (!segundaBaraja && test_state == "")
         {
             m_P_TeamA.text = "";
             m_P_TeamB.text = "";

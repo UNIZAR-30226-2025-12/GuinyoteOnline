@@ -1,0 +1,34 @@
+8,0;0,1;1,0;2,2;8,3;4,1;5,0;3,3;6,3;1,3;2,3;7,0;3,2;5,3
+50
+50
+0
+0
+False
+
+COMENTARIOS
+Prueba arrastre para 2 jugadores, ambos controlables.
+En la baraja está la mano de los 2 jugadores, el triunfo y otra carta
+para empezar a 1 jugada del arrastre.
+Empezar con el 5 de copas, y usar el 2 de oros con el segundo jugador.
+En arrastre, usar el caballo de bastos. La única carta posible para el
+segundo jugador debería ser la sota de bastos.
+En el siguiente turno usar el 3 de oros. Las opciones posibles serían
+el caballo y el 6 de oros. Usar el caballo de oros para seguir el test.
+Usar el 4 de espadas. La única opción posible será matar con el 3 de
+espadas.
+Usar el 6 de oros. La única opción posible debería ser el 7 de oros.
+Usar el 4 de oros. Deberían poder usarse cualquiera de las 2 cartas
+restantes.
+
+CASOS PROBADOS
+Se tiene una carta del mismo palo y mayor valor que la jugada inicialmente,
+y no se puede usar otra que no cumpla esas condiciones, siendo no triunfo
+la carta jugada inicialmente.
+Se tienen cartas del mismo palo pero todas de menor valor que la jugada
+inicialmente, y es posible usar cualquiera de ellas, pero no otra, siendo
+no triunfo la carta jugada inicialmente.
+Se tienen cartas del mismo palo y mismo valor que la jugada inicialmente,
+con una de ellas de mayor número que la inicial, y solo es posible jugar
+la carta de mayor número.
+Si ninguna de las cartas coincide con el palo de la carta jugada inicialmente,
+y no hay triunfos disponibles, se puede usar cualquier carta.
