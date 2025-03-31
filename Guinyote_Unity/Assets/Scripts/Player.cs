@@ -199,7 +199,11 @@ public class Player : MonoBehaviour
             }
         }
         if(this is Player_Controller){
-            if(!cartaValida) mano[input.carta].enMano = true; mano[input.carta].jugada = false; mano[input.carta].OnMouseExit();
+            if(!cartaValida) {
+                mano[input.carta].enMano = true;
+                mano[input.carta].jugada = false;
+                mano[input.carta].OnMouseExit();
+            }
         }
         return cartaValida;
     }
