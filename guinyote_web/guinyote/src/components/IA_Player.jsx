@@ -14,7 +14,7 @@ const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick }) => {
       console.log("\tIA " + numIA + " : " + index);
       handleCartaClick(index);
     }
-  }, [esMiTurno]);
+  }, [esMiTurno, controller.state.gameManager.state.turnManager.state.playerTurn]);
 
   return (
     <>
