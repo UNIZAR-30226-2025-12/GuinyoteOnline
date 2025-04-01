@@ -20,6 +20,7 @@ class GameManager {
         };
 
         this.Evaluar = this.Evaluar.bind(this);
+        this.TurnChange = this.TurnChange.bind(this);
     }
 
     Init() {
@@ -35,7 +36,7 @@ class GameManager {
         this.state.triunfo = this.state.baraja.darCarta();
         this.state.baraja.anyadirAlFinal(this.state.triunfo);
 
-        this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar);
+        this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
         this.state.turnManager.reset();
 
         for (let i = 0; i < this.state.numPlayers; i++) {
@@ -43,11 +44,10 @@ class GameManager {
         }
 
         this.state.turnManager.tick();
-        this.TurnChange(this.state.turnManager.state.playerTurn);
     }
 
     InitJugadores() {
-        this.state.players[0] = new PlayerBase();
+        this.state.players[0] = new PlayerBase(this);
         for (let j = 0; j < 6; j++) {
             this.state.players[0].anyadirCarta(this.state.baraja.darCarta());
         }
@@ -74,16 +74,15 @@ class GameManager {
 
     TurnChange() {
         this.state.players[this.state.orden[this.state.turnManager.state.playerTurn]].state.esMiTurno = true;
+        
+        console.log("Turno de: " + this.state.orden[this.state.turnManager.state.playerTurn]);
     }
 
     Evaluar() {
         this.evaluarLogic();
-        console.log("Ganador de esta ronda: " + this.state.ganador);
         console.log(this.state.orden);
         this.state.cartasJugadas = Array(this.state.numPlayers).fill(null);
-        this.state.turnManager.reset();
         this.state.turnManager.tick();
-        this.TurnChange(this.state.turnManager.state.playerTurn);
     }
 
     evaluarLogic() {
@@ -122,6 +121,9 @@ class GameManager {
                 }
             }
         }
+        console.log("===============");
+        console.log("Ganador: " + indexGanador + " fin de ronda");
+        console.log("===============");
 
         // FINALIZACION DE TURNO
         this.state.players[indexGanador].state.ganador = true;
@@ -135,7 +137,6 @@ class GameManager {
         for (let i = 0; i < this.state.numPlayers; i++) {
             this.state.orden[i] = (i + indexGanador) % this.state.numPlayers;
         }
-        this.state.turnManager.reset();
         for (let i = 0; i < this.state.numPlayers; i++) {
             this.state.players[this.state.orden[i]].anyadirCarta(this.state.baraja.darCarta());
         }
@@ -149,7 +150,12 @@ class GameManager {
             }
         }
 
-        if (this.state.finRonda) this.state.players[this.state.orden[0]].state.puntos += 10; // 10 ultimas
+        if (this.state.finRonda) {
+            this.state.players[this.state.orden[0]].state.puntos += 10;
+            this.terminarRonda();
+            this.barajarYRepartir();
+            return;
+        } // 10 ultimas
 
         if (!this.state.segundaBaraja) return;
         if (this.state.numPlayers === 4) {
@@ -171,6 +177,52 @@ class GameManager {
                 this.state.finRonda = true;
             }
         }
+    }
+
+    terminarRonda() {
+        this.state.segundaBaraja = false;
+        if (this.state.numPlayers == 4) {
+            if (this.state.players[0].state.puntos + this.state.players[2].state.puntos > 100) this.state.ganador = 1;
+            else if (this.state.players[1].state.puntos + this.state.players[3].state.puntos > 100) this.state.ganador = 2;
+            else this.state.segundaBaraja = true;
+        }
+        else {
+            if (this.state.players[0].state.puntos > 100) this.state.ganador = 1;
+            else if (this.state.players[1].state.puntos > 100) this.state.ganador = 2;
+            else this.state.segundaBaraja = true;
+        }
+
+        if (!this.state.segundaBaraja) //PARTIDA TERMINADA
+        {
+
+        }
+    }
+
+    barajarYRepartir() {
+        this.state.arrastre = false;
+        this.state.baraja.recogerCartas();
+
+        this.state.baraja.barajar();
+        for (let i = 0; i < this.state.numPlayers; i++)
+        {
+            for (let j = 0; j < 6; j++)
+            {
+                this.state.players[i].anyadirCarta(this.state.baraja.darCarta());
+            }
+            this.state.players[i].reset();
+        }
+        this.state.triunfo = this.state.baraja.darCarta();
+        this.state.baraja.anyadirAlFinal(this.state.triunfo);
+
+        this.state.turnManager.reset();
+
+
+        this.state.orden = Array(this.state.numPlayers).fill(null);
+        for (let i = 0; i < this.state.numPlayers; i++)
+        {
+            this.state.orden[i] = i;
+        }
+        this.state.turnManager.tick();
     }
 }
 

@@ -1,12 +1,11 @@
 import PlayerBase from "./PlayerBase";
 
 class IA_PlayerBase extends PlayerBase {
-    constructor(_numPlayers, gManager, _numIA) {
-        super();
+    constructor(_numPlayers, gameManager, _numIA) {
+        super(gameManager);
         this.state = {
             ...this.state, // Heredar el estado de PlayerBase
             numPlayers: _numPlayers,
-            gameManager: gManager,
             cartasIntentadas: Array(6).fill(false),
             exito: false,
             todasIntentadas: false,
@@ -15,39 +14,61 @@ class IA_PlayerBase extends PlayerBase {
     }
 
     turnoLogic() {
-        let index = null;
-        if (this.state.todasIntentadas) {
-            console.log("todas intentadas");
-            index = this.peorCartaIndex();
-            exito = this.turno();
-            return;
-        }
+        console.log("\tTurno de IA" + this.state.numIA);
+        this.reset();
+        this.state.input.carta = this.peorCartaIndex();
+        return this.state.input.carta;
+    }
 
+    /*turnoLogic() {
+        console.log("Turno de IA" + this.state.numIA);
+        this.reset();
         //CANTAR SI ES POSIBLE
-        if (this.intentarCantar()) return;
+        this.intentarCantar();
 
         //CAMBIAR 7 DE TRIUNFO SI ES POSIBLE Y SE OBTENDRÁ MEJOR CARTA
-        if (this.intentarCambiarSiete()) return;
+        this.intentarCambiarSiete();
 
-        if (this.soyPrimero()) {
-            console.log("IA primera");
-            if (this.state.gameManager.state.arrastre && !this.state.gameManager.state.segundaBaraja) index = this.primeraCartaArrastreIndex();
-            else if (!this.state.gameManager.state.arrastre && !this.state.gameManager.state.segundaBaraja) index = this.peorCartaIndex();
-            else if (this.state.gameManager.state.arrastre) index = this.primeraCartaArrastreIndex();
-            else index = this.primeraCartaSegundaBarajaIndex();
-        }
-        else { //No soy primero (si 2 this.state.gameManager.state.cartasJugadas ultimo)
-            if (this.state.gameManager.state.numPlayers == 2) {
-                index = this.seleccion2Jugadores();
+        while (this.state.exito === false) {
+            if (this.state.todasIntentadas) {
+                console.log("IA" + this.state.numIA + " todas intentadas");
+                this.state.input.carta = this.peorCartaIndex();
+                this.state.exito = this.turno();
+                return this.state.input.carta;
             }
-            else index = this.seleccion4Jugadores();
+
+            if (this.soyPrimero()) {
+                console.log("IA" + this.state.numIA +  " es primera");
+                if (this.state.gameManager.state.arrastre && !this.state.gameManager.state.segundaBaraja) this.state.input.carta = this.primeraCartaArrastreIndex();
+                else if (!this.state.gameManager.state.arrastre && !this.state.gameManager.state.segundaBaraja) { 
+                    this.state.input.carta = this.peorCartaIndex(); console.log("\tIA" + this.state.numIA +  " peor carta");
+                }
+                else if (this.state.gameManager.state.arrastre) {
+                    this.state.input.carta = this.primeraCartaArrastreIndex();
+                }
+                else this.state.input.carta = this.primeraCartaSegundaBarajaIndex();
+            }
+            else { //No soy primero (si 2 this.state.gameManager.state.cartasJugadas ultimo)
+                console.log("\tIA" + this.state.numIA +  " no primera");
+                if (this.state.gameManager.state.numPlayers == 2) {
+                    this.state.input.carta = this.seleccion2Jugadores();
+                }
+                else this.state.input.carta = this.seleccion4Jugadores();
+            }
+            this.state.cartasIntentadas[this.state.input.carta] = true;
+
+            this.state.exito = this.turno();
         }
-        this.state.cartasIntentadas[index] = true;
-        if(index != null){
-            return index; 
+
+        // Verificar si la carta seleccionada es válida
+        if (this.state.input.carta < 0 || this.state.input.carta >= this.state.mano.length || this.state.mano[this.state.input.carta] === null) {
+            console.error("Carta seleccionada no válida:", this.state.input.carta);
+            this.state.input.carta = this.peorCartaIndex();
         }
-        else{ return 0; }
-    }
+        
+        console.log("IA " + this.state.numIA + " juega la carta numero " + this.state.input.carta)
+        return this.state.input.carta; 
+    }*/
 
     seleccion2Jugadores() {
         let jugada = this.state.gameManager.state.cartasJugadas[0];
@@ -122,7 +143,7 @@ class IA_PlayerBase extends PlayerBase {
     }
 
     soyPrimero() {
-        return this.state.gameManager.state.orden[0] === (this.state.numIA + 1);
+        return this.state.gameManager.state.orden[0] === (this.state.numIA);
     }
 
     //Devuelve el índice en la mano de la carta a jugar cuando la partida va por la segunda baraja
@@ -473,74 +494,5 @@ class IA_PlayerBase extends PlayerBase {
 
         return false;
     }
-
-    getCartaJugada(paloJugado)
-    {
-        if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]] === null) //NADIE HA JUGADO, SOY PRIMERO
-        {
-            return null;
-        }
-        else if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]] === null) //PRIMERO HA JUGADO, SOY SEGUNDO
-        {
-            //DEVUELVE UNICA CARTA JUGADA, ES DEL OTRO EQUIPO Y SE DEBE MATAR SI ES POSIBLE
-            paloJugado = this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo;
-            return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]];
-        }
-        else if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]] === null) //SEGUNDO HA JUGADO, SOY TERCERO
-        {
-            paloJugado = this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo;
-            //SE DEVUELVE LA CARTA DEL SEGUNDO SI HA MATADO, SI NO NULL
-            //(EL PRIMERO ES DE TU EQUIPO Y NO HACE FALTA MATAR AL DE TU EQUIPO)
-            if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].numero))) ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.triunfo.palo))
-            {
-                return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]];
-            }
-            else return null;
-        }
-        else if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[3]] === null) //TERCERO HA JUGADO, SOY ULTIMO
-        {
-            paloJugado = this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo;
-            //SE DEVUELVE LA CARTA MAXIMA DE LA PARTIDA SI ES DEL OTRO EQUIPO,
-            //EN CASO CONTRARIO SE DEVUELVE NULL (MI COMPAÑERO HA MATADO)
-
-            //JUGADOR DE MI EQUIPO (SEGUNDO) HA MATADO AL PRIMERO (OTRO EQUIPO)
-            if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].numero))) ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.triunfo.palo))
-            {
-                //JUGADOR DEL OTRO EQUIPO (TERCERO) HA MATADO AL DE MI EQUIPO (SEGUNDO)
-                if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo &&
-                   (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos ||
-                   (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos &&
-                    this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].numero))) ||
-                   (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo &&
-                    this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.triunfo.palo))
-                {
-                    return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].jugada; //MAXIMA ES LA DEL TERCERO
-                }
-                else return null; //MAXIMA ES LA DE MI EQUIPO
-            }
-            else if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                    (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos ||
-                    (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos &&
-                     this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].numero))) ||
-                    (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                     this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.triunfo.palo))
-            { //JUGADOR DE MI EQUIPO NO HA MATADO, PERO EL TERCERO SI HA MATADO AL PRIMERO
-                return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]]; //MAXIMA ES LA DEL TERCERO
-            }
-            else return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]]; //MAXIMA ES LA DEL PRIMERO
-        }
-        else return null; //CASO IMPOSIBLE, TODOS HABRIAN JUGADO
-    }
-
 }
 export default IA_PlayerBase;

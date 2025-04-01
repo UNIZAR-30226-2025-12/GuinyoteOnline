@@ -42,8 +42,8 @@
     scale: var(--escala);
 }
 
-/*=========================IA_0=========================*/
-.cartaJugadaIA_0 {
+/*=========================IA_1=========================*/
+.cartaJugadaIA_1 {
     z-index: 2;
     display: flex;
     align-items: center;
@@ -55,7 +55,7 @@
     scale: var(--escala);
 }
 
-.manoIA_0 {
+.manoIA_1 {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -63,42 +63,6 @@
     right: calc(50% - var(--escala) * var(--offsetX));
     top: 50%;
     transform: translateY(-50%) rotate(-90deg);
-}
-
-.cartasIA_0 {
-    z-index: 2;
-    display: flex;
-    flex-direction: row;
-    gap: calc(var(--escala) * 5 * 69px);
-}
-
-.manoIA_0 img {
-    position: absolute;
-    z-index: 1;
-    scale: var(--escala);
-}
-
-/*=========================IA_1=========================*/
-.cartaJugadaIA_1 {
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: calc(50% - 90px);
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(180deg);
-    scale: var(--escala);
-}
-
-.manoIA_1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: calc(50% - var(--escala) * var(--offsetY));
-    left: 50%;
-    transform: translateX(-50%) rotate(180deg);
 }
 
 .cartasIA_1 {
@@ -121,9 +85,9 @@
     align-items: center;
     justify-content: center;
     position: fixed;
-    left: calc(50% - 90px);
-    top: 50%;
-    transform: translate(-50%, -50%) rotate(90deg);
+    top: calc(50% - 90px);
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(180deg);
     scale: var(--escala);
 }
 
@@ -132,9 +96,9 @@
     align-items: center;
     justify-content: center;
     position: fixed;
-    left: calc(50% - var(--escala) * var(--offsetX));
-    top: 50%;
-    transform: translateY(-50%) rotate(90deg);
+    top: calc(50% - var(--escala) * var(--offsetY));
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
 }
 
 .cartasIA_2 {
@@ -145,6 +109,42 @@
 }
 
 .manoIA_2 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_3=========================*/
+.cartaJugadaIA_3 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: calc(50% - 90px);
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    scale: var(--escala);
+}
+
+.manoIA_3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: calc(50% - var(--escala) * var(--offsetX));
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.cartasIA_3 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_3 img {
     position: absolute;
     z-index: 1;
     scale: var(--escala);

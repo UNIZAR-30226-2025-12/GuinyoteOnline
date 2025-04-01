@@ -7,9 +7,11 @@ const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick }) => {
   const esMiTurno = controller.state.esMiTurno;
 
   useEffect(() => {
+    console.log("Se ejecuta");
     if (esMiTurno) {
       // Realiza la acción cuando esMiTurno sea true
       let index = controller.turnoLogic();
+      console.log("\tIA " + numIA + " : " + index);
       handleCartaClick(index);
     }
   }, [esMiTurno]);
