@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public IA_Player iAPrefab;
     public Player[] jugadores;
     public int[] orden;
-    public static int numJugadores = 2; 
+    public static int numJugadores = 4; 
     public Baraja Baraja;
     public Carta[] cartasJugadas;
     public Carta triunfo;
@@ -225,7 +225,7 @@ public class GameManager : MonoBehaviour
         else if(numJugadores == 4)
         {
             if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(12, 0, 0), Quaternion.Euler(0, 0, 90));
-            else jugadores[1] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 90));
+            else jugadores[1] = Instantiate(playerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[1].AnyadirCarta(Baraja.DarCarta());
@@ -239,7 +239,7 @@ public class GameManager : MonoBehaviour
             }
             jugadores[2].puntos = puntosJugadores[2];
             if (test_state == "" || test_state == "testIA") jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
-            else jugadores[3] = Instantiate(playerPrefab, new Vector3(0, -12, 0),Quaternion.Euler(0, 0, -90));
+            else jugadores[3] = Instantiate(playerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[3].AnyadirCarta(Baraja.DarCarta());
