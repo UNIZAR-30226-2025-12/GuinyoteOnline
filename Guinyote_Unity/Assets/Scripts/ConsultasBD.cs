@@ -64,17 +64,17 @@ namespace ConsultasBD
         public static IEnumerator GetHistorialUsuario(string id)
         {
             Debug.Log("Consultando historial...");
-            UnityWebRequest www = UnityWebRequest.Get(address + "/partidas/historial/" + id);
+            UnityWebRequest www = UnityWebRequest.Get($"{address}/partidas/historial/{id}");
             yield return www.SendWebRequest();
 
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log("error: " + www.error);
-            }
-            else
+            if (www.result == UnityWebRequest.Result.Success)
             {
                 Partida[] historial = JsonHelper.FromJson<Partida>(www.downloadHandler.text);
                 OnHistorialConsultado?.Invoke(historial);
+            }
+            else
+            {
+                Debug.LogError($"Error al obtener historial: {www.error}");
             }
         }
 

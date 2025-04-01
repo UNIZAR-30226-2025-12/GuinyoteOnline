@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
     private Button register_button_close;
     private Button login_button_close;
     public static Stack<string> lastScene = new Stack<string>();
-   private Button boton_IA;
-   private Button boton_reglas;
+    private Button boton_IA;
+    private Button boton_reglas;
     private Button boton_atras;
     private Button boton_1vs1;
     private Button boton_2vs2;
@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnRegistroUsuario += RegistroUsuario;
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
+        StartCoroutine(Consultas.GetHistorialUsuario(username)); // Llama al servidor para obtener el historial
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -196,6 +197,7 @@ public class UIManager : MonoBehaviour
 
     void UpdateHistorial(Partida[] historial)
     {
+        scroll_historial.Clear();
         Consultas.MostrarCamposArray(historial);
         Debug.Log("historial actualizado");
         VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Historial_elemento");
@@ -366,6 +368,9 @@ public class UIManager : MonoBehaviour
         Debug.Log("updateReference");
     }
 
-
-
+    void OnCartaSeleccionada(string cartaId)
+    {
+        Debug.Log($"Carta seleccionada: {cartaId}");
+        GameManager.Instance.EnviarAccion($"jugar_carta:{cartaId}");
+    }
 }
