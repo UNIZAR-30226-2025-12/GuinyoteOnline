@@ -34,6 +34,9 @@ public class UIManager : MonoBehaviour
     private TextField register_field_password2;
     private TextField login_field_username;
     private TextField login_field_password;
+    private Tab tab_amigos;
+    private Tab tab_amigos_list;
+    private Button boton_amigos;
     private Button boton_perfil;
     private Button boton_historial;
     private ScrollView scroll_historial;
@@ -61,6 +64,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnErrorInicioSesion += LoginFail;
         Consultas.OnRegistroUsuario += RegistroUsuario;
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
+        Consultas.OnAmigosConsultados += UpdateAmigos;
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -74,6 +78,9 @@ public class UIManager : MonoBehaviour
         }
 
         if(currentScene.name == "Inicio"){
+            if(isLogged){
+                StartCoroutine(Consultas.GetAmigosUsuario(username));
+            }
             //INICIO
             boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
             boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
@@ -84,7 +91,11 @@ public class UIManager : MonoBehaviour
             register_button_close.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.None);
 
             register_button_accept = tab_register.Q<Button>("accept_Button");
-            register_button_accept.RegisterCallback<ClickEvent>(ev => Registrar(register_field_mail.value, register_field_username.value, register_field_password.value, register_field_password2.value));
+            register_button_accept.RegisterCallback<ClickEvent>(ev => { 
+                tab_register.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+                tab_register.Q<Label>("error_Label").text = "Cargando"; 
+                Registrar(register_field_mail.value, register_field_username.value, register_field_password.value, register_field_password2.value);
+            });
 
             register_field_mail = tab_register.Q<TextField>("mail_Field");
             register_field_username = tab_register.Q<TextField>("user_Field");
@@ -103,7 +114,11 @@ public class UIManager : MonoBehaviour
             login_button_register.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.Flex);
 
             login_button_accept = tab_login.Q<Button>("accept_Button");
-            login_button_accept.RegisterCallback<ClickEvent>(ev => StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value)));
+            login_button_accept.RegisterCallback<ClickEvent>(ev => { 
+                tab_login.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+                tab_login.Q<Label>("error_Label").text = "Cargando"; 
+                StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value)); 
+            });
 
             boton_login = root.rootVisualElement.Q<Button>("Login_Button");
             if(isLogged){
@@ -120,6 +135,30 @@ public class UIManager : MonoBehaviour
 
             login_field_username = tab_login.Q<TextField>("user_Field");
             login_field_password = tab_login.Q<TextField>("Password_Field");
+
+            //AMIGOS
+            tab_amigos = root.rootVisualElement.Q<Tab>("Friends_tab");
+            tab_amigos_list = root.rootVisualElement.Q<Tab>("Friends_list_tab");
+
+            boton_amigos = root.rootVisualElement.Q<Button>("Friends_Button");
+            boton_amigos.RegisterCallback<ClickEvent>(ev => {
+                Debug.Log("Amigos pulsado"); 
+                root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.Flex; 
+                tab_amigos.style.display = DisplayStyle.Flex; 
+                tab_amigos_list.style.display = DisplayStyle.None; 
+            });
+            tab_amigos.Q<Button>("Friends_List_Button").RegisterCallback<ClickEvent>(ev => {
+                tab_amigos.style.display = DisplayStyle.None; 
+                tab_amigos_list.style.display = DisplayStyle.Flex; 
+            });
+            tab_amigos.Q<Button>("close_Button").RegisterCallback<ClickEvent>(ev => { 
+                root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.None; 
+                tab_amigos.style.display = DisplayStyle.None; 
+            });
+            tab_amigos_list.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
+                tab_amigos.style.display = DisplayStyle.Flex; 
+                tab_amigos_list.style.display = DisplayStyle.None; 
+            });
         } else if(currentScene.name == "Partida_IA"){
             //PARTIDA IA
             boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
@@ -245,6 +284,8 @@ public class UIManager : MonoBehaviour
         if (password != password2)
         {
             Debug.Log("Contraseñas no coinciden");
+            tab_register.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+            tab_register.Q<Label>("error_Label").text = "Error: Las contraseñas no coinciden";
             return;
         }
 
@@ -254,18 +295,22 @@ public class UIManager : MonoBehaviour
     void RegistroUsuario()
     {
         Debug.Log("Usuario registrado");
+        tab_register.Q<Label>("error_Label").style.display = DisplayStyle.None;
         tab_register.style.display = DisplayStyle.None;
     }
 
     void RegistroUsuarioFail()
     {
         Debug.Log("Error al registrar usuario");
+        tab_register.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+        tab_register.Q<Label>("error_Label").text = "Error: Error al registrar usuario";
     }
 
     void Login(String name)
     {
         Debug.Log("Username: " + name);
 
+        tab_login.Q<Label>("error_Label").style.display = DisplayStyle.None;
         isLogged = true;
         username = name;
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
@@ -277,7 +322,21 @@ public class UIManager : MonoBehaviour
     void LoginFail()
     {
         Debug.Log("Login erroneo");
-        //Acciones login erroneo
+        tab_login.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+        tab_login.Q<Label>("error_Label").text = "Error: Usuario o contraseña incorrectos";
+    }
+
+    void UpdateAmigos(/*Amigo[] amigos*/)
+    {
+        /*Debug.Log("Amigos: " + amigos.Length);
+        VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Amigo_elemento");
+
+        foreach (Amigo amigo in amigos)
+        {
+            VisualElement resultado = resultadoAsset.CloneTree();
+            SetFriendElementInfo(resultado, amigo.nombre, amigo.idUsuario);
+            tab_amigos_list.Q<ScrollView>("Friends_Scroll").Add(resultado);
+        }*/
     }
 
 

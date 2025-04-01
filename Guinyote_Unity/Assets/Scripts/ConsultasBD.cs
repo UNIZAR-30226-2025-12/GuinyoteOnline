@@ -53,6 +53,8 @@ namespace ConsultasBD
 
         //EVENTO PARA OBTENER EL HISTORIAL
         public static event Action<Partida[]> OnHistorialConsultado;
+
+        public static event Action OnAmigosConsultados;
         public static event Action<string> OnInicioSesion;
         public static event Action OnErrorInicioSesion;
         public static event Action OnRegistroUsuario;
@@ -73,6 +75,25 @@ namespace ConsultasBD
             {
                 Partida[] historial = JsonHelper.FromJson<Partida>(www.downloadHandler.text);
                 OnHistorialConsultado?.Invoke(historial);
+            }
+        }
+
+        public static IEnumerator GetAmigosUsuario(string id)
+        {
+            Debug.Log("Consultando Amigos...");
+            UnityWebRequest www = UnityWebRequest.Get(address + "/amigos/" + id);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+            }
+            else
+            {
+                Debug.Log("Amigos: " + www.downloadHandler.text);
+                //POR TERMINAR
+                //Amigos[] amigos = JsonHelper.FromJson<Partida>(www.downloadHandler.text);
+                //OnAmigosConsultados?.Invoke(historial);             
             }
         }
 
