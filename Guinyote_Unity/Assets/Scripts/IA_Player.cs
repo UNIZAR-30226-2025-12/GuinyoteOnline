@@ -15,6 +15,8 @@ public class IA_Player : Player
 
     public void Update()
     {
+        if (GameManager.Instance.mostrandoCantar) return;
+        
         if (exito)
         {
             for (int i = 0; i < 6; i++)

@@ -24,7 +24,9 @@ public class GameManager : MonoBehaviour
     private Label m_P_TeamB;
     private Label m_FinPartida;
     private Button m_FinPartidaButton;
+    private int indexGanador;
     public int ganador;
+    public bool mostrandoCantar;
 
     public string test_state = "";
 
@@ -254,8 +256,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current.enterKey.wasPressedThisFrame && m_FinPartida.style.visibility == Visibility.Visible) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
         if (!cartasMoviendo) return;
         for (int i = 0; i < jugadores.Length; i++)
         {
@@ -290,6 +290,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void mostrarCantar(int palo)
+    {
+        int puntos = (palo == triunfo.Palo) ? 40 : 20;
+        string paloString = "";
+        if (palo == 0) paloString = "bastos";
+        if (palo == 1) paloString = "copas";
+        if (palo == 2) paloString = "espadas";
+        if (palo == 3) paloString = "oros";
+        mostrandoCantar = true;
+        m_FinPartida.text = "Cantado " + (puntos).ToString() + " en " + paloString;
+        m_FinPartida.style.visibility = Visibility.Visible;
+        Invoke("finMostrarCantar", 1f);
+    }
+
+    public void finMostrarCantar()
+    {
+        mostrandoCantar = false;
+        m_FinPartida.style.visibility = Visibility.Hidden;
+    }
     public void TurnChange(int turno)
     {
         if(turno > 0){
@@ -302,7 +321,7 @@ public class GameManager : MonoBehaviour
     public void Evaluar()
     {
         cartasJugadas[orden.Length-1] = jugadores[orden.Length-1].jugada;
-        int indexGanador = orden[0];
+        indexGanador = orden[0];
         int maxPuntos = jugadores[orden[0]].jugada.Puntos;
         int sumaPuntos = jugadores[orden[0]].jugada.Puntos;
         bool triunfo = (jugadores[orden[0]].jugada.Palo == this.triunfo.Palo);
@@ -468,13 +487,9 @@ public class GameManager : MonoBehaviour
             m_FinPartida.style.visibility = Visibility.Visible;
             if (jugadores.Length == 2) m_FinPartida.text = "Ganador: Jugador " + ganador.ToString();
             else m_FinPartida.text = "Ganador: Equipo " + ganador.ToString();
-            //IR AL MENU DE GANAR CUANDO ESTE HECHO DE MOMENTO NADA
+
             m_FinPartidaButton.SetEnabled(true);
             m_FinPartidaButton.style.display = DisplayStyle.Flex;
-            
-
-
-
         }
     }
 
@@ -503,7 +518,7 @@ public class GameManager : MonoBehaviour
         orden = new int[jugadores.Length];
         for (int i = 0; i < jugadores.Length; i++)
         {
-            orden[i] = i;
+            orden[i] = (i + indexGanador) % jugadores.Length;
         }
     }
 }

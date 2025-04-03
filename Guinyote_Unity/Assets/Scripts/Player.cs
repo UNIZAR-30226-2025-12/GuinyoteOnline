@@ -101,6 +101,7 @@ public class Player : MonoBehaviour
     {
         if (palo == GameManager.Instance.triunfo.Palo) puntos += 40;
         else puntos += 20;
+        GameManager.Instance.mostrarCantar(palo);
     }
     public void meToca()
     {
@@ -210,7 +211,8 @@ public class Player : MonoBehaviour
 
     protected bool turno()
     {
-        if (m_CartaDesplazandose)
+        if (GameManager.Instance.mostrandoCantar) return false;
+        else if (m_CartaDesplazandose)
         {
             jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 15f * Time.deltaTime);
 
