@@ -10,6 +10,8 @@ class PlayerBase {
             input: { carta: -1, cantar: -1, cambiarSiete: false },
             palosCantados: [false, false, false, false],
             gameManager: GManager,
+            sePuedeCantar: false,
+            sePuedeCambiarSiete: false,
         };
     }
 
@@ -19,6 +21,26 @@ class PlayerBase {
         if (index !== -1) {
             this.state.mano[index] = carta;
         }
+        this.state.sePuedeCantar = this.puedoCantar();
+
+    }
+
+    puedoCantar() {
+        let hayRey;
+        let haySota;
+        for (let i = 0; i < 4; i++) {
+            hayRey = false;
+            haySota = false;
+            for (var c in this.state.mano) {
+                if (c == null) continue;
+                if (c.numero == 10 && c.palo == i) haySota = true;
+                if (c.numero == 12 && c.palo == i) hayRey = true;
+            }
+            if (hayRey && haySota) {
+                return true; //CANTABLE
+            }
+        }
+        return false; //NO CANTABLE
     }
 
     cambiarSieteTriunfo(triunfo) {
@@ -42,32 +64,35 @@ class PlayerBase {
         this.state.palosCantados = [false, false, false, false];
     }
 
-    cartaValidaEnArrastre()
-    {
-        let paloJugado;
+    cartaValidaEnArrastre() {
+        let paloJugado = -1;
         let pri = this.getCartaJugada(paloJugado);
-        if (pri == null && paloJugado == -1) return true; //NO HAY CARTA, SOY EL PRIMERO
-        if (this.state.mano[this.state.input.carta] == null) return false; //INTENTO DE JUGAR CARTA QUE NO EXISTE
+        if (pri == null && paloJugado == -1) {
+            console.log("Soy el primero, puedo jugar cualquier carta");
+            return true;
+        } //NO HAY CARTA, SOY EL PRIMERO
+        if (this.state.mano[this.state.input.carta] == null) {
+            console.log("Carta no válida, no hay carta");
+            return false;
+        }//INTENTO DE JUGAR CARTA QUE NO EXISTE
 
         let cartaValida = true;
-        if (this.state.mano[this.state.input.carta].palo == paloJugado)
-        {
-            if (pri != null) //COMPROBAR PUNTOS, SI ES NULL LA CARTA ES DE MI COMPAÑERO Y NO HAY QUE MATAR
+        if (this.state.mano[this.state.input.carta].palo == paloJugado) {
+            if (pri != null) //SI ES NULL LA CARTA ES DE MI COMPAÑERO Y NO HAY QUE MATAR
             {
-                if (this.state.mano[this.state.input.carta].puntos < pri.puntos || (this.state.mano[this.state.input.carta].puntos == pri.puntos && this.state.mano[this.state.input.carta].numero < pri.numero))
-                {
+                if (this.state.mano[this.state.input.carta].puntos < pri.puntos || (this.state.mano[this.state.input.carta].puntos == pri.puntos && this.state.mano[this.state.input.carta].numero < pri.numero)) {
+                    //MI CARTA NO MATA, BUSCAR CARTA QUE MATE
                     for (let i = 0; i < this.state.mano.length; i++) {
                         const c = this.state.mano[i];
                         if (c != null && c.palo == paloJugado && (c.puntos > pri.puntos || (c.puntos == pri.puntos && c.numero > pri.numero))) {
-                            cartaValida = false;
+                            cartaValida = false; //HAY UNA CARTA QUE MATA, NO PUEDO JUGAR ESTA
                             break;
                         }
                     }
                 }
             }
         }
-        else if (this.state.mano[this.state.input.carta].palo != paloJugado && this.state.mano[this.state.input.carta].palo == this.state.gameManager.state.triunfo.palo)
-        {
+        else if (this.state.mano[this.state.input.carta].palo != paloJugado && this.state.mano[this.state.input.carta].palo == this.state.gameManager.state.triunfo.palo) {
             if (pri == null) //NO HACE FALTA MATAR
             {
                 //BUSCAR UNA CARTA DEL MISMO PALO QUE EL JUGADO
@@ -89,9 +114,9 @@ class PlayerBase {
                     }
 
                     if (c.palo == paloJugado || //HAY OTRA CARTA DEL MISMO PALO
-                    (c.palo != paloJugado && pri.palo == this.state.gameManager.state.triunfo.palo && c.palo == this.state.gameManager.state.triunfo.palo && //HAN JUGADO TRIUNFO Y LA CARTA ENCONTRADA ES TRIUNFO
-                    (this.state.mano[this.state.input.carta].puntos < pri.puntos || (this.state.mano[this.state.input.carta].puntos == pri.puntos && this.state.mano[this.state.input.carta].numero < pri.numero)) && //TRIUNFO ELEGIDO NO MATA
-                    (c.puntos > pri.puntos || (c.puntos == pri.puntos && c.numero > pri.numero)))) //TRIUNFO ENCONTRADO MATARIA
+                        (c.palo != paloJugado && pri.palo == this.state.gameManager.state.triunfo.palo && c.palo == this.state.gameManager.state.triunfo.palo && //HAN JUGADO TRIUNFO Y LA CARTA ENCONTRADA ES TRIUNFO
+                            (this.state.mano[this.state.input.carta].puntos < pri.puntos || (this.state.mano[this.state.input.carta].puntos == pri.puntos && this.state.mano[this.state.input.carta].numero < pri.numero)) && //TRIUNFO ELEGIDO NO MATA
+                            (c.puntos > pri.puntos || (c.puntos == pri.puntos && c.numero > pri.numero)))) //TRIUNFO ENCONTRADO MATARIA
                     {
                         cartaValida = false;
                         break;
@@ -99,8 +124,7 @@ class PlayerBase {
                 }
             }
         }
-        else if (this.state.mano[this.state.input.carta].palo != paloJugado && this.state.mano[this.state.input.carta].palo != this.state.gameManager.state.triunfo.palo)
-        {
+        else if (this.state.mano[this.state.input.carta].palo != paloJugado && this.state.mano[this.state.input.carta].palo != this.state.gameManager.state.triunfo.palo) {
             if (pri == null) //NO HACE FALTA MATAR, PUEDO TIRAR CUALQUIER COSA SI NO TIENE MISMO PALO
             {
                 for (let i = 0; i < this.state.mano.length; i++) {
@@ -125,123 +149,113 @@ class PlayerBase {
         return cartaValida;
     }
 
-    turno()
-    {
-        if (this.state.esMiTurno)
-        {
-            let index = 0;
-            let cartaSeleccionada = false;
-            if (this.state.input.carta > -1 && this.state.input.carta < 6 && !this.state.gameManager.state.arrastre)
-            {
-                index = this.state.input.carta;
-                cartaSeleccionada = true;
+    turno() {
+        if (this.state.input.carta > -1 && this.state.input.carta < 6 && this.state.gameManager.state.arrastre) {
+            if (!this.cartaValidaEnArrastre()) {
+                return false;
             }
-            else if (this.state.input.carta > -1 && this.state.input.carta < 6 && this.state.gameManager.state.arrastre)
-            {   
-                if (this.cartaValidaEnArrastre())
-                {
-                    index = this.state.input.carta;
-                }
-                else return false;
-            }
-            else if (this.state.input.cambiarSiete)
-            {
-                if(this.state.ganador && !this.state.gameManager.state.arrastre) cambiarSieteTriunfo();
-            }
-            else if (this.state.input.cantar > -1 && this.state.input.cantar < 4)
-            {
-                if (this.state.ganador && !this.state.cantadoEsteTurno && !this.state.palosCantados[this.state.input.cantar])
-                {
-                    let hayRey = false;
-                    let haySota = false;
-                    for (let i = 0; i < this.state.mano.length; i++) {
-                        const c = this.state.mano[i];
-                        if (c == null) continue;
+        }
+        else if (this.state.input.cambiarSiete) {
+            if (this.state.ganador && !this.state.gameManager.state.arrastre) this.cambiarSieteTriunfo();
+        }
+        else if (this.state.input.cantar > -1 && this.state.input.cantar < 4) {
+            if (this.state.ganador && !this.state.cantadoEsteTurno && !this.state.palosCantados[this.state.input.cantar]) {
+                let hayRey = false;
+                let haySota = false;
+                for (let i = 0; i < this.state.mano.length; i++) {
+                    const c = this.state.mano[i];
+                    if (c == null) continue;
 
-                        if (c.numero == 10 && c.palo == this.state.input.cantar) haySota = true;
-                        if (c.numero == 12 && c.palo == this.state.input.cantar) hayRey = true;
-                    }
-                    if (hayRey && haySota)
-                    {
-                        this.cantar(this.state.input.cantar);
-                        this.state.palosCantados[this.state.input.cantar] = true;
-                        this.state.cantadoEsteTurno = true;
-                        //Actualizar Marcadores
-                    }
+                    if (c.numero == 10 && c.palo == this.state.input.cantar) haySota = true;
+                    if (c.numero == 12 && c.palo == this.state.input.cantar) hayRey = true;
+                }
+                if (hayRey && haySota) {
+                    this.cantar(this.state.input.cantar);
+                    this.state.palosCantados[this.state.input.cantar] = true;
+                    this.state.cantadoEsteTurno = true;
                 }
             }
         }
         return true;
     }
 
-    getCartaJugada(paloJugado)
-    {
-        if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]] === null) //NADIE HA JUGADO, SOY PRIMERO
+    getCartaJugada(paloJugado) {
+        let arrayOrden = this.state.gameManager.state.orden;
+        let jugadasArray = this.state.gameManager.state.cartasJugadas;
+        if (jugadasArray[arrayOrden[0]] === null) //NADIE HA JUGADO, SOY PRIMERO
         {
-            console.log("Soy primero");
             return null;
         }
-        else if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]] === null) //PRIMERO HA JUGADO, SOY SEGUNDO
+        else if (jugadasArray[arrayOrden[1]] === null) //SOY SEGUNDO
         {
-            console.log("Soy segundo");
             //DEVUELVE UNICA CARTA JUGADA, ES DEL OTRO EQUIPO Y SE DEBE MATAR SI ES POSIBLE
-            paloJugado = this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo;
-            return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]];
+            paloJugado = jugadasArray[arrayOrden[0]].palo;
+            return jugadasArray[arrayOrden[0]];
         }
-        else if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]] === null) //SEGUNDO HA JUGADO, SOY TERCERO
+        else if (jugadasArray[arrayOrden[2]] === null) //SOY TERCERO
         {
-            console.log("Soy tercero");
-            paloJugado = this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo;
-            //SE DEVUELVE LA CARTA DEL SEGUNDO SI HA MATADO, SI NO NULL
+            paloJugado = jugadasArray[arrayOrden[0]].palo;
+            //SE DEVUELVE LA CARTA DEL SEGUNDO SI HA MATADO A COMPAÑERO, SI NO NULL
             //(EL PRIMERO ES DE TU EQUIPO Y NO HACE FALTA MATAR AL DE TU EQUIPO)
-            if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].numero))) ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.triunfo.palo))
-            {
-                return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]];
+            if ((jugadasArray[arrayOrden[1]].palo === jugadasArray[arrayOrden[0]].palo &&
+                (jugadasArray[arrayOrden[1]].puntos > jugadasArray[arrayOrden[0]].puntos 
+                //Han matado con más puntos
+                ||
+                (jugadasArray[arrayOrden[1]].puntos === jugadasArray[arrayOrden[0]].puntos &&
+                jugadasArray[arrayOrden[1]].numero > jugadasArray[arrayOrden[0]].numero))) 
+                //Han matado con mismos puntos pero más alto
+                ||
+                (jugadasArray[arrayOrden[1]].palo != jugadasArray[arrayOrden[0]].palo &&
+                jugadasArray[arrayOrden[1]].palo === this.state.gameManager.state.triunfo.palo)) 
+                //Han matado con triunfo
+                {
+                return jugadasArray[arrayOrden[1]];
             }
             else return null;
         }
-        else if (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[3]] === null) //TERCERO HA JUGADO, SOY ULTIMO
+        else if (jugadasArray[arrayOrden[3]] === null) //SOY ULTIMO
         {
-            console.log("Soy cuarto");
-            paloJugado = this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo;
+            paloJugado = jugadasArray[arrayOrden[0]].palo;
             //SE DEVUELVE LA CARTA MAXIMA DE LA PARTIDA SI ES DEL OTRO EQUIPO,
             //EN CASO CONTRARIO SE DEVUELVE NULL (MI COMPAÑERO HA MATADO)
 
-            //JUGADOR DE MI EQUIPO (SEGUNDO) HA MATADO AL PRIMERO (OTRO EQUIPO)
-            if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].numero))) ||
-               (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo === this.state.gameManager.state.triunfo.palo))
+            //SI JUGADOR DE MI EQUIPO (SEGUNDO) HA MATADO AL PRIMERO (OTRO EQUIPO)
+            if ((jugadasArray[arrayOrden[1]].palo === jugadasArray[arrayOrden[0]].palo &&
+                (jugadasArray[arrayOrden[1]].puntos > jugadasArray[arrayOrden[0]].puntos 
+                ||
+                (jugadasArray[arrayOrden[1]].puntos === jugadasArray[arrayOrden[0]].puntos &&
+                jugadasArray[arrayOrden[1]].numero > jugadasArray[arrayOrden[0]].numero))) 
+                ||
+                (jugadasArray[arrayOrden[1]].palo != jugadasArray[arrayOrden[0]].palo &&
+                jugadasArray[arrayOrden[1]].palo === this.state.gameManager.state.triunfo.palo)) 
             {
-                //JUGADOR DEL OTRO EQUIPO (TERCERO) HA MATADO AL DE MI EQUIPO (SEGUNDO)
-                if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo &&
-                   (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos ||
-                   (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos &&
-                    this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].numero))) ||
-                   (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].palo &&
-                    this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.triunfo.palo))
+                //SI JUGADOR DEL OTRO EQUIPO (TERCERO) HA MATADO AL DE MI EQUIPO (SEGUNDO)
+                if ((jugadasArray[arrayOrden[2]].palo === jugadasArray[arrayOrden[1]].palo &&
+                    (jugadasArray[arrayOrden[2]].puntos > jugadasArray[arrayOrden[1]].puntos 
+                    ||
+                    (jugadasArray[arrayOrden[2]].puntos === jugadasArray[arrayOrden[1]].puntos &&
+                    jugadasArray[arrayOrden[2]].numero > jugadasArray[arrayOrden[1]].numero))) 
+                    ||
+                    (jugadasArray[arrayOrden[2]].palo != jugadasArray[arrayOrden[1]].palo &&
+                    jugadasArray[arrayOrden[2]].palo === this.state.gameManager.state.triunfo.palo)) 
                 {
-                    return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].jugada; //MAXIMA ES LA DEL TERCERO
+                    return jugadasArray[arrayOrden[2]].jugada; //MAXIMA ES LA DEL TERCERO
                 }
                 else return null; //MAXIMA ES LA DE MI EQUIPO
             }
-            else if ((this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                    (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos ||
-                    (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].puntos === this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos &&
-                     this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].numero > this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].numero))) ||
-                    (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo != this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].palo &&
-                     this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]].palo === this.state.gameManager.state.triunfo.palo))
-            { //JUGADOR DE MI EQUIPO NO HA MATADO, PERO EL TERCERO SI HA MATADO AL PRIMERO
-                return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[2]]; //MAXIMA ES LA DEL TERCERO
+            else if (
+                (jugadasArray[arrayOrden[2]].palo === jugadasArray[arrayOrden[0]].palo &&
+                (jugadasArray[arrayOrden[2]].puntos > jugadasArray[arrayOrden[0]].puntos 
+                ||
+                (jugadasArray[arrayOrden[2]].puntos === jugadasArray[arrayOrden[0]].puntos &&
+                jugadasArray[arrayOrden[2]].numero > jugadasArray[arrayOrden[0]].numero))) 
+                ||
+                (jugadasArray[arrayOrden[2]].palo != jugadasArray[arrayOrden[0]].palo &&
+                jugadasArray[arrayOrden[2]].palo === this.state.gameManager.state.triunfo.palo)) 
+            { //JUGADOR DE MI EQUIPO NO HA MATADO, PERO EL TERCERO HA MATADO AL PRIMERO
+                return jugadasArray[arrayOrden[2]]; //MAXIMA ES LA DEL TERCERO
             }
-            else return this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]]; //MAXIMA ES LA DEL PRIMERO
+            else return jugadasArray[arrayOrden[0]]; //MAXIMA ES LA DEL PRIMERO
         }
         else return null; //CASO IMPOSIBLE, TODOS HABRIAN JUGADO
     }

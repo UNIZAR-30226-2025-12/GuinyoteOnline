@@ -1,7 +1,7 @@
 import TurnManager from "./TurnManager";
 import PlayerBase from "./PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
-import BarajaClass from "./BarajaClass";
+import BarajaClass from "./BarajaBase";
 
 class GameManager {
     constructor(_numPlayers) {
@@ -17,6 +17,7 @@ class GameManager {
             segundaBaraja: false,
             arrastre: false,
             finRonda: false,
+            finJuego: false,
         };
 
         this.Evaluar = this.Evaluar.bind(this);
@@ -27,6 +28,7 @@ class GameManager {
         this.state.arrastre = false;
         this.state.segundaBaraja = false;
         this.state.finRonda = false;
+        this.state.finJuego = false;
 
         this.state.baraja = new BarajaClass();
         this.state.baraja.barajar();
@@ -96,7 +98,6 @@ class GameManager {
         for (let i = 1; i < this.state.numPlayers; i++) {
             let aux = this.state.cartasJugadas[this.state.orden[i]].puntos;
             sumaPuntos += aux;
-
             if (boolTriunfo) {
                 if (this.state.cartasJugadas[this.state.orden[i]].palo === this.state.triunfo.palo) {
                     if (aux > maxPuntos) {
@@ -121,9 +122,6 @@ class GameManager {
                 }
             }
         }
-        console.log("===============");
-        console.log("Ganador: " + indexGanador + " fin de ronda");
-        console.log("===============");
 
         // FINALIZACION DE TURNO
         this.state.players[indexGanador].state.ganador = true;
@@ -133,7 +131,9 @@ class GameManager {
             this.state.players[(indexGanador + 3) % 4].state.ganador = false;
             this.state.players[(indexGanador + 2) % 4].state.ganador = true;
         }
+
         this.state.players[indexGanador].state.puntos += sumaPuntos;
+
         for (let i = 0; i < this.state.numPlayers; i++) {
             this.state.orden[i] = (i + indexGanador) % this.state.numPlayers;
         }
@@ -161,25 +161,28 @@ class GameManager {
         if (this.state.numPlayers === 4) {
             if (this.state.players[0].state.puntos + this.state.players[2].state.puntos > 100) {
                 this.state.ganador = 1;
-                this.state.finRonda = true;
+                this.state.finJuego = true;
             }
             if (this.state.players[1].state.puntos + this.state.players[3].state.puntos > 100) {
                 this.state.ganador = 2;
-                this.state.finRonda = true;
+                this.state.finJuego = true;
             }
         } else {
             if (this.state.players[0].state.puntos > 100) {
                 this.state.ganador = 1;
-                this.state.finRonda = true;
+                this.state.finJuego = true;
             }
             if (this.state.players[1].state.puntos > 100) {
                 this.state.ganador = 2;
-                this.state.finRonda = true;
+                this.state.finJuego = true;
             }
         }
     }
 
     terminarRonda() {
+        console.log("==============================");
+        console.log("Pasamos a segunda baraja");
+        console.log("==============================");
         this.state.segundaBaraja = false;
         if (this.state.numPlayers == 4) {
             if (this.state.players[0].state.puntos + this.state.players[2].state.puntos > 100) this.state.ganador = 1;
@@ -189,16 +192,14 @@ class GameManager {
         else {
             if (this.state.players[0].state.puntos > 100) this.state.ganador = 1;
             else if (this.state.players[1].state.puntos > 100) this.state.ganador = 2;
-            else this.state.segundaBaraja = true;
-        }
-
-        if (!this.state.segundaBaraja) //PARTIDA TERMINADA
-        {
-
+            else {this.state.segundaBaraja = true; console.log("Segunda baraja");}
         }
     }
 
     barajarYRepartir() {
+        console.log("==============================");
+        console.log("Reparto segunda baraja");
+        console.log("==============================");
         this.state.arrastre = false;
         this.state.baraja.recogerCartas();
 
@@ -222,7 +223,6 @@ class GameManager {
         {
             this.state.orden[i] = i;
         }
-        this.state.turnManager.tick();
     }
 }
 

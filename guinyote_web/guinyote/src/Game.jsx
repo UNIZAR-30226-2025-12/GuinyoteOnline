@@ -19,71 +19,105 @@ function Game() {
         setIniciado(true);
     };
 
-    /*const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Espera*/
+    const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Espera
 
-    const handleCartaClick = (index) => {
+    const handleCartaClick = async (index) => {
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
         let player = gameManager.state.players[playerIndex];
+        if (!player.turno()) {
+            console.log("Carta no válida");
+            return;
+        }
         let carta = player.state.mano[index];
 
-        //await esperar(250);
+        await esperar(50);
 
         const nuevasCartasJugadas = [...gameManager.state.cartasJugadas];
         nuevasCartasJugadas[playerIndex] = carta;
         gameManager.state.cartasJugadas = nuevasCartasJugadas;
         player.state.mano[index] = null;
-        console.log("turno false " + playerIndex);
         player.state.esMiTurno = false;
-        
+
 
         setPlayers([...gameManager.state.players]);
 
         gameManager.state.turnManager.tick();
     };
 
+    const handleCantarPlayer = () => {
+        
+    }
+
     return (
         <div className="juego">
             {!iniciado ? (
-                <button onClick={handleInit}>Init</button>
+                <button className="botonInit" onClick={handleInit}>Init</button>
             ) : (
-                <>
-                    <Tapete />
-                    <Baraja controller={gameManager.state.baraja} />
-                    <Triunfo triunfo={gameManager.state.triunfo} />
-                    <Player 
-                        controller={gameManager.state.players[0]} 
-                        cartaJugada={gameManager.state.cartasJugadas[0]} 
-                        handleCartaClick={handleCartaClick} 
-                    />
-                    {numJugadores === 2 && (
-                        <IA_Player 
-                            controller={gameManager.state.players[1]} 
-                            numIA={2} 
-                            handleCartaClick={handleCartaClick} 
-                            cartaJugada={gameManager.state.cartasJugadas[1]} 
+                !gameManager.state.finJuego ? (
+                    <>
+                        <Tapete />
+                        <Baraja controller={gameManager.state.baraja} />
+                        <Triunfo triunfo={gameManager.state.triunfo} />
+                        <Player
+                            controller={gameManager.state.players[0]}
+                            cartaJugada={gameManager.state.cartasJugadas[0]}
+                            handleCartaClick={handleCartaClick}
                         />
-                    )}
-                    {numJugadores === 4 && (
-                        <div className="IAs">
-                            <IA_Player 
-                                controller={gameManager.state.players[1]} 
-                                numIA={1} 
-                                handleCartaClick={handleCartaClick} 
-                                cartaJugada={gameManager.state.cartasJugadas[1]} 
+                        {numJugadores === 2 && (
+                            <IA_Player
+                                controller={gameManager.state.players[1]}
+                                numIA={2}
+                                handleCartaClick={handleCartaClick}
+                                cartaJugada={gameManager.state.cartasJugadas[1]}
                             />
-                            <IA_Player 
-                                controller={gameManager.state.players[2]} 
-                                numIA={2} handleCartaClick={handleCartaClick} 
-                                cartaJugada={gameManager.state.cartasJugadas[2]} 
-                            />
-                            <IA_Player 
-                                controller={gameManager.state.players[3]} 
-                                numIA={3} handleCartaClick={handleCartaClick} 
-                                cartaJugada={gameManager.state.cartasJugadas[3]} 
-                            />
-                        </div>
-                    )}
-                </>
+                        )}
+                        {numJugadores === 4 && (
+                            <div className="IAs">
+                                <IA_Player
+                                    controller={gameManager.state.players[1]}
+                                    numIA={1}
+                                    handleCartaClick={handleCartaClick}
+                                    cartaJugada={gameManager.state.cartasJugadas[1]}
+                                />
+                                <IA_Player
+                                    controller={gameManager.state.players[2]}
+                                    numIA={2} handleCartaClick={handleCartaClick}
+                                    cartaJugada={gameManager.state.cartasJugadas[2]}
+                                />
+                                <IA_Player
+                                    controller={gameManager.state.players[3]}
+                                    numIA={3} handleCartaClick={handleCartaClick}
+                                    cartaJugada={gameManager.state.cartasJugadas[3]}
+                                />
+                            </div>
+                        )}
+                        {gameManager.state.segundaBaraja && (
+                            <div>
+                                <h1 className="MTeam_1">Equipo 1: {
+                                    gameManager.state.numPlayers === 2
+                                        ? gameManager.state.players[0].state.puntos
+                                        :
+                                        gameManager.state.numPlayers === 4
+                                            ? gameManager.state.players[0].state.puntos + gameManager.state.players[2].state.puntos
+                                            : "Error"
+                                }</h1>
+                                <h1 className="MTeam_2">Equipo 2: {
+                                    gameManager.state.numPlayers === 2
+                                        ? gameManager.state.players[1].state.puntos
+                                        :
+                                        gameManager.state.numPlayers === 4
+                                            ? gameManager.state.players[1].state.puntos + gameManager.state.players[3].state.puntos
+                                            : "Error"
+                                }</h1>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div>
+                        <h1 className="GanadorLabel">Ganador: Equipo {gameManager.state.ganador}</h1>
+                        <button className="botonInit" onClick={handleInit}>Reiniciar</button>
+                    </div>
+                )
             )}
         </div>
     );

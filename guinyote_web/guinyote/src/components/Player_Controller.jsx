@@ -2,12 +2,28 @@ import React from "react";
 import Carta from "./Carta";
 import '../styles/Game.css';
 
+
+
 const Player = ({ controller, cartaJugada, handleCartaClick }) => {
   const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 
   return (
     <>
+      <button className="botonCantar"
+        style={{
+          backgroundColor: controller.state.sePuedeCantar ? "green" : "gray",
+          color: "white",
+          border: `2px solid ${controller.state.sePuedeCantar ? "darkgreen" : "darkgray"}`,
+        }}
+        onClick={() => {
+          if (esCantarActivo) {
+            console.log("Cantar activado");
+          }
+        }}
+      >
+        Cantar
+      </button>
       <div className="cartaJugada">
         {cartaJugada && (
           <Carta

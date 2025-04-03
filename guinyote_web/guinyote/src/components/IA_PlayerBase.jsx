@@ -1,5 +1,6 @@
 import PlayerBase from "./PlayerBase";
 
+
 class IA_PlayerBase extends PlayerBase {
     constructor(_numPlayers, gameManager, _numIA) {
         super(gameManager);
@@ -14,15 +15,9 @@ class IA_PlayerBase extends PlayerBase {
     }
 
     turnoLogic() {
-        console.log("\tTurno de IA" + this.state.numIA);
-        this.reset();
-        this.state.input.carta = this.peorCartaIndex();
-        return this.state.input.carta;
-    }
-
-    /*turnoLogic() {
         console.log("Turno de IA" + this.state.numIA);
         this.reset();
+        this.state.exito = false;
         //CANTAR SI ES POSIBLE
         this.intentarCantar();
 
@@ -38,10 +33,9 @@ class IA_PlayerBase extends PlayerBase {
             }
 
             if (this.soyPrimero()) {
-                console.log("IA" + this.state.numIA +  " es primera");
                 if (this.state.gameManager.state.arrastre && !this.state.gameManager.state.segundaBaraja) this.state.input.carta = this.primeraCartaArrastreIndex();
                 else if (!this.state.gameManager.state.arrastre && !this.state.gameManager.state.segundaBaraja) { 
-                    this.state.input.carta = this.peorCartaIndex(); console.log("\tIA" + this.state.numIA +  " peor carta");
+                    this.state.input.carta = this.peorCartaIndex();
                 }
                 else if (this.state.gameManager.state.arrastre) {
                     this.state.input.carta = this.primeraCartaArrastreIndex();
@@ -49,7 +43,6 @@ class IA_PlayerBase extends PlayerBase {
                 else this.state.input.carta = this.primeraCartaSegundaBarajaIndex();
             }
             else { //No soy primero (si 2 this.state.gameManager.state.cartasJugadas ultimo)
-                console.log("\tIA" + this.state.numIA +  " no primera");
                 if (this.state.gameManager.state.numPlayers == 2) {
                     this.state.input.carta = this.seleccion2Jugadores();
                 }
@@ -66,9 +59,8 @@ class IA_PlayerBase extends PlayerBase {
             this.state.input.carta = this.peorCartaIndex();
         }
         
-        console.log("IA " + this.state.numIA + " juega la carta numero " + this.state.input.carta)
         return this.state.input.carta; 
-    }*/
+    }
 
     seleccion2Jugadores() {
         let jugada = this.state.gameManager.state.cartasJugadas[0];
@@ -85,7 +77,8 @@ class IA_PlayerBase extends PlayerBase {
         }
         else //segunda baraja o segunda baraja y arrastre
         {
-            return this.cartaSegundaBarajaIndex(puntos, this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[1]].puntos, puntos);
+            let puntosEnMesa = (this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]] == null) ? 0 : this.state.gameManager.state.cartasJugadas[this.state.gameManager.state.orden[0]].puntos;
+            return this.cartaSegundaBarajaIndex(puntosEnMesa, this.state.gameManager.state.players[0].puntos, this.state.gameManager.state.players[1].puntos);
         }
     }
 
@@ -168,7 +161,7 @@ class IA_PlayerBase extends PlayerBase {
                 return index;
             }
             else if (misPuntos + puntosJugados + mano[index].Puntos >= 101) return index;
-            else if (this.puedoCantar(paloCantar)) {
+            else if (this.puedoCantarIA(paloCantar)) {
                 if (((paloCantar == paloTriunfo && misPuntos + 40 + this.state.mano[index].puntos + puntosJugados >= 101) ||
                     (paloCantar != paloTriunfo && misPuntos + 20 + this.state.mano[index].puntos + puntosJugados >= 101)) &&
                     !(this.state.mano[index].palo == paloCantar && (this.state.mano[index].numero == 10 || this.state.mano[index].numero == 12))) {
@@ -186,7 +179,7 @@ class IA_PlayerBase extends PlayerBase {
      * que se puede cantar en "palo". Si no se puede cantar, devuelve
      * false y -1 en "palo".
      */
-    puedoCantar(palo) {
+    puedoCantarIA(palo) {
         let hayRey;
         let haySota;
         let cantable = -1;

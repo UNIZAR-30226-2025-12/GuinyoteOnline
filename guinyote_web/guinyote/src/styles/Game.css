@@ -6,7 +6,63 @@
     --offsetBaraja: 2400px;
 }
 
+/*=========================General=========================*/
+.botonInit{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.GanadorLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    scale: var(--escala) * 30;
+}
+
+.MTeam_1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 10%;
+    left: 5%;
+    scale: var(--escala) * 30;
+}
+
+.MTeam_2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 20%;
+    left: 5%;
+    scale: var(--escala) * 30;
+}
+
+
 /*=========================Jugador=========================*/
+.botonCantar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 5%;
+    right: 30%;
+    height: 10%;
+}
+
 .cartaJugada {
     z-index: 2;
     display: flex;

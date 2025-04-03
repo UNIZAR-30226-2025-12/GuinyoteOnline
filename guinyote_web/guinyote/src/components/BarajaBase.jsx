@@ -2,10 +2,24 @@ class Carta{
     constructor(_palo, _numero){
         this.palo = _palo;
         this.numero = _numero;
+        this.puntos = this.calcularPuntos(_numero);
     }
+
+    calcularPuntos = (numero) => {
+        let numeroReal = numero < 7 ? numero + 1 : numero + 3;
+        switch (numeroReal) {
+          case 1: return 11;
+          case 3: return 10;
+          case 12: return 4;
+          case 10: return 3;
+          case 11: return 2;
+          default: return 0;
+        }
+      };
 }
 
-class BarajaClass {
+
+class BarajaBase {
     constructor() {
         this.cartas = [];
         this.inicializarBaraja();
@@ -40,8 +54,7 @@ class BarajaClass {
     }
 
     anyadirAlFinal(carta) {
-        let numero = carta.numero <= 7 ? carta.numero - 1 : carta.numero - 3;
-        this.cartas.push({ palo: carta.palo, numero });
+        this.cartas.push(carta);
     }
 
     eliminarUltima() {
@@ -51,4 +64,4 @@ class BarajaClass {
     }
 }
 
-export default BarajaClass;
+export default BarajaBase;
