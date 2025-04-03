@@ -4,7 +4,6 @@ using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
-using UnityEngine.Networking;
 
 public class GameManager : MonoBehaviour
 {
@@ -28,7 +27,6 @@ public class GameManager : MonoBehaviour
     public int ganador;
 
     public string test_state = "";
-    public string address = "https://guinyoteonline-hkio.onrender.com"; // URL confirmada del servidor
 
 
     private void Awake()
@@ -417,51 +415,6 @@ public class GameManager : MonoBehaviour
                 finRonda = true;
             }
         }
-
-        // Función para enviar el estado del juego al servidor si es necesario
-        StartCoroutine(EnviarEstadoJuegoAlServidor());
-    }
-
-    IEnumerator EnviarEstadoJuegoAlServidor()
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("estado", "datos_del_estado"); // Ajusta según los datos necesarios
-        UnityWebRequest www = UnityWebRequest.Post($"{address}/estadoJuego", form);
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError($"Error al enviar estado del juego: {www.error}");
-        }
-    }
-
-    IEnumerator EnviarJugadaAlServidor(string jugada)
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("jugada", jugada); // Envía la jugada al servidor
-        UnityWebRequest www = UnityWebRequest.Post($"{address}/juego/jugada", form);
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError($"Error al enviar jugada: {www.error}");
-        }
-        else
-        {
-            Debug.Log("Jugada enviada correctamente");
-        }
-    }
-
-    void RecibirEstadoJuego(string estadoJson)
-    {
-        // Actualiza el estado del juego basado en la respuesta del servidor
-        Debug.Log($"Estado del juego recibido: {estadoJson}");
-        // Deserializa el JSON y actualiza las variables locales (cartas, puntuaciones, etc.)
-    }
-
-    public void EnviarAccion(string accion)
-    {
-        StartCoroutine(EnviarJugadaAlServidor(accion));
     }
 
     public void ActualizarMarcadores()
