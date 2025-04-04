@@ -58,7 +58,7 @@
 }
 
 .ranking-table-container {
-    max-height: 550px; /* Altura máxima de la tabla */
+    max-height: 600px; /* Altura máxima de la tabla */
     overflow-y: auto;  /* Agregar scroll vertical */
     position: relative;
   }
@@ -70,23 +70,9 @@
     z-index: 10;
   }
 
-  .sticky-footer {
-    position: sticky;
-    bottom: 0;
-    background: #222; /* O el color de fondo que uses */
-    z-index: 10;
-  }
-
 .ranking-table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.usr-ranking tr{
-    border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    padding: 1px
 }
 
 .ranking-table th, .ranking-table td {
