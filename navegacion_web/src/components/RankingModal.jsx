@@ -12,9 +12,13 @@ function RankingModal({ show, handleClose, username }) {
     useEffect(() => {
         if (show) {
             if (username !== '') {
-                setUsrRanking({ ranking: 1, victorias: 100, foto_perfil: '-', usuario: username });
-            } else {
-                setUsrRanking({ ranking: '-', victorias: '-', foto_perfil: '-', usuario: '-' });
+                const userRanking = data.find(user => user.nombre === username);
+                if (userRanking) {
+                    setUsrRanking({ ranking: userRanking.ranking, victorias: userRanking.nVictorias, foto_perfil: userRanking.foto_perfil, usuario: username });
+                }
+                else {
+                    setUsrRanking({ ranking: '-', victorias: '-', foto_perfil: '-', usuario: username });
+                }
             }
         }
     }, [username, show]);
