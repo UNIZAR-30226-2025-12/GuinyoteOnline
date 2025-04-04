@@ -10,8 +10,8 @@ class GameButtons extends Component {
 
         return (
             <div className={className}>
-            <OnlinePlayButton onClick={onClickOnlinePlay} />
-            <SoloPlayButton onClick={onClickSoloPlay} />
+                <OnlinePlayButton onClick={onClickOnlinePlay} />
+                <SoloPlayButton onClick={onClickSoloPlay} />
             </div>
         );
     }

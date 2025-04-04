@@ -57,15 +57,43 @@
     display: block;
 }
 
+.ranking-table-container {
+    max-height: 550px; /* Altura máxima de la tabla */
+    overflow-y: auto;  /* Agregar scroll vertical */
+    position: relative;
+  }
+  
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    background: #222; /* O el color de fondo que uses */
+    z-index: 10;
+  }
+
+  .sticky-footer {
+    position: sticky;
+    bottom: 0;
+    background: #222; /* O el color de fondo que uses */
+    z-index: 10;
+  }
+
 .ranking-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+}
+
+.usr-ranking tr{
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 1px
 }
 
 .ranking-table th, .ranking-table td {
-    padding: 12px 15px;
     text-align: left;
+    padding: 13px;
+    box-sizing: border-box; /* Evita cambios por padding o border */
+    width: auto;  
     border-bottom: 1px solid #ddd;
 }
 

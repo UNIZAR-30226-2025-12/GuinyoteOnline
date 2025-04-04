@@ -19,6 +19,9 @@
 
 .gab-container-position {
   position: fixed;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
   top: 50%;
   left: 10px;
   transform: translateY(-50%);

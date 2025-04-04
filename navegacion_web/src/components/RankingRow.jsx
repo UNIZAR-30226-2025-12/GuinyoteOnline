@@ -5,14 +5,14 @@ import '/src/styles/RankingModal.css';
 class RankingRow extends Component {
     render() {
 
-        const { keyValue, ranking, usuario, victorias } = this.props;
+        const { keyValue, ranking, usuario, foto_perfil, victorias } = this.props;
 
         return (
             <tr key={keyValue}>
             <td>{ranking}</td>
-            <td style={{position: 'relative', display: 'flex'}}>
-                <img src={userIcon} alt="User Icon" style={{ position: 'absolute', left: '10px', width: '30px', height: '30px' }} />
-                <span style={{ marginLeft: '50px' }}>{usuario}</span>
+            <td style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <img src={userIcon} alt="User Icon" style={{ marginRight: '10px', width: '30px', height: '30px', borderRadius: '50%' }} />
+                <span>{usuario}</span>
             </td>
             <td>{victorias}</td>
             </tr>

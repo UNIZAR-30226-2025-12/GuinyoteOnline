@@ -62,8 +62,6 @@ function Homepage() {
     }
   };
 
- 
-
   const redirigirReglas = () => {
     window.location.href = 'https://www.nhfournier.es/como-jugar/guinote/';
   }

@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import backButton from '/src/assets/back_button.png';
 
 class Amigos extends Component {
+
+    componentDidMount() {
+        // Aquí se debería hacer una petición al servidor para obtener las solicitudes de amistad
+    }
+
     render() {
 
         const {handleBack} = this.props;
