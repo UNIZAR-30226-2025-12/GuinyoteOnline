@@ -23,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // Importar modelos
 const Usuario = require("../Bd/models/Usuario");
 const Partida = require("../Bd/models/Partida");
+const salasRoutes = require("./routes/salas");
 
 // Estado en memoria
 const partidasActivas = new Map();
@@ -252,6 +253,9 @@ app.get("/partidas/historial/:userId", async (req, res) => {
     res.status(500).json({ message: "Error obteniendo historial", error: error.message });
   }
 });
+
+// Rutas de Salas
+app.use("/salas", salasRoutes);
 
 // Configuración de Socket.IO para tiempo real
 io.on('connection', (socket) => {

@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System;
 
+/// <summary>
+/// Clase principal que gestiona el estado del juego, los turnos y los jugadores.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -30,7 +33,9 @@ public class GameManager : MonoBehaviour
 
     public string test_state = "";
 
-
+    /// <summary>
+    /// Inicializa la instancia singleton del GameManager.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -44,6 +49,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Configura el estado inicial del juego y el entorno.
+    /// </summary>
     void Start()
     {
         arrastre = false;
@@ -92,11 +100,11 @@ public class GameManager : MonoBehaviour
         
     }
 
-    /*
-     * Carga el estado de test del fichero "test_state".
-     * Devuelve un array de enteros con los puntos de 
-     * cada uno de los jugadores en orden (0 a 3).
-     */
+    /// <summary>
+    /// Carga el estado de prueba desde un archivo y configura el juego.
+    /// </summary>
+    /// <param name="baraja">Referencia a la baraja de cartas.</param>
+    /// <returns>Un array de enteros que representa los puntos de los jugadores.</returns>
     private int[] loadTest(ref Baraja baraja)
     {
         string line;
@@ -122,38 +130,37 @@ public class GameManager : MonoBehaviour
         return puntosJugadores;
     }
 
-    /* 
-     * Devuelve la carta que va ganando la baza actual si es del
-     * otro equipo (si es del compañero devuelve null), y el palo
-     * de la primera carta jugada durante la misma en paloJugado.
-     * Si no hay ninguna carta jugada, devuelve null y paloJugado = -1.
-     */
+    /// <summary>
+    /// Determina la carta ganadora de la ronda actual.
+    /// </summary>
+    /// <param name="paloJugado">Devuelve el palo de la primera carta jugada.</param>
+    /// <returns>La carta ganadora o null si no se ha jugado ninguna carta.</returns>
     public Carta getCartaJugada(out int paloJugado)
     {
         paloJugado = -1;
-        //2 JUGADORES
+        // 2 JUGADORES
         if (jugadores.Length == 2)
         {
             if (jugadores[orden[0]].jugada != null) paloJugado = jugadores[orden[0]].jugada.Palo;
             return jugadores[orden[0]].jugada;
         }
 
-        //4 JUGADORES
-        if (jugadores[orden[0]].jugada == null) //NADIE HA JUGADO, SOY PRIMERO
+        // 4 JUGADORES
+        if (jugadores[orden[0]].jugada == null) // NADIE HA JUGADO, SOY PRIMERO
         {
             return null;
         }
-        else if (jugadores[orden[1]].jugada == null) //PRIMERO HA JUGADO, SOY SEGUNDO
+        else if (jugadores[orden[1]].jugada == null) // PRIMERO HA JUGADO, SOY SEGUNDO
         {
-            //DEVUELVE UNICA CARTA JUGADA, ES DEL OTRO EQUIPO Y SE DEBE MATAR SI ES POSIBLE
+            // DEVUELVE ÚNICA CARTA JUGADA, ES DEL OTRO EQUIPO Y SE DEBE MATAR SI ES POSIBLE
             paloJugado = jugadores[orden[0]].jugada.Palo;
             return jugadores[orden[0]].jugada;
         }
-        else if (jugadores[orden[2]].jugada == null) //SEGUNDO HA JUGADO, SOY TERCERO
+        else if (jugadores[orden[2]].jugada == null) // SEGUNDO HA JUGADO, SOY TERCERO
         {
             paloJugado = jugadores[orden[0]].jugada.Palo;
-            //SE DEVUELVE LA CARTA DEL SEGUNDO SI HA MATADO, SI NO NULL
-            //(EL PRIMERO ES DE TU EQUIPO Y NO HACE FALTA MATAR AL DE TU EQUIPO)
+            // SE DEVUELVE LA CARTA DEL SEGUNDO SI HA MATADO, SI NO NULL
+            // (EL PRIMERO ES DE TU EQUIPO Y NO HACE FALTA MATAR AL DE TU EQUIPO)
             if ((jugadores[orden[1]].jugada.Palo == jugadores[orden[0]].jugada.Palo &&
                (jugadores[orden[1]].jugada.Puntos > jugadores[orden[0]].jugada.Puntos ||
                (jugadores[orden[1]].jugada.Puntos == jugadores[orden[0]].jugada.Puntos &&
@@ -165,13 +172,13 @@ public class GameManager : MonoBehaviour
             }
             else return null;
         }
-        else if (jugadores[orden[3]].jugada == null) //TERCERO HA JUGADO, SOY ULTIMO
+        else if (jugadores[orden[3]].jugada == null) // TERCERO HA JUGADO, SOY ÚLTIMO
         {
             paloJugado = jugadores[orden[0]].jugada.Palo;
-            //SE DEVUELVE LA CARTA MAXIMA DE LA PARTIDA SI ES DEL OTRO EQUIPO,
-            //EN CASO CONTRARIO SE DEVUELVE NULL (MI COMPAÑERO HA MATADO)
+            // SE DEVUELVE LA CARTA MÁXIMA DE LA PARTIDA SI ES DEL OTRO EQUIPO,
+            // EN CASO CONTRARIO SE DEVUELVE NULL (MI COMPAÑERO HA MATADO)
 
-            //JUGADOR DE MI EQUIPO (SEGUNDO) HA MATADO AL PRIMERO (OTRO EQUIPO)
+            // JUGADOR DE MI EQUIPO (SEGUNDO) HA MATADO AL PRIMERO (OTRO EQUIPO)
             if ((jugadores[orden[1]].jugada.Palo == jugadores[orden[0]].jugada.Palo &&
                (jugadores[orden[1]].jugada.Puntos > jugadores[orden[0]].jugada.Puntos ||
                (jugadores[orden[1]].jugada.Puntos == jugadores[orden[0]].jugada.Puntos &&
@@ -179,7 +186,7 @@ public class GameManager : MonoBehaviour
                (jugadores[orden[1]].jugada.Palo != jugadores[orden[0]].jugada.Palo &&
                 jugadores[orden[1]].jugada.Palo == triunfo.Palo))
             {
-                //JUGADOR DEL OTRO EQUIPO (TERCERO) HA MATADO AL DE MI EQUIPO (SEGUNDO)
+                // JUGADOR DEL OTRO EQUIPO (TERCERO) HA MATADO AL DE MI EQUIPO (SEGUNDO)
                 if ((jugadores[orden[2]].jugada.Palo == jugadores[orden[1]].jugada.Palo &&
                    (jugadores[orden[2]].jugada.Puntos > jugadores[orden[1]].jugada.Puntos ||
                    (jugadores[orden[2]].jugada.Puntos == jugadores[orden[1]].jugada.Puntos &&
@@ -187,9 +194,9 @@ public class GameManager : MonoBehaviour
                    (jugadores[orden[2]].jugada.Palo != jugadores[orden[1]].jugada.Palo &&
                     jugadores[orden[2]].jugada.Palo == triunfo.Palo))
                 {
-                    return jugadores[orden[2]].jugada; //MAXIMA ES LA DEL TERCERO
+                    return jugadores[orden[2]].jugada; // MÁXIMA ES LA DEL TERCERO
                 }
-                else return null; //MAXIMA ES LA DE MI EQUIPO
+                else return null; // MÁXIMA ES LA DE MI EQUIPO
             }
             else if ((jugadores[orden[2]].jugada.Palo == jugadores[orden[0]].jugada.Palo &&
                     (jugadores[orden[2]].jugada.Puntos > jugadores[orden[0]].jugada.Puntos ||
@@ -197,14 +204,18 @@ public class GameManager : MonoBehaviour
                      jugadores[orden[2]].jugada.Numero > jugadores[orden[0]].jugada.Numero))) ||
                     (jugadores[orden[2]].jugada.Palo != jugadores[orden[0]].jugada.Palo &&
                      jugadores[orden[2]].jugada.Palo == triunfo.Palo))
-            { //JUGADOR DE MI EQUIPO NO HA MATADO, PERO EL TERCERO SI HA MATADO AL PRIMERO
-                return jugadores[orden[2]].jugada; //MAXIMA ES LA DEL TERCERO
+            { // JUGADOR DE MI EQUIPO NO HA MATADO, PERO EL TERCERO SÍ HA MATADO AL PRIMERO
+                return jugadores[orden[2]].jugada; // MÁXIMA ES LA DEL TERCERO
             }
-            else return jugadores[orden[0]].jugada; //MAXIMA ES LA DEL PRIMERO
+            else return jugadores[orden[0]].jugada; // MÁXIMA ES LA DEL PRIMERO
         }
-        else return null; //CASO IMPOSIBLE, TODOS HABRIAN JUGADO
+        else return null; // CASO IMPOSIBLE, TODOS HABRÍAN JUGADO
     }
 
+    /// <summary>
+    /// Inicializa los jugadores y reparte las cartas.
+    /// </summary>
+    /// <param name="puntosJugadores">Array de puntos de los jugadores para la inicialización.</param>
     private void InitJugadores(int[] puntosJugadores)
     {
         jugadores = new Player[numJugadores];
@@ -248,12 +259,15 @@ public class GameManager : MonoBehaviour
             }
             jugadores[3].puntos = puntosJugadores[3];
         }
-        else Debug.Log("Error numero de jugadores es incorrecto");
+        else Debug.Log("Error número de jugadores es incorrecto");
 
         cartasJugadas = new Carta[jugadores.Length];
         cartasMoviendo = false;
     }
 
+    /// <summary>
+    /// Actualiza el estado del juego en cada frame.
+    /// </summary>
     void Update()
     {
         if (!cartasMoviendo) return;
@@ -290,6 +304,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Muestra un mensaje cuando un jugador canta (movimiento especial).
+    /// </summary>
+    /// <param name="palo">El palo del "cantar" anunciado.</param>
     public void mostrarCantar(int palo)
     {
         int puntos = (palo == triunfo.Palo) ? 40 : 20;
@@ -304,20 +322,30 @@ public class GameManager : MonoBehaviour
         Invoke("finMostrarCantar", 1f);
     }
 
+    /// <summary>
+    /// Oculta el mensaje de "cantar" después de un tiempo.
+    /// </summary>
     public void finMostrarCantar()
     {
         mostrandoCantar = false;
         m_FinPartida.style.visibility = Visibility.Hidden;
     }
+
+    /// <summary>
+    /// Cambia el turno entre los jugadores.
+    /// </summary>
+    /// <param name="turno">El índice del turno actual.</param>
     public void TurnChange(int turno)
     {
         if(turno > 0){
             cartasJugadas[orden[turno-1]] = jugadores[orden[turno-1]].jugada;
         }
         jugadores[orden[turno]].meToca();
-        //Debug.Log("Le toca al jugador " + orden[turno]);
     }
 
+    /// <summary>
+    /// Evalúa al ganador de la ronda actual y actualiza el estado del juego.
+    /// </summary>
     public void Evaluar()
     {
         cartasJugadas[orden.Length-1] = jugadores[orden.Length-1].jugada;
@@ -368,10 +396,9 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            //Destroy(cartasJugadas[i].gameObject);
         }
 
-        //FINALIZACION DE TURNO
+        // FINALIZACIÓN DE TURNO
         ubicacionGanador = jugadores[indexGanador].transform.position;
         jugadores[indexGanador].ganador = true;
         jugadores[(indexGanador + 1) % jugadores.Length].ganador = false;
@@ -392,7 +419,7 @@ public class GameManager : MonoBehaviour
             jugadores[orden[i]].AnyadirCarta(Baraja.DarCarta());
         }
 
-        //COMPROBAR SI HA ACABADO LA RONDA
+        // COMPROBAR SI HA ACABADO LA RONDA
         finRonda = true;
         foreach (var i in jugadores[0].mano)
         {
@@ -403,7 +430,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (finRonda) jugadores[orden[0]].puntos += 10; //10 ultimas
+        if (finRonda) jugadores[orden[0]].puntos += 10; // 10 últimas
 
         ActualizarMarcadores();
 
@@ -436,6 +463,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actualiza los marcadores de los jugadores o equipos.
+    /// </summary>
     public void ActualizarMarcadores()
     {
         if (!segundaBaraja && test_state == "")
@@ -465,6 +495,9 @@ public class GameManager : MonoBehaviour
         else m_P_TeamB.text = "Jugador 2\n" + (puntosB).ToString() + "\n" + buenasB;
     }
 
+    /// <summary>
+    /// Termina la ronda actual y verifica si el juego ha terminado.
+    /// </summary>
     public void TerminarRonda()
     {
         segundaBaraja = false;
@@ -482,7 +515,7 @@ public class GameManager : MonoBehaviour
         }
         ActualizarMarcadores();
 
-        if (!segundaBaraja) //PARTIDA TERMINADA
+        if (!segundaBaraja) // PARTIDA TERMINADA
         {
             m_FinPartida.style.visibility = Visibility.Visible;
             if (jugadores.Length == 2) m_FinPartida.text = "Ganador: Jugador " + ganador.ToString();
@@ -493,6 +526,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Baraja las cartas y las reparte nuevamente a los jugadores.
+    /// </summary>
     void BarajarYRepartir()
     {
         arrastre = false;
@@ -520,5 +556,40 @@ public class GameManager : MonoBehaviour
         {
             orden[i] = (i + indexGanador) % jugadores.Length;
         }
+    }
+
+    /// <summary>
+    /// Crea una sala privada y espera a que otros jugadores se unan.
+    /// </summary>
+    public void CrearSalaPrivada()
+    {
+        StartCoroutine(ConsultasBD.Consultas.CrearSalaPrivada("idUsuarioEjemplo"));
+    }
+
+    /// <summary>
+    /// Se une a una sala privada mediante un código.
+    /// </summary>
+    /// <param name="codigoSala">El código de la sala privada.</param>
+    public void UnirseSalaPrivada(string codigoSala)
+    {
+        StartCoroutine(ConsultasBD.Consultas.UnirseSalaPrivada(codigoSala, "idUsuarioEjemplo"));
+    }
+
+    /// <summary>
+    /// Busca una partida pública.
+    /// </summary>
+    public void BuscarPartidaPublica()
+    {
+        StartCoroutine(ConsultasBD.Consultas.BuscarPartidaPublica("idUsuarioEjemplo"));
+    }
+
+    /// <summary>
+    /// Sincroniza el estado del juego con el servidor.
+    /// </summary>
+    public void SincronizarEstado()
+    {
+        // Enviar el estado actual del juego al servidor y recibir actualizaciones.
+        Debug.Log("Sincronizando estado del juego...");
+        // Implementar lógica de sincronización aquí.
     }
 }
