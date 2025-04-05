@@ -1,18 +1,9 @@
 // usePost.js
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const usePost = (baseURL) => {
-    const [data, setData] = useState(null);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-
-    const changeData = (newData) => {
-        setData(newData);
-    }
 
     const postData = async (datos, specificURL) => {
-        setLoading(true);
-        setError(null);
 
         try {
             const response = await fetch(baseURL + specificURL, {
@@ -32,16 +23,14 @@ const usePost = (baseURL) => {
             } catch (parseError) {
                 throw new Error('Error parsing JSON response');
             }
-            changeData(responseData);
-            console.log('Response Data:', responseData); // Log responseData directly/
+            return{responseData, error: null}
+
         } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            return { responseData: null, error: err.message };
         }
     };
 
-    return { data, error, loading, postData };
+    return { postData };
 };
 
 export default usePost;

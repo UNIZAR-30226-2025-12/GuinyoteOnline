@@ -9,7 +9,6 @@ import RankingModal from './RankingModal';
 import FriendsModal from './FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
-import useFetch from '../customHooks/useFetch';
 
 function Homepage() {
 
@@ -17,7 +16,7 @@ function Homepage() {
   const login_url = '/usuarios/inicioSesion';
   const register_url = '/usuarios/registro';
 
-  const { data, error, loading, postData } = usePost(url);
+  const { postData } = usePost(url);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -88,23 +87,16 @@ function Homepage() {
     alert("Mensaje enviado: " + mail + " --- " + username + " --- " + password);
 
     // Llamar a postData y esperar que se complete
-    await postData(inputData, register_url); // Llamada a la API
+    const response = await postData(inputData, register_url); // Llamada a la API
 
-    // Después de la llamada, verifica el estado de loading, error y data
-    if (loading) {
-        console.log('Cargando...');
-    }
-
-    if (error) {
-        console.error('Error:', error);
+    if (response.error != null) {
+        console.log('Error:', response.error);
         return; // Salir de la función si hay un error
-    }
-
-    if (data) {
-        setIsUserRegistered(true);
-        setShowRegisterModal(false);
-        setUsername(username);
-        console.log('Usuario registrado exitosamente:', data);
+    }else{
+      console.log('Respuesta:', response.responseData);
+      setIsUserRegistered(true);
+      setShowRegisterModal(false);
+      setUsername(username);
     }
   };
 
@@ -117,17 +109,13 @@ function Homepage() {
   
     alert("Mensaje enviado" + username + " --- " + password);
 
-    await postData(inputData, login_url);
-    console.log({loading, error, data});
+    const response = await postData(inputData, login_url);
 
-    if (loading) {
-      console.log('Cargando...');
-    }
-    if (error) {
-      console.error('Error:', error);
-    }
-    if (data) {
-      console.log('Respuesta:', data);
+    if (response.error != null) {
+      console.log('Error:', response.error);
+      return;
+    } else {
+      console.log('Respuesta:', response.responseData);
       setIsUserRegistered(true);
       setShowLoginModal(false);
       setUsername(username);

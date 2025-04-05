@@ -40,6 +40,7 @@ function RankingModal({ show, handleClose }) {
                         <tbody>
                             {data.map((data, index) => (
                             <RankingRow 
+                                key={index+1} // Use a unique id if available
                                 keyValue={index + 1} 
                                 ranking={index + 1} 
                                 usuario={data.nombre} 
