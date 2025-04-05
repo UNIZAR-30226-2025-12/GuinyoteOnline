@@ -37,8 +37,8 @@ const FriendsModal = ({ show, handleClose, mail, onClickFriendList, onClickFrien
                     </>
                 ) : null}
 
-                {(showAmigos && !showSolicitudes) ? <Amigos mail={mail} handleBack={handleBackAmigos} /> : null}
-                {(showSolicitudes && !showAmigos) ? <Solicitudes mail={mail} handleBack={handleBackSolicitudes} /> : null}
+                <Amigos show={showAmigos} mail={mail} handleBack={handleBackAmigos} /> 
+                <Solicitudes show={showSolicitudes} mail={mail} handleBack={handleBackSolicitudes} />
             </div>
         </div>
     );

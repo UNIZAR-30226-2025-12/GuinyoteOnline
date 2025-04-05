@@ -1,0 +1,59 @@
+.game-container {
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    width: 100%;  /* Asegura de que el ancho sea 100% */
+}
+
+.game-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+/*  
+  .game-button-position {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .gb-container-position {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .gab-container-position {
+    position: fixed;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+  }
+  
+  .rules-button-position {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .background-container {
+    height: 80vh;
+  }
+  
+  .background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/Logo_PSoft_Guinyote.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.5;  /* Aplica opacidad solo a la imagen de fondo 
+    z-index: -1;  /* Coloca la capa de fondo detrás del contenido 
+  }*/

@@ -1,0 +1,28 @@
+/* Estilo para modo claro */
+.cm_round_button {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 400px;
+    height: 75px;
+    justify-content: center;
+    padding: 15px 30px;
+    background-color: white;
+    color: #333;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 40px;
+}
+
+.cm_round_button:hover {
+    background-color: #d7dbdf;
+    color: #4866f8;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .cm_round_button {
+        background-color: #242424;
+        color: white;
+    }
+}

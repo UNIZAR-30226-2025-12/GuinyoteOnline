@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import LoginButton from './buttons/LoginButton'
-import GroupButtons from './buttons/GroupButtons'
-import GameButtons from './buttons/GameButtons'
-import RulesButton from './buttons/RulesButton'
-import LoginModal from './LoginModal'
-import RegisterModal from './RegisterModal';
-import RankingModal from './RankingModal';
-import FriendsModal from './FriendsModal';
+import LoginButton from '../components/buttons/LoginButton'
+import GroupButtons from '../components/buttons/GroupButtons'
+import GameButtons from '../components/buttons/GameButtons'
+import RulesButton from '../components/buttons/RulesButton'
+import LoginModal from '../components/LoginModal'
+import RegisterModal from '../components/RegisterModal';
+import RankingModal from '../components/RankingModal';
+import FriendsModal from '../components/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
 
-function Homepage() {
+function Homepage({handleMiCuentaClick, handlePartidaOnlineClick, handlePartidaOfflineClick}) {
 
   const url = 'https://guinyoteonline-hkio.onrender.com';
   const login_url = '/usuarios/inicioSesion';
@@ -53,7 +53,11 @@ function Homepage() {
   }
 
   const handleFriendsModalOpen = () => {
-    setShowFriends(true);
+    if (isUserRegistered) {
+      setShowFriends(true);
+    } else {
+      setShowLoginModal(true);
+    }
   }
 
   const handleFriendsModalClose = () => {
@@ -65,11 +69,12 @@ function Homepage() {
       setShowLoginModal(true);
     } else {
       // Lógica para usuarios registrados
+      handleMiCuentaClick();
     }
   };
 
   const redirigirReglas = () => {
-    window.location.href = 'https://www.nhfournier.es/como-jugar/guinote/';
+    window.location.href = 'https://es.wikipedia.org/wiki/Gui%C3%B1ote';
   }
 
   const tryButtons = () => {
@@ -122,6 +127,14 @@ function Homepage() {
     }
   };
 
+  const handleOnlineClick = () => {
+    if (isUserRegistered) {
+      handlePartidaOnlineClick();
+    } else {
+      setShowLoginModal(true);
+    }
+  }
+
   return (
     <div className='background-container'>
       <div className='background-layer'>
@@ -129,12 +142,12 @@ function Homepage() {
       </div>
       <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
       <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
-      <GameButtons className='gab-container-position' onClickSoloPlay={tryButtons} onClickOnlinePlay={tryButtons}/>
+      <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handleOnlineClick}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
       <RankingModal show={showRanking} handleClose={handleRankingModalClose} username={username}/>
-      <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
+      <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={username}/>
     </div>
   )
 }
