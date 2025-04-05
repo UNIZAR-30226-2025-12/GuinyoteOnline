@@ -1,6 +1,16 @@
+import { useEffect } from 'react';
 import backButton from '/src/assets/back_button.png';
 
-const Solicitudes = ({ showSolicitudes, handleBack }) => {
+const Solicitudes = ({ showSolicitudes, handleBack, mail }) => {
+
+    const { data, loading, error, fetchData } = useFetch('https://guinyoteonline-hkio.onrender.com/solicitudes/' + mail);
+
+    useEffect(() => {
+        if (showSolicitudes) {
+            console.log(mail);
+            fetchData();
+        }
+    }, [showSolicitudes]);
 
     return ( showSolicitudes ?
         <>

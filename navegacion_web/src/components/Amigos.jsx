@@ -6,12 +6,14 @@ import useFetch from '../customHooks/useFetch';
 import SearchBar from './SearchBar';
 import AddFriendButton from './buttons/AddFriendButton';
 import FriendsRow from './FriendsRow';
+import AddFriendModal from './AddFriendModal';
 
 const Amigos = ({ show, handleBack, mail }) => {
 
     const { data, loading, error, fetchData } = useFetch('https://guinyoteonline-hkio.onrender.com/amigos/' + mail);
 
     const [filter, setFilter] = useState('');
+    const [showAddFriendModal, setShowAddFriendModal] = useState(false);
 
     useEffect(() => {
         if (show) {
@@ -33,6 +35,14 @@ const Amigos = ({ show, handleBack, mail }) => {
         setFilter(inputValue);
     }
 
+    function handleAddFriendClose() {
+        setShowAddFriendModal(false);
+    }
+
+    function handleAddFriend() {
+        setShowAddFriendModal(true);
+    }
+
     return ( !show ? null : 
         <>
             <button className='friend-list-back-button' onClick={handleBack} >
@@ -42,7 +52,9 @@ const Amigos = ({ show, handleBack, mail }) => {
 
             <SearchBar handleOnChange={handleOnChange}/>
 
-            <AddFriendButton />
+            <AddFriendButton onClick={handleAddFriend}/>
+
+            { showAddFriendModal && <AddFriendModal mail={mail} handleClose={handleAddFriendClose}/> }
 
             {data && !data.amigos && <p>No tienes amigos</p>}
             {loading && <p>Cargando ...</p>}

@@ -1,15 +1,10 @@
 import React from 'react';
 
-const AddFriendButton = ({ onAddFriend }) => {
-    const handleClick = () => {
-        if (onAddFriend) {
-            onAddFriend();
-        }
-    };
+const AddFriendButton = ({ onClick }) => {
 
     return (
-        <button onClick={handleClick} className="add-friend-button">
-            Add Friend
+        <button onClick={onClick} className="add-friend-button">
+            Añadir amigo
         </button>
     );
 };

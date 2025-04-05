@@ -10,6 +10,12 @@ const FriendsModal = ({ show, handleClose, mail, onClickFriendList, onClickFrien
     const [showAmigos, setShowAmigos] = useState(false);
     const [showSolicitudes, setShowSolicitudes] = useState(false);
 
+    useEffect(() => {
+        if (show) {
+            console.log('Modal de amigos abierto');
+        }
+    }, [show]);
+
     if(!show) {
         return null;
     } 

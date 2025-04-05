@@ -78,6 +78,21 @@
     text-align: center;
 }
 
+.friend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: calc(100% - 4rem);
+    overflow-y: auto;
+}
+
+.friend-row {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
 /* Estilo para modo oscuro */
 @media (prefers-color-scheme: dark) {
     .friends-modal {
