@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoginButton from '../components/buttons/LoginButton'
 import GroupButtons from '../components/buttons/GroupButtons'
 import GameButtons from '../components/buttons/GameButtons'
@@ -10,11 +11,13 @@ import FriendsModal from '../components/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
 
-function Homepage({handleMiCuentaClick, handlePartidaOnlineClick, handlePartidaOfflineClick}) {
+function Homepage({handleMiCuentaClick}) {
 
   const url = 'https://guinyoteonline-hkio.onrender.com';
   const login_url = '/usuarios/inicioSesion';
   const register_url = '/usuarios/registro';
+
+  const navigate = useNavigate();
 
   const { postData } = usePost(url);
 
@@ -97,7 +100,7 @@ function Homepage({handleMiCuentaClick, handlePartidaOnlineClick, handlePartidaO
     if (response.error != null) {
         console.log('Error:', response.error);
         return; // Salir de la función si hay un error
-    }else{
+    } else {
       console.log('Respuesta:', response.responseData);
       setIsUserRegistered(true);
       setShowRegisterModal(false);
@@ -127,9 +130,18 @@ function Homepage({handleMiCuentaClick, handlePartidaOnlineClick, handlePartidaO
     }
   };
 
-  const handleOnlineClick = () => {
+  const handlePartidaOnlineClick = () => {
+    navigate('/online_match');
+    /*if (isUserRegistered) {
+      navigate('/online_match');  // Necesitamos pasar el contexto
+    } else {
+      setShowLoginModal(true);
+    }*/
+  }
+
+  const handlePartidaOfflineClick = () => {
     if (isUserRegistered) {
-      handlePartidaOnlineClick();
+      //navigate('/offline_match'); // Necesitamos pasar el contexto
     } else {
       setShowLoginModal(true);
     }
@@ -142,7 +154,7 @@ function Homepage({handleMiCuentaClick, handlePartidaOnlineClick, handlePartidaO
       </div>
       <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
       <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
-      <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handleOnlineClick}/>
+      <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handlePartidaOnlineClick}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>

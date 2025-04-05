@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import SoloPlayButton from './SoloPlayButton'
-import OnlinePlayButton from './OnlinePlayButton'
+import Match1v1Button from './Match1v1Button'
+import Match2v2Button from './Match2v2Button'
 
 class MatchFormatButtons extends Component {
         
     render() {
 
-        const { className, onClickOnlinePlay, onClickSoloPlay } = this.props;
+        const { className, onClick2v2Match, onClick1v1Match } = this.props;
 
         return (
             <div className={className}>
-                <OnlinePlayButton onClick={onClickOnlinePlay} />
-                <SoloPlayButton onClick={onClickSoloPlay} />
+                <Match2v2Button onClick={onClick2v2Match} />
+                {/* Puede que sea necesario especificar el espacio entre los dos */}
+                <Match1v1Button onClick={onClick1v1Match} />
             </div>
         );
     }

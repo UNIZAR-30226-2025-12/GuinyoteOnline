@@ -1,12 +1,10 @@
 .game-container {
     margin: 0 auto;
-    padding: 2rem;
     text-align: center;
     width: 100%;  /* Asegura de que el ancho sea 100% */
 }
 
 .game-title {
-    font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 2rem;
 }
