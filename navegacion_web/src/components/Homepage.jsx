@@ -7,10 +7,17 @@ import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal';
 import RankingModal from './RankingModal';
 import FriendsModal from './FriendsModal';
-
 import '/src/styles/Homepage.css'
+import usePost from '../customHooks/usePost';
+import useFetch from '../customHooks/useFetch';
 
 function Homepage() {
+
+  const url = 'https://guinyoteonline-hkio.onrender.com';
+  const login_url = '/usuarios/inicioSesion';
+  const register_url = '/usuarios/registro';
+
+  const { data, error, loading, postData } = usePost(url);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -70,42 +77,60 @@ function Homepage() {
     alert('Funcionalidad no disponible');
   }
 
-  const handleRegisterSubmit = (event) => {
+  const handleRegisterSubmit = async (event) => {
     event.preventDefault();
 
-    const mail = event.target.mail.value; 
+    const mail = event.target.email.value; 
     const username = event.target.username.value;
     const password = event.target.password.value;
-    const reppassword = event.target.reppassword.value;
 
-    if(password === reppassword){
+    const inputData = { nombre: username, correo: mail, contrasena: password };
+    alert("Mensaje enviado: " + mail + " --- " + username + " --- " + password);
+
+    // Llamar a postData y esperar que se complete
+    await postData(inputData, register_url); // Llamada a la API
+
+    // Después de la llamada, verifica el estado de loading, error y data
+    if (loading) {
+        console.log('Cargando...');
+    }
+
+    if (error) {
+        console.error('Error:', error);
+        return; // Salir de la función si hay un error
+    }
+
+    if (data) {
+        setIsUserRegistered(true);
+        setShowRegisterModal(false);
+        setUsername(username);
+        console.log('Usuario registrado exitosamente:', data);
+    }
+  };
+
+  const handleLoginSubmit = async (event) => {
+    event.preventDefault();
+    const username = event.target.username.value;
+    const password = event.target.password.value;
+
+    const inputData = ({correo: username, contrasena: password});
+  
+    alert("Mensaje enviado" + username + " --- " + password);
+
+    await postData(inputData, login_url);
+    console.log({loading, error, data});
+
+    if (loading) {
+      console.log('Cargando...');
+    }
+    if (error) {
+      console.error('Error:', error);
+    }
+    if (data) {
+      console.log('Respuesta:', data);
       setIsUserRegistered(true);
       setShowLoginModal(false);
       setUsername(username);
-      alert('Registro enviado', { username, password, mail });
-      alert('Registro correcto');
-    }
-    else{
-      alert('Error en el registro');
-    };
-  };
-
-  const handleLoginSubmit = (event) => {
-    event.preventDefault();
-    const username = event.target.username.value;
-    const password = event.target.password.value;
-
-    // Aquí puedes agregar la lógica para manejar el inicio de sesión, por ejemplo, una petición de validación de usuario
-    alert('Inicio de sesión enviado', { username, password });
-
-    // Simulación de validación de usuario
-    if (username === 'usuario' && password === 'contraseña') {
-      setIsUserRegistered(true);
-      setShowLoginModal(false);
-      setUsername(event.target.username.value);
-      alert('Inicio de sesión correcto');
-    } else {
-      alert('Error en el inicio de sesión');
     }
   };
 

@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '/src/styles/RankingModal.css';
 import RankingRow from './RankingRow';
 import useFetch from '../customHooks/useFetch';
 
-function RankingModal({ show, handleClose, username }) {
+function RankingModal({ show, handleClose }) {
 
-    const { data, loading, error } = useFetch('https://guinyoteonline-hkio.onrender.com/rankings');
+    const { data, loading, error, fetchData } = useFetch('https://guinyoteonline-hkio.onrender.com/rankings');
+
+    useEffect(() => {
+        if (show) {
+            fetchData();
+        }
+    }, [show]);
 
     if (!show) {
         return null;
@@ -21,33 +27,32 @@ function RankingModal({ show, handleClose, username }) {
                 {loading && <p>Cargando ...</p>}
                 {error && <p>Error al cargar los datos</p>}
                 {data && data.length > 0 && (
+                <> 
                     <div className="ranking-table-container">
                         <table className="ranking-table">
-                            <thead>
-                                <tr className="sticky-header" key={0}>
-                                    <th>Posición</th>
-                                    <th>Usuario</th>
-                                    <th>Victorias</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.map((data, index) => (
-                                <RankingRow 
-                                    keyValue={index + 1} 
-                                    ranking={index + 1} 
-                                    usuario={data.nombre} 
-                                    img={data.foto_perfil} 
-                                    victorias={data.nVictorias} 
-                                />
-                                ))}
-                            </tbody>
+                        <thead>
+                            <tr className="sticky-header" key={0}>
+                                <th>Posición</th>
+                                <th>Usuario</th>
+                                <th>Victorias</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((data, index) => (
+                            <RankingRow 
+                                keyValue={index + 1} 
+                                ranking={index + 1} 
+                                usuario={data.nombre} 
+                                img={data.foto_perfil} 
+                                victorias={data.nVictorias} 
+                            />
+                            ))}
+                        </tbody>
                         </table>
                     </div>
+                  </>
                 )
                 }
-                {data && data.length === 0 && (
-                    <p>No hay datos disponibles</p>
-                )}
             </div>
         </div>
     );
