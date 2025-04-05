@@ -174,12 +174,44 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-app.get("/amigos/:userId", async (req, res) => {
+/*app.get("/amigos/:userId", async (req, res) => {
   try {
     const amigos = await Usuario.find({ correo: req.params.userId }, { correo: 1, amigos: 1 });
     res.json(amigos);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo amigos", error: error.message });
+  }
+});*/
+
+app.get("/amigos/:userId", async (req, res) => {
+  try {
+    const usuario = await Usuario.findOne(
+      { correo: req.params.userId },
+      { amigos: { $elemMatch: { pendiente: false } } } // Filtrar solo amigos con pendiente: true
+    );
+    if (usuario) {
+      res.json(usuario.amigos);
+    } else {
+      res.status(404).json({ message: "Usuario no encontrado" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error obteniendo solicitudes", error: error.message });
+  }
+});
+
+app.get("/solicitudes/:userId", async (req, res) => {
+  try {
+    const usuario = await Usuario.findOne(
+      { correo: req.params.userId },
+      { amigos: { $elemMatch: { pendiente: true } } } // Filtrar solo amigos con pendiente: true
+    );
+    if (usuario) {
+      res.json(usuario.amigos);
+    } else {
+      res.status(404).json({ message: "Usuario no encontrado" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error obteniendo solicitudes", error: error.message });
   }
 });
 
