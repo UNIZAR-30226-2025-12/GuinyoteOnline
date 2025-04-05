@@ -11,7 +11,7 @@ import FriendsModal from '../components/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
 
-function Homepage({handleMiCuentaClick}) {
+function Homepage() {
 
   const url = 'https://guinyoteonline-hkio.onrender.com';
   const login_url = '/usuarios/inicioSesion';
@@ -131,20 +131,17 @@ function Homepage({handleMiCuentaClick}) {
   };
 
   const handlePartidaOnlineClick = () => {
-    navigate('/online_match');
-    /*if (isUserRegistered) {
+    if (isUserRegistered) {
       navigate('/online_match');  // Necesitamos pasar el contexto
     } else {
       setShowLoginModal(true);
-    }*/
+    }
   }
 
   const handlePartidaOfflineClick = () => {
-    if (isUserRegistered) {
-      //navigate('/offline_match'); // Necesitamos pasar el contexto
-    } else {
-      setShowLoginModal(true);
-    }
+
+    navigate('/offline_match'); // Necesitamos pasar el contexto
+    
   }
 
   return (
@@ -158,7 +155,7 @@ function Homepage({handleMiCuentaClick}) {
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
-      <RankingModal show={showRanking} handleClose={handleRankingModalClose} username={username}/>
+      <RankingModal show={showRanking} handleClose={handleRankingModalClose} />
       <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={username}/>
     </div>
   )

@@ -37,7 +37,7 @@ const FriendsModal = ({ show, handleClose, mail, onClickFriendList, onClickFrien
                     </>
                 ) : null}
 
-                <Amigos show={showAmigos} mail={mail} handleBack={handleBackAmigos} /> 
+                <Amigos show={showAmigos} mail={mail} handleBack={handleBackAmigos} />
                 <Solicitudes show={showSolicitudes} mail={mail} handleBack={handleBackSolicitudes} />
             </div>
         </div>
