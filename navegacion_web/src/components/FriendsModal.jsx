@@ -5,20 +5,22 @@ import FriendListButton from './buttons/FriendListButton';
 import Amigos from './Amigos';
 import Solicitudes from './Solicitudes';
 
-const FriendsModal = ({ show, handleClose, mail, onClickFriendList, onClickFriendRequest }) => {
+const FriendsModal = ({ show, handleClose, mail }) => {
 
     const [showAmigos, setShowAmigos] = useState(false);
     const [showSolicitudes, setShowSolicitudes] = useState(false);
 
-    useEffect(() => {
-        if (show) {
-            console.log('Modal de amigos abierto');
-        }
-    }, [show]);
-
     if(!show) {
         return null;
-    } 
+    }
+
+    const handleFriendsClick = () => {
+        setShowAmigos(true);
+    }
+
+    const handleSolicitudesClick = () => {
+        setShowSolicitudes(true);
+    }
 
     const handleBackAmigos = () => {
         setShowAmigos(false);
@@ -38,8 +40,8 @@ const FriendsModal = ({ show, handleClose, mail, onClickFriendList, onClickFrien
                             <img src="https://img.icons8.com/material-rounded/24/000000/close-window.png" alt="Cerrar" />
                         </button>
                         <h2 className='modal-title'>Amigos</h2>
-                        <FriendListButton onClick={() => { setShowAmigos(true); }} />
-                        <FriendRequestButton onClick={() => { setShowSolicitudes(true); }} />
+                        <FriendListButton onClick={handleFriendsClick} />
+                        <FriendRequestButton onClick={handleSolicitudesClick} />
                     </>
                 ) : null}
 

@@ -56,28 +56,32 @@ const Amigos = ({ show, handleBack, mail }) => {
 
             { showAddFriendModal && <AddFriendModal mail={mail} handleClose={handleAddFriendClose}/> }
 
-            {data && !data.amigos && <p>No tienes amigos</p>}
-            {loading && <p>Cargando ...</p>}
-            {error && <p>Error al cargar los datos</p>}
-            {data && data.amigos && (
             <> 
                 <div className="friends-table-container">
                     <table className="friends-table">
-                    
+                    {loading && <p>Cargando ...</p>}
+                    {error && <p>Error al cargar los datos</p>}
+                    {data && !data.amigos && (
                         <tbody>
+                            <p>Todavía no tienes amigos</p>
+                        </tbody>
+                    )}
+                    {data && data.amigos && (
+                        <tbody> 
                             {data.amigos.map((data, index) => (
                             <FriendsRow 
-                                key={index+1} // Use a unique id if available
+                                key={index+1}
                                 img={data.foto_perfil}
                                 username={data.nombre}
                                 mail={data.correo}
                             />
                             ))}
                         </tbody>
+                    )}
                     </table>
                 </div>
                 </>
-            )}
+            
             {/* Hay que incluir el muestreo de la lista de amigos, un componente para cada amigo, el búscador por username, si puede ser que cargue elementos dinámicamente para ahorrar recursos */}
 
         </>

@@ -23,6 +23,7 @@ const usePost = (baseURL) => {
             } catch (parseError) {
                 throw new Error('Error parsing JSON response');
             }
+
             return{responseData, error: null}
 
         } catch (err) {

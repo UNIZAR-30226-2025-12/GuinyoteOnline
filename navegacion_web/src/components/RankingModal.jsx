@@ -24,12 +24,8 @@ function RankingModal({ show, handleClose }) {
                     <img src="https://img.icons8.com/material-rounded/24/000000/close-window.png" alt="Cerrar" />
                 </button>
                 <h1>Ranking</h1>
-                {loading && <p>Cargando ...</p>}
-                {error && <p>Error al cargar los datos</p>}
-                {data && data.length > 0 && (
-                <> 
-                    <div className="ranking-table-container">
-                        <table className="ranking-table">
+                <div className="ranking-table-container">
+                    <table className="ranking-table">
                         <thead>
                             <tr className="sticky-header" key={0}>
                                 <th>Posición</th>
@@ -37,8 +33,9 @@ function RankingModal({ show, handleClose }) {
                                 <th>Victorias</th>
                             </tr>
                         </thead>
+                    {data && data.length > 0 && (
                         <tbody>
-                            {data.map((data, index) => (
+                        {data.map((data, index) => (
                             <RankingRow 
                                 key={index+1} // Use a unique id if available
                                 keyValue={index + 1} 
@@ -47,15 +44,16 @@ function RankingModal({ show, handleClose }) {
                                 img={data.foto_perfil} 
                                 victorias={data.nVictorias} 
                             />
-                            ))}
+                        ))}
                         </tbody>
-                        </table>
-                    </div>
-                  </>
-                )
-                }
+                    )}
+                    {loading && <p>Cargando ...</p>}
+                    {error && <p>Error al cargar los datos</p>}
+                    </table>
+                </div>
             </div>
         </div>
+        
     );
 }
 

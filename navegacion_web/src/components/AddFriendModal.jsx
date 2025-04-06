@@ -12,8 +12,8 @@ const AddFriendModal = ({ handleClose, mail }) => {
         e.preventDefault();
         
         const data = {
-            mail: mail,
-            amigo: friendName
+            idUsuario: mail,
+            idAmigo: friendName
         };
 
         const response = await postData(data, '');
