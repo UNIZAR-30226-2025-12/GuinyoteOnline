@@ -185,7 +185,7 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
 
 app.get("/amigos/:userId", async (req, res) => {
   try {
-    const usuario = await Usuario.findOne(
+    const usuario = await Usuario.find(
       { correo: req.params.userId },
       { amigos: 1 } // Filtrar solo amigos con pendiente: false
     );
@@ -202,7 +202,7 @@ app.get("/amigos/:userId", async (req, res) => {
 
 app.get("/solicitudes/:userId", async (req, res) => {
   try {
-    const usuario = await Usuario.findOne(
+    const usuario = await Usuario.find(
       { correo: req.params.userId },
       { amigos: 1 } // Obtener el campo 'amigos'
     );
