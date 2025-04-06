@@ -207,6 +207,8 @@ app.get("/solicitudes/:userId", async (req, res) => {
       { amigos: 1 } // Obtener el campo 'amigos'
     );
 
+    console.log(usuario);
+
     if (usuario) {
       const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
       res.json(solicitudesPendientes);
