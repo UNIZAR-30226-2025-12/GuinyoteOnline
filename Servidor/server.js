@@ -189,6 +189,9 @@ app.get("/amigos/:userId", async (req, res) => {
       { correo: req.params.userId },
       { amigos: 1 } // Filtrar solo amigos con pendiente: false
     );
+
+    console.log(usuario);
+
     if (usuario) {
       const amigos = usuario.amigos.filter(amigo => amigo.pendiente === false);
       res.json(amigos);
@@ -206,6 +209,8 @@ app.get("/solicitudes/:userId", async (req, res) => {
       { correo: req.params.userId },
       { amigos: 1 } // Obtener el campo 'amigos'
     );
+
+    console.log(usuario);
 
     if (usuario) {
       const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
