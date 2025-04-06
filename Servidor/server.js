@@ -191,7 +191,7 @@ app.get("/amigos/:userId", async (req, res) => {
     );
 
     if (usuario) {
-      const amigos = usuario.amigos[0].filter(amigo => amigo.pendiente === false);
+      const amigos = usuario[0].amigos.filter(amigo => amigo.pendiente === false);
       res.json(amigos);
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
@@ -211,7 +211,7 @@ app.get("/solicitudes/:userId", async (req, res) => {
     console.log(usuario);
 
     if (usuario) {
-      const solicitudesPendientes = usuario.amigos[0].filter(amigo => amigo.pendiente === true);
+      const solicitudesPendientes = usuario[0].amigos.filter(amigo => amigo.pendiente === true);
       res.json(solicitudesPendientes);
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
