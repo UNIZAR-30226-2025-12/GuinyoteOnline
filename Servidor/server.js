@@ -190,10 +190,8 @@ app.get("/amigos/:userId", async (req, res) => {
       { amigos: 1 } // Filtrar solo amigos con pendiente: false
     );
 
-    console.log(usuario);
-
     if (usuario) {
-      const amigos = usuario.amigos.filter(amigo => amigo.pendiente === false);
+      const amigos = usuario.amigos[0].filter(amigo => amigo.pendiente === false);
       res.json(amigos);
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
@@ -213,7 +211,7 @@ app.get("/solicitudes/:userId", async (req, res) => {
     console.log(usuario);
 
     if (usuario) {
-      const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
+      const solicitudesPendientes = usuario.amigos[0].filter(amigo => amigo.pendiente === true);
       res.json(solicitudesPendientes);
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
