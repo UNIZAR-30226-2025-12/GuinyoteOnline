@@ -187,15 +187,16 @@ app.get("/amigos/:userId", async (req, res) => {
   try {
     const usuario = await Usuario.findOne(
       { correo: req.params.userId },
-      { amigos: { $elemMatch: { pendiente: false } } } // Filtrar solo amigos con pendiente: true
+      { amigos: 1 } // Filtrar solo amigos con pendiente: false
     );
     if (usuario) {
-      res.json(usuario.amigos);
+      const amigos = usuario.amigos.filter(amigo => amigo.pendiente === false);
+      res.json(amigos);
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error obteniendo solicitudes", error: error.message });
+    res.status(500).json({ message: "Error obteniendo amigos", error: error.message });
   }
 });
 
@@ -203,10 +204,12 @@ app.get("/solicitudes/:userId", async (req, res) => {
   try {
     const usuario = await Usuario.findOne(
       { correo: req.params.userId },
-      { amigos: { $elemMatch: { pendiente: true } } } // Filtrar solo amigos con pendiente: true
+      { amigos: 1 } // Obtener el campo 'amigos'
     );
+
     if (usuario) {
-      res.json(usuario.amigos);
+      const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
+      res.json(solicitudesPendientes);
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
     }
