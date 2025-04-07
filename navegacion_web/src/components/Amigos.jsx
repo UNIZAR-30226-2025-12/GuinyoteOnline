@@ -60,13 +60,13 @@ const Amigos = ({ show, handleBack, mail }) => {
                 <div className="friends-table-container">
                     {loading && <p>Cargando ...</p>}
                     {error && <p>Error al cargar los datos</p>}
-                    {data && !data.amigos && (
+                    {!data && !loading && (
                             <p>Todavía no tienes amigos</p>
                     )}
-                    {data && data.amigos && (
+                    {data && (
                     <table className="friends-table">
                         <tbody> 
-                            {data.amigos.map((data, index) => (
+                            {data.map((data, index) => (
                             <FriendsRow 
                                 key={index+1}
                                 img={data.foto_perfil}
