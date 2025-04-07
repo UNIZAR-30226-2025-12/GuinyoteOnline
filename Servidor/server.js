@@ -162,7 +162,7 @@ app.post("/usuarios/registro", async (req, res) => {
 app.post("/usuarios/inicioSesion", async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
-    const resultado = await Usuario.findOne({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1 });
+    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1 });
     if (resultado.length > 0) {
       res.status(202).json(resultado);
     }
