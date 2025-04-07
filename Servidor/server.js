@@ -215,7 +215,7 @@ app.get("/solicitudes/:userId", async (req, res) => {
     const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
 
     // Suponiendo que 'correo' es el identificador del amigo
-    const correosSolicitantes = solicitudesPendientes.map(amigo => amigo.correo);
+    const correosSolicitantes = solicitudesPendientes.map(amigo => amigo.idUsuario);
 
     // Buscar todos los usuarios relacionados con esas solicitudes
     const usuariosSolicitantes = await Usuario.find(
