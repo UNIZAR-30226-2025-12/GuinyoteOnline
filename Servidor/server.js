@@ -502,6 +502,10 @@ app.get("/amigos/:idUsuario", async (req, res) => {
 
     console.log('correosAmigos' + correosAmigos);
 
+    if (!Array.isArray(correosAmigos)) {
+      correosAmigos = [correosAmigos];
+    }
+
     const amigos = await Usuario.find(
       { correo: { $in: correosAmigos } },
       { nombre: 1, correo: 1, foto_perfil: 1 }
