@@ -71,7 +71,7 @@ app.get("/usuarios", async (req, res) => {
 app.post("/usuarios/registro", async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
-    const usuario = new Usuario({ nombre, correo, contrasena });
+    const usuario = new Usuario({ nombre, correo, contrasena, foto_perfil: "default.png" });
     await usuario.save();
     res.status(201).json(usuario);
   } catch (error) {
