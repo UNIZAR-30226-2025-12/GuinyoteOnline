@@ -57,7 +57,33 @@ app.get("/", (req, res) => {
   res.json({ message: "API de Guiñote funcionando" });
 });
 
-// Rutas de Usuario
+
+// * DONE Documentación y prueba de funcionalidad actual
+/**
+ * GET /usuarios
+ *
+ * Descripción:
+ * Esta ruta obtiene la lista completa de usuarios registrados en la base de datos.
+ *
+ * Parámetros de la solicitud:
+ * - No requiere parámetros en la URL ni en la query.
+ *
+ * Respuesta:
+ * - 200 OK: Devuelve un arreglo de objetos usuario en formato JSON.
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
 app.get("/usuarios", async (req, res) => {
   try {
     const usuarios = await Usuario.find();
@@ -67,7 +93,35 @@ app.get("/usuarios", async (req, res) => {
   }
 });
 
-// Autenticación y perfil
+// * DONE Documentación y prueba de funcionalidad actual
+/**
+ * POST /usuarios/registro
+ *
+ * Descripción:
+ * Esta ruta registra un nuevo usuario en la base de datos.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} nombre - Nombre del nuevo usuario.
+ * - @params {string} correo - Correo electrónico del nuevo usuario.
+ * - @params {string} contrasena - Contraseña del nuevo usuario.
+ *
+ * Respuesta:
+ * - 201 Created: Devuelve el contenido del nuevo usuario.
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * {
+ *   "correo": "pruebaRegistro@gmail.com",
+ *   "nombre": "pruebaRegistro",
+ *   "contrasena": "pruebaRegistro",
+ *   "foto_perfil": "default.png",
+ *   "nVictorias": 0,
+ *   "_id": "67f40268b679013fe7fa6548",
+ *   "amigos": [],
+ *   "__v": 0
+ * }
+ *
+ */
 app.post("/usuarios/registro", async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
@@ -79,10 +133,36 @@ app.post("/usuarios/registro", async (req, res) => {
   }
 });
 
+// * DONE Documentación y prueba de funcionalidad actual
+// ! NOT DONE Falta cifrar contraseña
+/**
+ * POST /usuarios/inicioSesion
+ *
+ * Descripción:
+ * Esta ruta se encarga de validar el inicio de sesión de los usuarios.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} correo - Correo electrónico del usuario.
+ * - @params {string} contrasena - Contraseña del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 401 Unauthorized: Devuelve error, no se ha podido iniciar sesión.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
 app.post("/usuarios/inicioSesion", async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
-    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1 });
+    const resultado = await Usuario.findOne({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1 });
     if (resultado.length > 0) {
       res.status(202).json(resultado);
     }
@@ -94,6 +174,31 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
   }
 })
 
+// ! NOT DONE Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * POST /usuarios/actualizacionPerfil/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de validar el inicio de sesión de los usuarios.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} correo - Correo electrónico del usuario.
+ * - @params {string} contrasena - Contraseña del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 401 Unauthorized: Devuelve error, no se ha podido iniciar sesión.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
 app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
   try {
     const { nombre, foto_perfil } = req.body;
@@ -107,6 +212,35 @@ app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
   }
 });
 
+// * DONE Documentación?
+// ! NOT DONE Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * GET /usuarios/perfil/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de recoger los datos del perfil del usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} id - Correo electrónico del usuario (Dentro de la ruta).
+ *  ! Dentro de la ruta
+ * 
+ * Respuesta:
+ * - 200 OK: Devuelve un objeto con la información del usuario.
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * {
+ *   "correo": "pruebaRegistro@gmail.com",
+ *   "nombre": "pruebaRegistro",
+ *   "contrasena": "pruebaRegistro",
+ *   "foto_perfil": "default.png",
+ *   "nVictorias": 0,
+ *   "_id": "67f40268b679013fe7fa6548",
+ *   "amigos": [],
+ *   "__v": 0
+ * }
+ *
+ */
 app.get("/usuarios/perfil/:id", async (req, res) => {
   try {
     const usuario = await Usuario.find({correo: req.params.id}, {amigos: 0});
@@ -116,7 +250,33 @@ app.get("/usuarios/perfil/:id", async (req, res) => {
   }
 });
 
-// Rutas de Ranking
+// * DONE Prueba de funcionalidad actual
+// ! NOT DONE Documentar la respuesta obtenida
+/**
+ * GET /rankings
+ *
+ * Descripción:
+ * Esta ruta se encarga obtener el listado de los 100 primeros usuarios del ranking.
+ *
+ * Parámetros de la solicitud:
+ * - No recibe parámetros en la URL ni en la query.
+ * 
+ * Respuesta:
+ * - 200 OK: Devuelve un arreglo con los .
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
 app.get("/rankings", async (req, res) => {
   try {
     const rankings = await Usuario.find({}, {foto_perfil: 1, nombre: 1, nVictorias: 1}).sort({ nVictorias: -1 }).limit(100);
@@ -126,13 +286,73 @@ app.get("/rankings", async (req, res) => {
   }
 });
 
-// Rutas de Amigos
+// * DONE Prueba de funcionalidad básica
+// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * POST /amigos/enviarSolicitud
+ *
+ * Descripción:
+ * Esta ruta se encarga enviar una solicitud a un usuario registrado.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idSolicitante - Correo electrónico del usuario que envía la solicitud.
+ * - @params {string} idSolicitado - Correo electrónico del usuario al que se le envía la solicitud.
+ * 
+ * Respuesta:
+ * - 201 Created: Se ha creado bien la solicitud o se ha añadido un nuevo amigo si tenías una petición de dicho usuario.
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
 app.post("/amigos/enviarSolicitud", async (req, res) => {
   try {
-    const { idUsuario, idAmigo } = req.body;
+    const { idSolicitante, idSolicitado } = req.body;
+
+    if (idSolicitante === idSolicitado) {
+      return res.status(400).json({ message: "No puedes enviarte una solicitud a ti mismo" });
+    }
+
+    const amigos = await Usuario.findOne(
+      { correo: idSolicitante }, { amigos: 1 }
+    )
+
+    if (amigos) {
+      // Si el usuario ya tiene una solicitud pendiente de amistad se hacen amigos
+      if (amigos.amigos.find(amigo => amigo.idUsuario === idSolicitado && amigo.pendiente)) {
+        await Usuario.findOneAndUpdate(
+          { correo: idSolicitado },
+          { $push: { amigos: {idUsuario: idSolicitante, pendiente: false} } }
+        );
+
+        await Usuario.findOneAndUpdate(
+          { correo: idSolicitante, "amigos.idUsuario": idUsuario },
+          { $set: { "amigos.$.pendiente": false} }
+        );
+
+        res.status(201).json({ message: "Tenías una solicitud pendiente, ahora son amigos" });
+        return;
+      }
+
+      // Si ya son amigos se manda error
+      if (amigos.amigos.find(amigo => amigo.idUsuario === idSolicitado && !amigo.pendiente)) {
+        return res.status(400).json({ message: "Este usuario ya es amigo tuyo" });
+      }
+    }
+
     await Usuario.findOneAndUpdate(
-      { correo: idUsuario },
-      { $push: { amigos: {idUsuario: idAmigo, pendiente: true} } }
+      { correo: idSolicitado },
+      { $push: { amigos: {idUsuario: idSolicitante, pendiente: true} } }
     );
     
     res.status(201).json({ message: "Solicitud enviada con éxito"});
@@ -141,17 +361,46 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
   }
 });
 
+
+// * DONE Prueba de funcionalidad actual
+// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * POST /amigos/aceptarSolicitud
+ *
+ * Descripción:
+ * Esta ruta se encarga de aceptar una solicitud de amistad de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idAceptante - Correo electrónico del usuario que acepta la solicitud.
+ * - @params {string} idSolicitante - Correo electrónico del usuario al que envío la solicitud.
+ * 
+ * Respuesta:
+ * - 202 OK: Devuelve un arreglo con los .
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
 app.post("/amigos/aceptarSolicitud", async (req, res) => {
   try {
-    const { idUsuario, idSolicitante } = req.body;
+    const { idAceptante, idSolicitante } = req.body;
     await Usuario.findOneAndUpdate(
-      { correo: idSolicitante, "amigos.idUsuario": idUsuario },
+      { correo: idAceptante, "amigos.idUsuario": idSolicitante },
       { $set: { "amigos.$.pendiente": false} }
     );
 
     await Usuario.findOneAndUpdate(
-      { correo: idUsuario },
-      { $push: { amigos: {idUsuario: idSolicitante, pendiente: false} } }
+      { correo: idSolicitante },
+      { $push: { amigos: {idUsuario: idAceptante, pendiente: false} } }
     )
     
     res.status(202).json({ message: "Solicitud aceptada con éxito"});
@@ -160,6 +409,35 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
   }
 });
 
+
+// * DONE Prueba de funcionalidad actual
+// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * POST /amigos/rechazarSolicitud
+ *
+ * Descripción:
+ * Esta ruta se encarga de rechazar una solicitud de amistad de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idAceptante - Correo electrónico del usuario que rechaza la solicitud.
+ * - @params {string} idSolicitante - Correo electrónico del usuario al que envío la solicitud.
+ * 
+ * Respuesta:
+ * - 202 OK: Devuelve un arreglo con los .
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
 app.post("/amigos/rechazarSolicitud", async (req, res) => {
   try {
     const { idUsuario, idSolicitante } = req.body;
@@ -174,20 +452,40 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-/*app.get("/amigos/:userId", async (req, res) => {
-  try {
-    const amigos = await Usuario.find({ correo: req.params.userId }, { correo: 1, amigos: 1 });
-    res.json(amigos);
-  } catch (error) {
-    res.status(500).json({ message: "Error obteniendo amigos", error: error.message });
-  }
-});*/
 
-app.get("/amigos/:userId", async (req, res) => {
+// * DONE Prueba de funcionalidad actual
+// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * POST /amigos/:idUsuario
+ *
+ * Descripción:
+ * Esta ruta se encarga de obtener los datos de los amigos del usuario :idUsuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idUsuario - Correo electrónico del usuario (En el path).
+ * 
+ * Respuesta:
+ * - 200 OK: Devuelve un arreglo con los .
+ * - 404 Not Found: Devuelve un objeto con un mensaje de error indicando que el usuario no fue encontrado.
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
+app.get("/amigos/:idUsuario", async (req, res) => {
   try {
     const usuario = await Usuario.find(
-      { correo: req.params.userId },
-      { amigos: 1 } // Filtrar solo amigos con pendiente: false
+      { correo: req.params.idUsuario },
+      { amigos: 1 }
     );
 
     if (usuario) {
@@ -201,10 +499,39 @@ app.get("/amigos/:userId", async (req, res) => {
   }
 });
 
-app.get("/solicitudes/:userId", async (req, res) => {
+
+// * DONE Prueba de funcionalidad actual
+// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+/**
+ * POST /solicitudes/:idUsuario
+ *
+ * Descripción:
+ * Esta ruta se encarga de obtener los datos de las solicitudes del usuario :idUsuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idUsuario - Correo electrónico del usuario (En el path).
+ * 
+ * Respuesta:
+ * - 200 OK: Devuelve un arreglo con los .
+ * - 404 Not Found: Devuelve un objeto con un mensaje de error indicando que el usuario no fue encontrado.
+ * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *     "_id": "607d1b2f531123456789abcd",
+ *     "nombre": "Juan Pérez",
+ *     "correo": "juan@example.com",
+ *     ...
+ *   },
+ *   ...
+ * ]
+ *
+ */
+app.get("/solicitudes/:idUsuario", async (req, res) => {
   try {
     const usuario = await Usuario.findOne(
-      { correo: req.params.userId },
+      { correo: req.params.idUsuario },
       { amigos: 1 }
     );
 
@@ -213,14 +540,10 @@ app.get("/solicitudes/:userId", async (req, res) => {
     }
 
     const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
-
-    // Suponiendo que 'correo' es el identificador del amigo
     const correosSolicitantes = solicitudesPendientes.map(amigo => amigo.idUsuario);
-
-    // Buscar todos los usuarios relacionados con esas solicitudes
     const usuariosSolicitantes = await Usuario.find(
       { correo: { $in: correosSolicitantes } },
-      { nombre: 1, correo: 1, foto_perfil: 1 } // Selecciona los campos que necesitas
+      { nombre: 1, correo: 1, foto_perfil: 1 }
     );
 
     res.json(usuariosSolicitantes);
