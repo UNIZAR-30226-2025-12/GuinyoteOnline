@@ -220,7 +220,7 @@ app.get("/solicitudes/:userId", async (req, res) => {
     // Buscar todos los usuarios relacionados con esas solicitudes
     const usuariosSolicitantes = await Usuario.find(
       { correo: { $in: correosSolicitantes } },
-      { nombre: 1, correo: 1, foto: 1 } // Selecciona los campos que necesitas
+      { nombre: 1, correo: 1, foto_perfil: 1 } // Selecciona los campos que necesitas
     );
 
     res.json(usuariosSolicitantes);
