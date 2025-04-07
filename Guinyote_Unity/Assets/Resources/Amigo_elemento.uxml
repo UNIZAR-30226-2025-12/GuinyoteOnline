@@ -1,0 +1,5 @@
+<UXML xmlns="UnityEngine.UIElements">
+    <VisualElement>
+        <Label name="Nombre_Amigo" text="Nombre del Amigo" style="font-size: 14px; margin: 5px;" />
+    </VisualElement>
+</UXML>

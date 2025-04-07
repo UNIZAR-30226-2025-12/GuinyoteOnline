@@ -34,10 +34,15 @@ namespace ConsultasBD
     }
 
     [System.Serializable]
-    public class Jugador
+    public class Usuario
     {
-        // Representa un jugador en el juego.
+        // Representa un usuario.
         public string idUsuario, nombre;
+    }
+
+    [System.Serializable]
+    public class Jugador : Usuario
+    {
         public int equipo, puntuacion;
     }
 
@@ -62,7 +67,7 @@ namespace ConsultasBD
         /// <summary>
         /// Evento que se activa al consultar la lista de amigos.
         /// </summary>
-        public static event Action OnAmigosConsultados;
+        public static event Action<Usuario[]> OnAmigosConsultados;
 
         /// <summary>
         /// Evento que se activa al iniciar sesión correctamente.
@@ -123,10 +128,14 @@ namespace ConsultasBD
             }
             else
             {
-                Debug.Log("Amigos: " + www.downloadHandler.text);
-                //POR TERMINAR
-                //Amigos[] amigos = JsonHelper.FromJson<Partida>(www.downloadHandler.text);
-                //OnAmigosConsultados?.Invoke(historial);             
+                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
+                Usuario[] amigos = JsonHelper.FromJson<Usuario>(www.downloadHandler.text);
+                Debug.Log("Amigos deserializados: " + amigos.Length);
+                foreach (var amigo in amigos)
+                {
+                    Debug.Log("Amigo: " + amigo.nombre);
+                }
+                OnAmigosConsultados?.Invoke(amigos);
             }
         }
 

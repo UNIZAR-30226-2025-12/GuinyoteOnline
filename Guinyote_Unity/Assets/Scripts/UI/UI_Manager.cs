@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
     private Button register_button_close;
     private Button login_button_close;
     public static Stack<string> lastScene = new Stack<string>();
-   private Button boton_IA;
-   private Button boton_reglas;
+    private Button boton_IA;
+    private Button boton_reglas;
     private Button boton_atras;
     private Button boton_1vs1;
     private Button boton_2vs2;
@@ -85,7 +85,7 @@ public class UIManager : MonoBehaviour
             boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
             boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
 
-                //REGISTRO
+            //REGISTRO
             tab_register = root.rootVisualElement.Q<Tab>("Register_Tab");
             register_button_close = tab_register.Q<Button>("exit_Button");
             register_button_close.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.None);
@@ -105,7 +105,7 @@ public class UIManager : MonoBehaviour
 
 
 
-                //LOGIN
+            //LOGIN
             tab_login = root.rootVisualElement.Q<Tab>("Login_Tab");
             login_button_close = tab_login.Q<Button>("exit_Button");
             login_button_close.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.None);
@@ -326,19 +326,29 @@ public class UIManager : MonoBehaviour
         tab_login.Q<Label>("error_Label").text = "Error: Usuario o contraseña incorrectos";
     }
 
-    void UpdateAmigos(/*Amigo[] amigos*/)
+    /// <summary>
+    /// Actualiza la lista de amigos en la interfaz de usuario.
+    /// Obtiene un ScrollView, limpia su contenido y añade elementos visuales para cada amigo proporcionado.
+    /// </summary>
+    /// <param name="amigos">Array de objetos Usuario que representan a los amigos.</param>
+    void UpdateAmigos(Usuario[] amigos)
     {
-        /*Debug.Log("Amigos: " + amigos.Length);
-        VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Amigo_elemento");
+        // Obtener el ScrollView donde se mostrarán los amigos
+        ScrollView friendsScroll = tab_amigos_list.Q<ScrollView>("Friends_Scroll");
+        friendsScroll.Clear(); // Limpiar el contenido actual del ScrollView
 
-        foreach (Amigo amigo in amigos)
+        // Cargar el recurso visual para representar a un amigo
+        VisualTreeAsset amigoAsset = Resources.Load<VisualTreeAsset>("Amigo_elemento");
+
+        // Iterar sobre la lista de amigos y añadirlos al ScrollView
+        foreach (Usuario amigo in amigos)
         {
-            VisualElement resultado = resultadoAsset.CloneTree();
-            SetFriendElementInfo(resultado, amigo.nombre, amigo.idUsuario);
-            tab_amigos_list.Q<ScrollView>("Friends_Scroll").Add(resultado);
-        }*/
+            VisualElement amigoElement = amigoAsset.CloneTree();
+            Label nombreAmigoLabel = amigoElement.Q<Label>("Nombre_Amigo");
+            nombreAmigoLabel.text = amigo.nombre;
+            friendsScroll.Add(amigoElement);
+        }
     }
-
 
     void beginGame(string tipo)
     {
@@ -365,7 +375,4 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
         Debug.Log("updateReference");
     }
-
-
-
 }
