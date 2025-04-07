@@ -492,7 +492,11 @@ app.get("/amigos/:idUsuario", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    console.log('amigos y solicitudes' + usuario.amigos);
+
     const listaAmigos = usuario.amigos.filter(amigo => amigo.pendiente === false);
+
+    console.log('listaAmigos' + listaAmigos);
 
     const correosAmigos = listaAmigos?.map(amigo => amigo.idUsuario);
 
