@@ -58,15 +58,13 @@ const Amigos = ({ show, handleBack, mail }) => {
 
             <> 
                 <div className="friends-table-container">
-                    <table className="friends-table">
                     {loading && <p>Cargando ...</p>}
                     {error && <p>Error al cargar los datos</p>}
                     {data && !data.amigos && (
-                        <tbody>
                             <p>Todavía no tienes amigos</p>
-                        </tbody>
                     )}
                     {data && data.amigos && (
+                    <table className="friends-table">
                         <tbody> 
                             {data.amigos.map((data, index) => (
                             <FriendsRow 
@@ -77,8 +75,8 @@ const Amigos = ({ show, handleBack, mail }) => {
                             />
                             ))}
                         </tbody>
-                    )}
                     </table>
+                )}
                 </div>
                 </>
             

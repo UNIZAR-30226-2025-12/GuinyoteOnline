@@ -26,8 +26,8 @@ class LoginModal extends Component {
                     <h2>Inicio de Sesión</h2>
                     <form onSubmit={handleLoginSubmit} className='modal-form'>
                         <label>
-                            Usuario:
-                            <input type="text" name="username" />
+                            Correo electrónico:
+                            <input type="text" name="mail" />
                         </label>
                         <label>
                             Contraseña:

@@ -92,8 +92,6 @@ function Homepage() {
     const password = event.target.password.value;
 
     const inputData = { nombre: username, correo: mail, contrasena: password };
-    alert("Mensaje enviado: " + mail + " --- " + username + " --- " + password);
-
     // Llamar a postData y esperar que se complete
     const response = await postData(inputData, register_url); // Llamada a la API
 
@@ -105,17 +103,16 @@ function Homepage() {
       setIsUserRegistered(true);
       setShowRegisterModal(false);
       setUsername(username);
+      setMail(mail);
     }
   };
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-    const username = event.target.username.value;
+    const mail = event.target.mail.value;
     const password = event.target.password.value;
 
-    const inputData = ({correo: username, contrasena: password});
-  
-    alert("Mensaje enviado" + username + " --- " + password);
+    const inputData = ({correo: mail, contrasena: password});
 
     const response = await postData(inputData, login_url);
 
@@ -126,7 +123,8 @@ function Homepage() {
       console.log('Respuesta:', response.responseData);
       setIsUserRegistered(true);
       setShowLoginModal(false);
-      setUsername(username);
+      setUsername(response.responseData[0].nombre);
+      setMail(mail);
     }
   };
 
@@ -139,9 +137,7 @@ function Homepage() {
   }
 
   const handlePartidaOfflineClick = () => {
-
-    navigate('/offline_match'); // Necesitamos pasar el contexto
-    
+    navigate('/offline_match'); // Necesitamos pasar el contexto 
   }
 
   return (
@@ -156,7 +152,7 @@ function Homepage() {
       <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
       <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
       <RankingModal show={showRanking} handleClose={handleRankingModalClose} />
-      <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={username}/>
+      <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
     </div>
   )
 }

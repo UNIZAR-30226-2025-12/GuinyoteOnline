@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import backButton from '/src/assets/back_button.png';
 import useFetch from '../customHooks/useFetch';
+import SolicitudesRow from './SolicitudesRow';
 
 const Solicitudes = ({ show, handleBack, mail }) => {
 
@@ -23,11 +24,12 @@ const Solicitudes = ({ show, handleBack, mail }) => {
                 {loading && <p>Loading...</p>}
                 {error && <p>Error: {error.message}</p>}
                 {data && data.length > 0 && (
-                    data.map((solicitud, index) => (
-                        <div key={index} className='friend-item'>
-                            {solicitud.idUsuario}
-                        </div>
+                    data.map((solicitud) => (
+                        <SolicitudesRow foto_perfil={solicitud.foto_perfil} nombre={solicitud.nombre} mail={solicitud.correo} myMail={mail}/>
                     ))
+                )}
+                {data && data.length === 0 && (
+                    <p>No tienes solicitudes de amistad.</p>
                 )}
             </div>  
         </> : null

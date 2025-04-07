@@ -47,9 +47,9 @@ function RankingModal({ show, handleClose }) {
                         ))}
                         </tbody>
                     )}
+                    </table>
                     {loading && <p>Cargando ...</p>}
                     {error && <p>Error al cargar los datos</p>}
-                    </table>
                 </div>
             </div>
         </div>

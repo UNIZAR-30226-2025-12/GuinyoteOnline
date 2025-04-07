@@ -1,0 +1,89 @@
+.solicitudes-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+}
+
+.solicitudes-row img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.solicitudes-row .solicitud-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+}
+
+.solicitudes-row .actions {
+  display: flex;
+  gap: 10px;
+}
+
+.solicitudes-row .actions button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.solicitudes-row .actions .accept-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.solicitudes-row .actions .accept-btn:hover {
+  background-color: #45a049;
+}
+
+.solicitudes-row .actions .reject-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.solicitudes-row .actions .reject-btn:hover {
+  background-color: #e53935;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    .solicitudes-row {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #363636;
+      }
+
+    .modal-exit-button {
+        background-color: #242424;
+        color: white;
+    }
+
+    .ranking-overlay {
+        background-color: #242424;
+    }
+
+    .ranking-table th {
+        background-color: #242424;
+        color: white;
+    }
+
+    .ranking-table td {
+        color: white;
+    }
+
+    .ranking-table tr:nth-child(even) {
+        background-color: #444;
+    }
+
+    .ranking-table tr:nth-child(odd) {
+        background-color: #333;
+    }
+}
