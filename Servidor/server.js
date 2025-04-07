@@ -492,27 +492,22 @@ app.get("/amigos/:idUsuario", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    console.log('amigos y solicitudes' + usuario.amigos);
-
     const listaAmigos = usuario.amigos.filter(amigo => amigo.pendiente === false);
+    
+    console.log('listaAmigos --> ' + listaAmigos);
+    
+    const correosAmigos = listaAmigos.map(amigo => amigo.idUsuario);
 
-    console.log('listaAmigos' + listaAmigos);
+    console.log('correosAmigos --> ' + correosAmigos);
 
-    const correosAmigos = listaAmigos?.map(amigo => amigo.idUsuario);
-
-    console.log('correosAmigos' + correosAmigos);
-
-    if (!Array.isArray(correosAmigos)) {
-      correosAmigos = [correosAmigos];
-    }
-
-    const amigos = await Usuario.find(
+    const amigosList = await Usuario.find(
       { correo: { $in: correosAmigos } },
       { nombre: 1, correo: 1, foto_perfil: 1 }
     );
     
-    res.json(amigos);
+    console.log('amigosList --> ' + amigosList);
 
+    res.json(amigosList);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo amigos", error: error.message });
   }
