@@ -203,23 +203,32 @@ app.get("/amigos/:userId", async (req, res) => {
 
 app.get("/solicitudes/:userId", async (req, res) => {
   try {
-    const usuario = await Usuario.find(
+    const usuario = await Usuario.findOne(
       { correo: req.params.userId },
-      { amigos: 1 } // Obtener el campo 'amigos'
+      { amigos: 1 }
     );
 
-    console.log(usuario);
-
-    if (usuario) {
-      const solicitudesPendientes = usuario[0].amigos.filter(amigo => amigo.pendiente === true);
-      res.json(solicitudesPendientes);
-    } else {
-      res.status(404).json({ message: "Usuario no encontrado" });
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
+    const solicitudesPendientes = usuario.amigos.filter(amigo => amigo.pendiente === true);
+
+    // Suponiendo que 'correo' es el identificador del amigo
+    const correosSolicitantes = solicitudesPendientes.map(amigo => amigo.correo);
+
+    // Buscar todos los usuarios relacionados con esas solicitudes
+    const usuariosSolicitantes = await Usuario.find(
+      { correo: { $in: correosSolicitantes } },
+      { nombre: 1, correo: 1, foto: 1 } // Selecciona los campos que necesitas
+    );
+
+    res.json(usuariosSolicitantes);
   } catch (error) {
     res.status(500).json({ message: "Error obteniendo solicitudes", error: error.message });
   }
 });
+
 
 // Rutas de Partida y Sala
 app.post("/salas/crear", async (req, res) => {
