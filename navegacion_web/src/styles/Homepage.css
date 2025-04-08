@@ -47,6 +47,6 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.5;  /* Aplica opacidad solo a la imagen de fondo */
+  opacity: 0.6;  /* Aplica opacidad solo a la imagen de fondo */
   z-index: -1;  /* Coloca la capa de fondo detrás del contenido */
 }

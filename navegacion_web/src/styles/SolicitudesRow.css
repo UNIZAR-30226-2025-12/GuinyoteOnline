@@ -8,6 +8,10 @@
   transition: background-color 0.3s ease;
 }
 
+.solicitudes-row:hover {
+  background-color: #f1f1f1; /* Light mode hover effect */
+}
+
 .solicitudes-row img {
   width: 40px;
   height: 40px;
@@ -18,72 +22,92 @@
 .solicitudes-row .solicitud-label {
   font-size: 16px;
   font-weight: 500;
-  color: white;
+  color: black;
 }
 
-.solicitudes-row .actions {
+.solicitudes-row .solicitud-buttons {
   display: flex;
   gap: 10px;
 }
 
-.solicitudes-row .actions button {
+.solicitudes-row .btn-accept, .solicitudes-row .btn-decline {
   padding: 5px 10px;
   font-size: 14px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.solicitudes-row .actions .accept-btn {
+.solicitudes-row .btn-accept {
   background-color: #4caf50;
   color: white;
 }
 
-.solicitudes-row .actions .accept-btn:hover {
+.solicitudes-row .btn-accept:hover {
   background-color: #45a049;
 }
 
-.solicitudes-row .actions .reject-btn {
+.solicitudes-row .btn-decline {
   background-color: #f44336;
   color: white;
 }
 
-.solicitudes-row .actions .reject-btn:hover {
+.solicitudes-row .btn-decline:hover {
   background-color: #e53935;
 }
 
+.solicitudes-row .solicitud-response {
+  font-size: 14px;
+  color: #555;
+}
 
+/* Dark mode styles */
 @media (prefers-color-scheme: dark) {
-    .solicitudes-row {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        background-color: #363636;
-      }
+  .solicitudes-row {
+    background-color: #333;
+    border-bottom: 1px solid #555;
+    border-radius: 5px;
+  }
 
-    .modal-exit-button {
-        background-color: #242424;
-        color: white;
-    }
+  .solicitudes-row:hover {
+    background-color: #424242; /* Dark mode hover effect */
+  }
 
-    .ranking-overlay {
-        background-color: #242424;
-    }
+  .solicitudes-row .solicitud-label {
+    color: #ddd;
+  }
 
-    .ranking-table th {
-        background-color: #242424;
-        color: white;
-    }
+  .solicitudes-row .btn-accept {
+    background-color: #45a049;
+  }
 
-    .ranking-table td {
-        color: white;
-    }
+  .solicitudes-row .btn-decline {
+    background-color: #e53935;
+  }
 
-    .ranking-table tr:nth-child(even) {
-        background-color: #444;
-    }
+  .modal-exit-button {
+    background-color: #242424;
+    color: white;
+  }
 
-    .ranking-table tr:nth-child(odd) {
-        background-color: #333;
-    }
+  .ranking-overlay {
+    background-color: #242424;
+  }
+
+  .ranking-table th {
+    background-color: #242424;
+    color: white;
+  }
+
+  .ranking-table td {
+    color: white;
+  }
+
+  .ranking-table tr:nth-child(even) {
+    background-color: #444;
+  }
+
+  .ranking-table tr:nth-child(odd) {
+    background-color: #333;
+  }
 }

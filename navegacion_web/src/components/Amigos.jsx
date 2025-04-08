@@ -12,36 +12,29 @@ const Amigos = ({ show, handleBack, mail }) => {
 
     const { data, loading, error, fetchData } = useFetch('https://guinyoteonline-hkio.onrender.com/amigos/' + mail);
 
-    const [filter, setFilter] = useState('');
     const [showAddFriendModal, setShowAddFriendModal] = useState(false);
     const [dataShown, setDataShown] = useState(null);
 
     useEffect(() => {
         if (show) {
-            console.log(mail);
             fetchData();
         }
     }, [show]);
 
-    useEffect (() => {
+    useEffect(() => {
         if (data) {
             setDataShown(data);
         }
-    }, [data])
+    }, [data]);
 
-    useEffect(() => {
-        if (filter != '') {
-            console.log('Filter changed:', filter);
-            console.log('Mail:', mail);
-            setDataShown(data.filter((friend) => friend.correo.toLowerCase().includes(filter.toLowerCase())));
+    function handleOnChange(inputValue) {
+
+        if (data && inputValue !== '') {
+            const filteredData = data.filter((friend) => friend.correo.toLowerCase().startsWith(inputValue.toLowerCase()));
+            setDataShown(filteredData);
         } else {
             setDataShown(data);
         }
-    }, [filter]);
-
-    function handleOnChange(inputValue) {
-        console.log('Input value:', inputValue);
-        setFilter(inputValue);
     }
 
     function handleAddFriendClose() {

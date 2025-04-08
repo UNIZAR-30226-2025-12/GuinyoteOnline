@@ -20,16 +20,26 @@ const Solicitudes = ({ show, handleBack, mail }) => {
             </button>
             <h2 className='friend-list-title'>Solicitudes de amistad</h2>
         
-            <div className='friend-list'>
+            <div className="friends-table-container">
                 {loading && <p>Loading...</p>}
                 {error && <p>Error: {error.message}</p>}
-                {data && data.length > 0 && (
-                    data.map((solicitud) => (
-                        <SolicitudesRow foto_perfil={solicitud.foto_perfil} nombre={solicitud.nombre} mail={solicitud.correo} myMail={mail}/>
-                    ))
-                )}
                 {data && data.length === 0 && (
                     <p>No tienes solicitudes de amistad.</p>
+                )}
+                {data && data.length > 0 && (
+                    <table className="friends-table">
+                        <tbody>
+                            {data.map((solicitud, index) => (
+                                <SolicitudesRow 
+                                    key={index+1}
+                                    foto_perfil={solicitud.foto_perfil} 
+                                    nombre={solicitud.nombre} 
+                                    mail={solicitud.correo} 
+                                    myMail={mail}
+                                />
+                            ))}
+                        </tbody>
+                    </table>
                 )}
             </div>  
         </> : null

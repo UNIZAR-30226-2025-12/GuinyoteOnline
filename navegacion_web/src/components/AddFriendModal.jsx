@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import usePost from '../customHooks/usePost';
-import '/src/styles/LogRegModal.css';
+import '/src/styles/AddFriendModal.css';
 
 const AddFriendModal = ({ handleClose, mail }) => {
 
@@ -12,8 +12,8 @@ const AddFriendModal = ({ handleClose, mail }) => {
         e.preventDefault();
         
         const data = {
-            idUsuario: mail,
-            idAmigo: friendName
+            idSolicitante: mail,
+            idSolicitado: friendName
         };
 
         const response = await postData(data, '');
@@ -29,10 +29,13 @@ const AddFriendModal = ({ handleClose, mail }) => {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h1>Enviar solicitud</h1>
+                <button className='modal-exit-button' onClick={handleClose} >
+                    <img src="https://img.icons8.com/material-rounded/24/000000/close-window.png" alt="Cerrar" />
+                </button>
+                <h3>Enviar solicitud</h3>
                 <form onSubmit={handleSubmit}>
                     <label>
-                        Friend's Name:
+                        Id de amigo:
                         <input
                             type="text"
                             value={friendName}

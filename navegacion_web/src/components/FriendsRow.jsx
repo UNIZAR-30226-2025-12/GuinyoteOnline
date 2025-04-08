@@ -10,11 +10,13 @@ const FriendsRow = ({ img, username, mail, onClickOptions }) => {
 
     return (
         <tr key={mail} className='friend-row'>
-            <img src={assetsUrl + img} alt="avatar" />
-            <p>{username}</p>
-            <button onClick={handleOnClick} className='friend-row-options'>
-                <img src={assetsUrl + "options.png"} alt="options.png" />
-            </button>
+            <td><img src={assetsUrl + img} alt="avatar" /></td>
+            <td><p>{username}</p></td>
+            <td>
+                <button onClick={handleOnClick} className='friend-row-options'>
+                    <img src={assetsUrl + "options.png"} alt="options.png" />
+                </button>
+            </td>
         </tr>
     );
 };

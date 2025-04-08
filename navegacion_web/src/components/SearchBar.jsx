@@ -3,14 +3,12 @@ import '/src/styles/SearchBar.css';
 
 const SearchBar = ({ handleOnChange }) => {
 
-    const [value, setValue] = React.useState('');
+    const [value, setValue] = useState('');
 
     const onInputChange = (event) => {
         const newValue = event.target.value;
         setValue(newValue);
-
         handleOnChange(newValue);
-
     };
 
     return (
@@ -19,7 +17,7 @@ const SearchBar = ({ handleOnChange }) => {
                 type="text"
                 value={value}
                 onChange={onInputChange}
-                placeholder="Search..."
+                placeholder="Buscar amigo..."
                 autoFocus
             />
         </div>

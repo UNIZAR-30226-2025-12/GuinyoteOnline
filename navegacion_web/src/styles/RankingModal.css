@@ -52,7 +52,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5); /* Match the friends modal overlay */
     z-index: 999;
     display: block;
 }
@@ -102,16 +102,19 @@
 @media (prefers-color-scheme: dark) {
     .ranking-modal {
         background-color: #242424;
-        box-shadow: -2px 0 5px rgba(255, 255, 255, 0.2);
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
     }
 
     .modal-exit-button {
         background-color: #242424;
-        color: white;
+    }
+    
+    .modal-exit-button img {
+        filter: invert(1);
     }
 
     .ranking-overlay {
-        background-color: #242424;
+        background-color: rgba(0, 0, 0, 0.5); /* Match the ranking overlay background */
     }
 
     .ranking-table th {
