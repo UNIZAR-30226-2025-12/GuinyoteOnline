@@ -14,6 +14,7 @@ const Amigos = ({ show, handleBack, mail }) => {
 
     const [filter, setFilter] = useState('');
     const [showAddFriendModal, setShowAddFriendModal] = useState(false);
+    const [dataShown, setDataShown] = useState(null);
 
     useEffect(() => {
         if (show) {
@@ -22,11 +23,19 @@ const Amigos = ({ show, handleBack, mail }) => {
         }
     }, [show]);
 
+    useEffect (() => {
+        if (data) {
+            setDataShown(data);
+        }
+    }, [data])
+
     useEffect(() => {
         if (filter != '') {
             console.log('Filter changed:', filter);
             console.log('Mail:', mail);
-            //update_list(filter);
+            setDataShown(data.filter((friend) => friend.correo.toLowerCase().includes(filter.toLowerCase())));
+        } else {
+            setDataShown(data);
         }
     }, [filter]);
 
@@ -60,13 +69,13 @@ const Amigos = ({ show, handleBack, mail }) => {
                 <div className="friends-table-container">
                     {loading && <p>Cargando ...</p>}
                     {error && <p>Error al cargar los datos</p>}
-                    {!data && !loading && (
+                    {!dataShown && !loading && (
                             <p>Todavía no tienes amigos</p>
                     )}
-                    {data && (
+                    {dataShown && (
                     <table className="friends-table">
                         <tbody> 
-                            {data.map((data, index) => (
+                            {dataShown.map((data, index) => (
                             <FriendsRow 
                                 key={index+1}
                                 img={data.foto_perfil}
