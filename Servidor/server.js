@@ -393,6 +393,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
 app.post("/amigos/aceptarSolicitud", async (req, res) => {
   try {
     const { idAceptante, idSolicitante } = req.body;
+
     await Usuario.findOneAndUpdate(
       { correo: idAceptante, "amigos.idUsuario": idSolicitante },
       { $set: { "amigos.$.pendiente": false} }
@@ -419,7 +420,7 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
  * Esta ruta se encarga de rechazar una solicitud de amistad de un usuario.
  *
  * Parámetros de la solicitud:
- * - @params {string} idAceptante - Correo electrónico del usuario que rechaza la solicitud.
+ * - @params {string} idRechazante - Correo electrónico del usuario que rechaza la solicitud.
  * - @params {string} idSolicitante - Correo electrónico del usuario al que envío la solicitud.
  * 
  * Respuesta:
@@ -440,10 +441,10 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
  */
 app.post("/amigos/rechazarSolicitud", async (req, res) => {
   try {
-    const { idUsuario, idSolicitante } = req.body;
+    const { idRechazante, idSolicitante } = req.body;
     await Usuario.findOneAndUpdate(
-      { correo: idSolicitante },
-      { $pull: { amigos: {idUsuario: idUsuario, pendiente: true} } }
+      { correo: idRechazante },
+      { $pull: { amigos: {idUsuario: idSolicitante, pendiente: true} } }
     );
     
     res.status(203).json({ message: "Solicitud rechazada con éxito"});
