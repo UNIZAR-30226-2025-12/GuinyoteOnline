@@ -336,7 +336,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
         );
 
         await Usuario.findOneAndUpdate(
-          { correo: idSolicitante, "amigos.idUsuario": idUsuario },
+          { correo: idSolicitante, "amigos.idUsuario": idSolicitado },
           { $set: { "amigos.$.pendiente": false} }
         );
 
