@@ -1,0 +1,98 @@
+.friends-table-container {
+    margin: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-height: calc(100% - 6rem);
+    overflow-y: auto;
+}
+
+.friends-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.friends-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.friends-table-container p {
+    text-align: center;
+    font-size: 1rem;
+    color: #555;
+}
+
+.friends-table-container p.loading {
+    font-style: italic;
+}
+
+.friend-list-back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    cursor: pointer;
+    background-color: white;
+    border: none;
+}
+
+.friend-list-back-button img {
+    width: 24px;
+    height: 24px;
+}
+
+.friend-list-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.friends-table-container .friends-table tr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.friends-table-container .friends-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .friends-table-container {
+        background-color: #242424;
+        box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+    }
+
+    .friends-table-container p {
+        color: #ddd;
+    }
+
+    .friend-list-title {
+        color: white;
+    }
+
+    .friends-table-container .friends-table tr {
+        background-color: #333;
+        border-bottom: 1px solid #555;
+    }
+
+    .friends-table-container .friends-table tr:hover {
+        background-color: #444;
+    }
+
+    .friend-list-back-button {
+        background-color: #242424;
+    }
+
+    .friend-list-back-button img {
+        filter: invert(1);
+    }
+}

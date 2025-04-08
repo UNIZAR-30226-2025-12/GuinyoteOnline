@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import backButton from '/src/assets/back_button.png';
 import '/src/styles/FriendsModal.css';
-//import '/src/styles/Amigos.css';
+import '/src/styles/Amigos.css';
 import useFetch from '../customHooks/useFetch';
 import SearchBar from './SearchBar';
 import AddFriendButton from './buttons/AddFriendButton';
@@ -88,9 +88,6 @@ const Amigos = ({ show, handleBack, mail }) => {
                 )}
                 </div>
                 </>
-            
-            {/* Hay que incluir el muestreo de la lista de amigos, un componente para cada amigo, el búscador por username, si puede ser que cargue elementos dinámicamente para ahorrar recursos */}
-
         </>
     );
 };
