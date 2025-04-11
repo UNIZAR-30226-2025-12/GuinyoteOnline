@@ -70,6 +70,44 @@ namespace ConsultasBD
         public static event Action<Usuario[]> OnAmigosConsultados;
 
         /// <summary>
+        /// Evento que se activa al consultar la lista de solicitudes de amistad.
+        /// </summary>
+        public static event Action<Usuario[]> OnSolicitudesAmigosConsultadas;
+
+
+        /// <summary>
+        /// Evento que se activa al  enviar una solicitud de amistad.
+        /// </summary>
+        public static event Action OnEnviarSolicitudAmistad;
+
+        /// <summary>
+        /// Evento que se activa al ocurrir una error al enviar una solicitud de amistad.
+        /// </summary>
+        public static event Action OnErrorEnviarSolicitudAmistad;
+
+        /// <summary>
+        /// Evento que se activa al aceptar una solicitud de amistad.
+        /// </summary>
+        public static event Action OnAceptarSolicitudAmistad;
+
+        /// <summary>
+        /// Evento que se activa al ocurrir un error al  aceptar una solicitud de amistad.
+        /// </summary>
+        public static event Action OnErrorAceptarSolicitudAmistad;
+
+        /// <summary>
+        /// Evento que se activa al rechazar una solicitud de amistad..
+        /// </summary>
+        public static event Action OnRechazarSolicitudAmistad;
+
+        /// <summary>
+        /// Evento que se activa al ocurrir un error rechazar una solicitud de amistad..
+        /// </summary>
+        public static event Action OnErrorRechazarSolicitudAmistad;
+
+
+
+        /// <summary>
         /// Evento que se activa al iniciar sesión correctamente.
         /// </summary>
         public static event Action<string> OnInicioSesion;
@@ -140,6 +178,34 @@ namespace ConsultasBD
         }
 
         /// <summary>
+        /// Consulta la lista de solicitudes de amistad de un usuario por su ID.
+        /// </summary>
+        /// <param name="id">El ID del usuario.</param>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator GetSolicitudesAmistadUsuario(string id)
+        {
+            Debug.Log("Consultando Solicitudes de amistad...");
+            UnityWebRequest www = UnityWebRequest.Get(address + "/solicitudes/" + id);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+            }
+            else
+            {
+                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
+                Usuario[] solicitudes = JsonHelper.FromJson<Usuario>(www.downloadHandler.text);
+                Debug.Log("Solicitudes deserializadas: " + solicitudes.Length);
+                foreach (var solicitud in solicitudes)
+                {
+                    Debug.Log("Solicitud: " + solicitud.nombre);
+                }
+                OnSolicitudesAmigosConsultadas?.Invoke(solicitudes);
+            }
+        }
+
+        /// <summary>
         /// Intenta iniciar sesión con las credenciales proporcionadas.
         /// </summary>
         /// <param name="id">El ID del usuario.</param>
@@ -192,6 +258,88 @@ namespace ConsultasBD
                 OnRegistroUsuario?.Invoke();
             }
         }
+
+         /// <summary>
+        /// Envía una solicitud de amistad con los datos proporcionados.
+        /// </summary>
+        /// <param name="idAceptante">El ID del usuario que solicitó la amistad.</param>
+        /// <param name="idSolicitante">El ID del usuario que aceptó la solicitud de amistad.</param>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator EnviarSolicitudAmistad(string idAceptante, string idSolicitante)
+        {
+            Debug.Log("Enviando solicitud de amistad...");
+            Debug.Log("idAceptante: " + idAceptante);
+            Debug.Log("idSolicitante: " + idSolicitante);
+            WWWForm form = new WWWForm();
+            form.AddField("idAceptante", idAceptante);
+            form.AddField("idSolicitante", idSolicitante);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/amigos/enviarSolicitud/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorEnviarSolicitudAmistad?.Invoke();
+            }
+            else
+            {
+                Debug.Log("Mensaje: " + www.downloadHandler.text);
+                OnEnviarSolicitudAmistad?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Acepta una solicitud de amistad con los datos proporcionados.
+        /// </summary>
+        /// <param name="idAceptante">El ID del usuario que solicitó la amistad.</param>
+        /// <param name="idSolicitante">El ID del usuario que aceptó la solicitud de amistad.</param>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator AceptarSolicitudAmistad(string idAceptante, string idSolicitante)
+        {
+            Debug.Log("Aceptando solicitud de amistad...");
+            WWWForm form = new WWWForm();
+            form.AddField("idAceptante", idAceptante);
+            form.AddField("idSolicitante", idSolicitante);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/amigos/aceptarSolicitud/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorAceptarSolicitudAmistad?.Invoke();
+            }
+            else
+            {
+                OnAceptarSolicitudAmistad?.Invoke();
+            }
+        }
+
+        /// <summary>
+        /// Acepta una solicitud de amistad con los datos proporcionados.
+        /// </summary>
+        /// <param name="idAceptante">El ID del usuario que solicitó la amistad.</param>
+        /// <param name="idSolicitante">El ID del usuario que aceptó la solicitud de amistad.</param>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator RechazarSolicitudAmistad(string idRechazante, string idSolicitante)
+        {
+            Debug.Log("Aceptando solicitud de amistad...");
+            WWWForm form = new WWWForm();
+            form.AddField("idRechazante", idRechazante);
+            form.AddField("idSolicitante", idSolicitante);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/amigos/rechazarSolicitud/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorRechazarSolicitudAmistad?.Invoke();
+            }
+            else
+            {
+                OnRechazarSolicitudAmistad?.Invoke();
+            }
+        }
+
 
         /// <summary>
         /// Muestra los campos de un array de objetos en la consola.

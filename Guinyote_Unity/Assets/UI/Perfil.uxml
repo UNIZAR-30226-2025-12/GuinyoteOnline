@@ -3,4 +3,5 @@
     <engine:Button text="Historial de partidas" name="History_Button" style="position: absolute; top: 222px; left: 30px; width: 192px;" />
     <engine:Button icon-image="project://database/Assets/Resources/Sprites/UI/atras.png?fileID=2800000&amp;guid=e1424596349e675458de8a62305ce426&amp;type=3#atras" name="atras" style="width: 93px; height: 78px; background-color: rgba(188, 188, 188, 0); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); position: absolute;" />
     <engine:ScrollView name="History_Scroll" horizontal-scroller-visibility="Auto" vertical-scroller-visibility="Auto" style="position: absolute; height: 361px; width: 526px; top: 40px; left: 305px; align-items: stretch; display: flex;" />
+    <engine:Button text="Cerrar sesión" name="LogOut_Button" style="position: absolute; top: 325px; left: 65px;" />
 </engine:UXML>

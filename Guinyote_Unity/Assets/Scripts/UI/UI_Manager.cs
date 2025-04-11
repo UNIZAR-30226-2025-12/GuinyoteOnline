@@ -36,10 +36,12 @@ public class UIManager : MonoBehaviour
     private TextField login_field_password;
     private Tab tab_amigos;
     private Tab tab_amigos_list;
+    private Tab tab_solicitudes_amigos;
     private Button boton_amigos;
     private Button boton_perfil;
     private Button boton_historial;
     private ScrollView scroll_historial;
+    private Button boton_logOut;
 
     void Awake()
     {
@@ -65,6 +67,9 @@ public class UIManager : MonoBehaviour
         Consultas.OnRegistroUsuario += RegistroUsuario;
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
+        Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
+        Consultas.OnAceptarSolicitudAmistad += () => UpdateSolicitudesAmigos(null);
+        Consultas.OnRechazarSolicitudAmistad += () => UpdateSolicitudesAmigos(null);    
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -80,6 +85,7 @@ public class UIManager : MonoBehaviour
         if(currentScene.name == "Inicio"){
             if(isLogged){
                 StartCoroutine(Consultas.GetAmigosUsuario(username));
+                StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
             }
             //INICIO
             boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
@@ -139,6 +145,7 @@ public class UIManager : MonoBehaviour
             //AMIGOS
             tab_amigos = root.rootVisualElement.Q<Tab>("Friends_tab");
             tab_amigos_list = root.rootVisualElement.Q<Tab>("Friends_list_tab");
+            tab_solicitudes_amigos = root.rootVisualElement.Q<Tab>("Solicitudes_list_tab");
 
             boton_amigos = root.rootVisualElement.Q<Button>("Friends_Button");
             boton_amigos.RegisterCallback<ClickEvent>(ev => {
@@ -151,6 +158,10 @@ public class UIManager : MonoBehaviour
                 tab_amigos.style.display = DisplayStyle.None; 
                 tab_amigos_list.style.display = DisplayStyle.Flex; 
             });
+            tab_amigos.Q<Button>("Solicitudes_Button").RegisterCallback<ClickEvent>(ev => {
+                tab_amigos.style.display = DisplayStyle.None; 
+                tab_solicitudes_amigos.style.display = DisplayStyle.Flex; 
+            });
             tab_amigos.Q<Button>("close_Button").RegisterCallback<ClickEvent>(ev => { 
                 root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.None; 
                 tab_amigos.style.display = DisplayStyle.None; 
@@ -158,6 +169,14 @@ public class UIManager : MonoBehaviour
             tab_amigos_list.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
                 tab_amigos.style.display = DisplayStyle.Flex; 
                 tab_amigos_list.style.display = DisplayStyle.None; 
+            });
+            tab_amigos_list.Q<Button>("addFriend_Button").RegisterCallback<ClickEvent>(ev => { 
+                String nombre = tab_amigos_list.Q<TextField>("friend_Field").value;
+                StartCoroutine(Consultas.EnviarSolicitudAmistad(username, nombre));
+            });
+            tab_solicitudes_amigos.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
+                tab_amigos.style.display = DisplayStyle.Flex; 
+                tab_solicitudes_amigos.style.display = DisplayStyle.None; 
             });
         } else if(currentScene.name == "Partida_IA"){
             //PARTIDA IA
@@ -175,6 +194,12 @@ public class UIManager : MonoBehaviour
         else if (currentScene.name == "Perfil")
         {
             //PERFIL
+            boton_logOut = root.rootVisualElement.Q<Button>("LogOut_Button");
+            boton_logOut.RegisterCallback<ClickEvent>(ev => {
+                isLogged = false;
+                ChangeScene("Inicio");
+            });
+
             boton_perfil = root.rootVisualElement.Q<Button>("Profile_Button");
             boton_perfil.RegisterCallback<ClickEvent>(ev => MostrarPerfil());
             boton_historial = root.rootVisualElement.Q<Button>("History_Button");
@@ -349,6 +374,39 @@ public class UIManager : MonoBehaviour
             friendsScroll.Add(amigoElement);
         }
     }
+
+    void UpdateSolicitudesAmigos(Usuario[] solicitudes)
+    {
+        // Obtener el ScrollView donde se mostrarán las solicitudes de amistad
+        ScrollView friendsScroll = tab_solicitudes_amigos.Q<ScrollView>("Friends_Scroll");
+        friendsScroll.Clear(); // Limpiar el contenido actual del ScrollView
+
+        // Cargar el recurso visual para representar a una solicitud de amistad
+        VisualTreeAsset solicitudAsset = Resources.Load<VisualTreeAsset>("SolicitudAmigo_elemento");
+
+        // Iterar sobre la lista de amigos y añadirlos al ScrollView
+        foreach (Usuario solicitud in solicitudes)
+        {
+
+            VisualElement solicitudElement = solicitudAsset.CloneTree();
+            Label nombreUsuarioLabel = solicitudElement.Q<Label>("Nombre_Usuario");
+            nombreUsuarioLabel.text = solicitud.nombre;
+            Button aceptarButton = solicitudElement.Q<Button>("Aceptar_Button");
+            aceptarButton.RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Aceptar solicitud de amistad de: " + solicitud.nombre); 
+                StartCoroutine(Consultas.AceptarSolicitudAmistad(username, solicitud.idUsuario));
+                //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
+            });
+            Button rechazarButton = solicitudElement.Q<Button>("Reject_Button");
+            rechazarButton.RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Rechazar solicitud de amistad de: " + solicitud.nombre); 
+                StartCoroutine(Consultas.RechazarSolicitudAmistad(username, solicitud.idUsuario));
+                //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
+            });
+            friendsScroll.Add(solicitudElement);
+        }
+    }
+
 
     void beginGame(string tipo)
     {
