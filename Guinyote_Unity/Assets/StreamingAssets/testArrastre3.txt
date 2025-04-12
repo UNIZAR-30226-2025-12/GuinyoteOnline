@@ -1,0 +1,37 @@
+5,3;6,1;8,0;0,0;0,0;0,0;4,3;5,1;4,0;0,3;0,0;0,0;4,2;3,1;7,1;2,3;0,0;0,0;5,2;4,1;8,1;7,0;0,0;0,0;0,0;1,0;2,0;3,0
+25
+25
+25
+25
+False
+
+COMENTARIOS
+Prueba arrastre para 4 jugadores, todos controlables.
+En la baraja está la mano de los 4 jugadores, el triunfo y otras 3 cartas
+para empezar a 1 jugada del arrastre.
+Turno 1:
+Jugar 6 de oros con jugador 1, 5 de oros con jugador 2, 5 de espadas con
+jugador 3 y 6 de espadas con jugador 4. La baza será para jugador 1.
+Turno 2: (empieza arrastre)
+Empezar con el 7 de copas. Seguir con el 6 de copas, ninguna otra carta
+debería ser posible. En el tercer jugador, se podrán usar tanto el 4 como
+la sota de copas, ya que la baza es del compañero. Jugar el 4 de copas. En
+el último jugador, se deberá matar al primero, ya que la baza es del equipo
+rival. La única carta posible será el rey de copas.
+Turno 3:
+Salir con el 5 de copas. El segundo jugador deberá utilizar triunfo para
+matar, ya que no tiene cartas de copas. Usar el 2 de bastos. El tercer
+jugador deberá matar al segundo con triunfo, ya que tampoco tiene copas
+y la baza es del equipo rival. Usar el 5 de bastos. El último jugador debe
+usar la sota de copas, ya que aunque la baza sea del equipo rival seguir
+el palo inicial es prioritario.
+Turno 4:
+Salir con el as de oros. El segundo jugador tiene que usar el 3 de oros.
+Con el tercer jugador usar la sota de bastos, aunque debería ser posible
+cualquier carta. El cuarto jugador deberá matar al tercero, ya que no tiene
+cartas del palo inicial, por lo que no podrá usar el caballo de bastos. Usar
+el as de bastos.
+
+CASOS PROBADOS
+Si es posible se debe seguir el palo de la carta jugada inicialmente.
+Solo se requiere matar si la carta ganadora de la baza es del equipo rival.
