@@ -68,8 +68,8 @@ public class UIManager : MonoBehaviour
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
         Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
-        Consultas.OnAceptarSolicitudAmistad += () => UpdateSolicitudesAmigos(null);
-        Consultas.OnRechazarSolicitudAmistad += () => UpdateSolicitudesAmigos(null);    
+        Consultas.OnAceptarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+        Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username)); 
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -172,7 +172,7 @@ public class UIManager : MonoBehaviour
             });
             tab_amigos_list.Q<Button>("addFriend_Button").RegisterCallback<ClickEvent>(ev => { 
                 String nombre = tab_amigos_list.Q<TextField>("friend_Field").value;
-                StartCoroutine(Consultas.EnviarSolicitudAmistad(username, nombre));
+                StartCoroutine(Consultas.EnviarSolicitudAmistad(nombre, username));
             });
             tab_solicitudes_amigos.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
                 tab_amigos.style.display = DisplayStyle.Flex; 
@@ -389,18 +389,18 @@ public class UIManager : MonoBehaviour
         {
 
             VisualElement solicitudElement = solicitudAsset.CloneTree();
-            Label nombreUsuarioLabel = solicitudElement.Q<Label>("Nombre_Usuario");
+            Label nombreUsuarioLabel = solicitudElement.Q<Label>("Nombre_usuario");
             nombreUsuarioLabel.text = solicitud.nombre;
-            Button aceptarButton = solicitudElement.Q<Button>("Aceptar_Button");
+            Button aceptarButton = solicitudElement.Q<Button>("accept_Button");
             aceptarButton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Aceptar solicitud de amistad de: " + solicitud.nombre); 
-                StartCoroutine(Consultas.AceptarSolicitudAmistad(username, solicitud.idUsuario));
+                StartCoroutine(Consultas.AceptarSolicitudAmistad(username, solicitud.correo));
                 //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
             });
-            Button rechazarButton = solicitudElement.Q<Button>("Reject_Button");
+            Button rechazarButton = solicitudElement.Q<Button>("reject_Button");
             rechazarButton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Rechazar solicitud de amistad de: " + solicitud.nombre); 
-                StartCoroutine(Consultas.RechazarSolicitudAmistad(username, solicitud.idUsuario));
+                StartCoroutine(Consultas.RechazarSolicitudAmistad(username, solicitud.correo));
                 //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
             });
             friendsScroll.Add(solicitudElement);

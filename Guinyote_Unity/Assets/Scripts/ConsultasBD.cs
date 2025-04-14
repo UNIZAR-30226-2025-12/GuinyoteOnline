@@ -37,7 +37,7 @@ namespace ConsultasBD
     public class Usuario
     {
         // Representa un usuario.
-        public string idUsuario, nombre;
+        public string idUsuario, nombre, correo;
     }
 
     [System.Serializable]
@@ -185,6 +185,7 @@ namespace ConsultasBD
         public static IEnumerator GetSolicitudesAmistadUsuario(string id)
         {
             Debug.Log("Consultando Solicitudes de amistad...");
+            Debug.Log("ID: " + id);
             UnityWebRequest www = UnityWebRequest.Get(address + "/solicitudes/" + id);
             yield return www.SendWebRequest();
 
