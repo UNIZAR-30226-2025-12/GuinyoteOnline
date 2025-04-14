@@ -72,7 +72,7 @@ function Homepage() {
       setShowLoginModal(true);
     } else {
       // Lógica para usuarios registrados
-      handleMiCuentaClick();
+      handleAccountManagementClick();
     }
   };
 
@@ -138,6 +138,12 @@ function Homepage() {
 
   const handlePartidaOfflineClick = () => {
     navigate('/offline_match'); // Necesitamos pasar el contexto 
+  }
+
+  const handleAccountManagementClick = () => {
+    if (isUserRegistered) {
+      navigate('/account');
+    }
   }
 
   return (
