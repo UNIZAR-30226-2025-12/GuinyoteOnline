@@ -1,0 +1,8 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement style="flex-grow: 1; height: 49px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 10px;">
+        <engine:Label text="Nombre" name="Nombre_Amigo" style="width: 112px; position: absolute; top: 14px; left: 128px;" />
+        <engine:VisualElement name="Profile_picture" style="flex-grow: 1; position: absolute; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;); height: 54px; width: 56px; top: 2px; left: 60px;" />
+        <engine:Label text="Nan" name="Posicion_Label" style="position: absolute; top: 15px; left: 7px;" />
+        <engine:Label text="Nan" name="Victorias_Label" style="position: absolute; top: 14px; left: 258px;" />
+    </engine:VisualElement>
+</engine:UXML>

@@ -83,161 +83,203 @@ public class UIManager : MonoBehaviour
         var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
 
         if(currentScene.name == "Partida_IA" || currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name == "Perfil"){   
-            boton_atras = root.rootVisualElement.Q<Button>("atras");
-            boton_atras.RegisterCallback<ClickEvent>(ev => goBack());
+            updateReferencegoBack(root, currentScene, mode);
         }
 
         if(currentScene.name == "Inicio"){
-            if(isLogged){
-                StartCoroutine(Consultas.GetAmigosUsuario(username));
-                StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
-            }
             //INICIO
-            boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
-            boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
-
-            //REGISTRO
-            tab_register = root.rootVisualElement.Q<Tab>("Register_Tab");
-            register_button_close = tab_register.Q<Button>("exit_Button");
-            register_button_close.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.None);
-
-            register_button_accept = tab_register.Q<Button>("accept_Button");
-            register_button_accept.RegisterCallback<ClickEvent>(ev => { 
-                tab_register.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
-                tab_register.Q<Label>("error_Label").text = "Cargando"; 
-                Registrar(register_field_mail.value, register_field_username.value, register_field_password.value, register_field_password2.value);
-            });
-
-            register_field_mail = tab_register.Q<TextField>("mail_Field");
-            register_field_username = tab_register.Q<TextField>("user_Field");
-            register_field_password = tab_register.Q<TextField>("Password_Field");
-            register_field_password2 = tab_register.Q<TextField>("Password2_Field");
-
-
-
-
-            //LOGIN
-            tab_login = root.rootVisualElement.Q<Tab>("Login_Tab");
-            login_button_close = tab_login.Q<Button>("exit_Button");
-            login_button_close.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.None);
-
-            login_button_register = tab_login.Q<Button>("register_Button");
-            login_button_register.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.Flex);
-
-            login_button_accept = tab_login.Q<Button>("accept_Button");
-            login_button_accept.RegisterCallback<ClickEvent>(ev => { 
-                tab_login.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
-                tab_login.Q<Label>("error_Label").text = "Cargando"; 
-                StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value)); 
-            });
-
-            boton_login = root.rootVisualElement.Q<Button>("Login_Button");
-            if(isLogged){
-                boton_login.Q<Label>("Login_Label").text = username;
-                boton_login.UnregisterCallback<ClickEvent>(mostrarLogin);
-                boton_login.RegisterCallback<ClickEvent>(ev => ChangeScene("Perfil"));
-
-            }else{
-                boton_login.RegisterCallback<ClickEvent>(mostrarLogin);
-            }
-             
-            boton_reglas = root.rootVisualElement.Q<Button>("reglas_Button");
-            boton_reglas.RegisterCallback<ClickEvent>(ev => Application.OpenURL("https://es.wikipedia.org/wiki/Guiñote"));
-
-            login_field_username = tab_login.Q<TextField>("user_Field");
-            login_field_password = tab_login.Q<TextField>("Password_Field");
-
-            //AMIGOS
-            tab_amigos = root.rootVisualElement.Q<Tab>("Friends_tab");
-            tab_amigos_list = root.rootVisualElement.Q<Tab>("Friends_list_tab");
-            tab_solicitudes_amigos = root.rootVisualElement.Q<Tab>("Solicitudes_list_tab");
-
-            boton_amigos = root.rootVisualElement.Q<Button>("Friends_Button");
-            if(isLogged){
-                boton_amigos.UnregisterCallback<ClickEvent>(mostrarLogin);
-                boton_amigos.RegisterCallback<ClickEvent>(ev => {
-                    Debug.Log("Amigos pulsado");
-                    root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.Flex; 
-                    tab_amigos.style.display = DisplayStyle.Flex; 
-                    tab_amigos_list.style.display = DisplayStyle.None; 
-                });
-            }
-            else {
-                boton_amigos.RegisterCallback<ClickEvent>(mostrarLogin);
-            }
-            tab_amigos.Q<Button>("Friends_List_Button").RegisterCallback<ClickEvent>(ev => {
-                tab_amigos.style.display = DisplayStyle.None; 
-                tab_amigos_list.style.display = DisplayStyle.Flex; 
-            });
-            tab_amigos.Q<Button>("Solicitudes_Button").RegisterCallback<ClickEvent>(ev => {
-                tab_amigos.style.display = DisplayStyle.None; 
-                tab_solicitudes_amigos.style.display = DisplayStyle.Flex; 
-            });
-            tab_amigos.Q<Button>("close_Button").RegisterCallback<ClickEvent>(ev => { 
-                root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.None; 
-                tab_amigos.style.display = DisplayStyle.None; 
-            });
-            tab_amigos_list.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
-                tab_amigos.style.display = DisplayStyle.Flex; 
-                tab_amigos_list.style.display = DisplayStyle.None; 
-            });
-            tab_amigos_list.Q<Button>("addFriend_Button").RegisterCallback<ClickEvent>(ev => { 
-                String nombre = tab_amigos_list.Q<TextField>("friend_Field").value;
-                StartCoroutine(Consultas.EnviarSolicitudAmistad(nombre, username));
-            });
-            tab_solicitudes_amigos.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
-                tab_amigos.style.display = DisplayStyle.Flex; 
-                tab_solicitudes_amigos.style.display = DisplayStyle.None; 
-            });
-            //Ranking
-            Tab_ranking = root.rootVisualElement.Q<Tab>("Ranking_Tab");
-            boton_ranking = root.rootVisualElement.Q<Button>("Ranking_Button");
-            if(isLogged){
-                boton_ranking.UnregisterCallback<ClickEvent>(mostrarLogin);
-                boton_ranking.RegisterCallback<ClickEvent>(ev => {
-                    Debug.Log("Ranking pulsado"); 
-                    Tab_ranking.style.display = DisplayStyle.Flex;
-                });
-            }else{
-                boton_ranking.RegisterCallback<ClickEvent>(mostrarLogin);
-            }
-            Tab_ranking.Q<Button>("Ranking_Close_Button").RegisterCallback<ClickEvent>(ev => { 
-                Tab_ranking.style.display = DisplayStyle.None; 
-            });
+            updateReferenceInicio(root, scene, mode);
         } else if(currentScene.name == "Partida_IA"){
             //PARTIDA IA
-            boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
-            boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA_1vs1"));
-
-            boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2");
-            boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA_2vs2"));
+            updateReferencePartidaIA(root, scene, mode);
         }
         else if (currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2")
         {
-            boton_start = root.rootVisualElement.Q<Button>("Start");
-            boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
+            updateReferenceStart(root, scene, mode);
         }
         else if (currentScene.name == "Perfil")
         {
             //PERFIL
-            boton_logOut = root.rootVisualElement.Q<Button>("LogOut_Button");
-            boton_logOut.RegisterCallback<ClickEvent>(ev => {
-                isLogged = false;
-                ChangeScene("Inicio");
-            });
-
-            boton_perfil = root.rootVisualElement.Q<Button>("Profile_Button");
-            boton_perfil.RegisterCallback<ClickEvent>(ev => MostrarPerfil());
-            boton_historial = root.rootVisualElement.Q<Button>("History_Button");
-            boton_historial.RegisterCallback<ClickEvent>(ev => MostrarHistorial());
-
+            updateReferencePerfil(root, scene, mode);
             
-            scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
-            scroll_historial.style.display = DisplayStyle.None;
-            
-            //consultar el historial a la BD
-            StartCoroutine(Consultas.GetHistorialUsuario(username));
         }
+    }
+
+    private void updateReferencegoBack(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        boton_atras = root.rootVisualElement.Q<Button>("atras");
+        boton_atras.RegisterCallback<ClickEvent>(ev => goBack());
+    }
+
+    private void updateReferenceInicio(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        if(isLogged){
+                StartCoroutine(Consultas.GetAmigosUsuario(username));
+                StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+            }
+            
+            boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
+            boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
+
+            //REGISTRO
+            updateReferenceRegister(root, currentScene, mode);
+            //LOGIN
+            updateReferenceLogin(root, currentScene, mode);
+            //AMIGOS
+            updateReferenceAmigos(root, currentScene, mode);
+            //Ranking
+            updateReferenceRanking(root, currentScene, mode);
+    }
+
+    private void updateReferenceRegister(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        tab_register = root.rootVisualElement.Q<Tab>("Register_Tab");
+        register_button_close = tab_register.Q<Button>("exit_Button");
+        register_button_close.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.None);
+
+        register_button_accept = tab_register.Q<Button>("accept_Button");
+        register_button_accept.RegisterCallback<ClickEvent>(ev => { 
+            tab_register.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+            tab_register.Q<Label>("error_Label").text = "Cargando"; 
+            Registrar(register_field_mail.value, register_field_username.value, register_field_password.value, register_field_password2.value);
+        });
+
+        register_field_mail = tab_register.Q<TextField>("mail_Field");
+        register_field_username = tab_register.Q<TextField>("user_Field");
+        register_field_password = tab_register.Q<TextField>("Password_Field");
+        register_field_password2 = tab_register.Q<TextField>("Password2_Field");
+    }
+
+    private void updateReferenceLogin(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        tab_login = root.rootVisualElement.Q<Tab>("Login_Tab");
+        login_button_close = tab_login.Q<Button>("exit_Button");
+        login_button_close.RegisterCallback<ClickEvent>(ev => tab_login.style.display = DisplayStyle.None);
+
+        login_button_register = tab_login.Q<Button>("register_Button");
+        login_button_register.RegisterCallback<ClickEvent>(ev => tab_register.style.display = DisplayStyle.Flex);
+
+        login_button_accept = tab_login.Q<Button>("accept_Button");
+        login_button_accept.RegisterCallback<ClickEvent>(ev => { 
+            tab_login.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+            tab_login.Q<Label>("error_Label").text = "Cargando"; 
+            StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value)); 
+        });
+
+        boton_login = root.rootVisualElement.Q<Button>("Login_Button");
+        if(isLogged){
+            boton_login.Q<Label>("Login_Label").text = username;
+            boton_login.UnregisterCallback<ClickEvent>(mostrarLogin);
+            boton_login.RegisterCallback<ClickEvent>(ev => ChangeScene("Perfil"));
+
+        }else{
+            boton_login.RegisterCallback<ClickEvent>(mostrarLogin);
+        }
+            
+        boton_reglas = root.rootVisualElement.Q<Button>("reglas_Button");
+        boton_reglas.RegisterCallback<ClickEvent>(ev => Application.OpenURL("https://es.wikipedia.org/wiki/Guiñote"));
+
+        login_field_username = tab_login.Q<TextField>("user_Field");
+        login_field_password = tab_login.Q<TextField>("Password_Field");
+    }
+
+    private void updateReferenceAmigos( UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        tab_amigos = root.rootVisualElement.Q<Tab>("Friends_tab");
+        tab_amigos_list = root.rootVisualElement.Q<Tab>("Friends_list_tab");
+        tab_solicitudes_amigos = root.rootVisualElement.Q<Tab>("Solicitudes_list_tab");
+
+        boton_amigos = root.rootVisualElement.Q<Button>("Friends_Button");
+        if(isLogged){
+            boton_amigos.UnregisterCallback<ClickEvent>(mostrarLogin);
+            boton_amigos.RegisterCallback<ClickEvent>(ev => {
+                Debug.Log("Amigos pulsado");
+                root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.Flex; 
+                tab_amigos.style.display = DisplayStyle.Flex; 
+                tab_amigos_list.style.display = DisplayStyle.None; 
+            });
+        }
+        else {
+            boton_amigos.RegisterCallback<ClickEvent>(mostrarLogin);
+        }
+        tab_amigos.Q<Button>("Friends_List_Button").RegisterCallback<ClickEvent>(ev => {
+            tab_amigos.style.display = DisplayStyle.None; 
+            tab_amigos_list.style.display = DisplayStyle.Flex; 
+        });
+        tab_amigos.Q<Button>("Solicitudes_Button").RegisterCallback<ClickEvent>(ev => {
+            tab_amigos.style.display = DisplayStyle.None; 
+            tab_solicitudes_amigos.style.display = DisplayStyle.Flex; 
+        });
+        tab_amigos.Q<Button>("close_Button").RegisterCallback<ClickEvent>(ev => { 
+            root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.None; 
+            tab_amigos.style.display = DisplayStyle.None; 
+        });
+        tab_amigos_list.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
+            tab_amigos.style.display = DisplayStyle.Flex; 
+            tab_amigos_list.style.display = DisplayStyle.None; 
+        });
+        tab_amigos_list.Q<Button>("addFriend_Button").RegisterCallback<ClickEvent>(ev => { 
+            String nombre = tab_amigos_list.Q<TextField>("friend_Field").value;
+            StartCoroutine(Consultas.EnviarSolicitudAmistad(nombre, username));
+        });
+        tab_solicitudes_amigos.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
+            tab_amigos.style.display = DisplayStyle.Flex; 
+            tab_solicitudes_amigos.style.display = DisplayStyle.None; 
+        });
+    }
+
+    private void updateReferenceRanking(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        Tab_ranking = root.rootVisualElement.Q<Tab>("Ranking_Tab");
+        boton_ranking = root.rootVisualElement.Q<Button>("Ranking_Button");
+        if(isLogged){
+            boton_ranking.UnregisterCallback<ClickEvent>(mostrarLogin);
+            boton_ranking.RegisterCallback<ClickEvent>(ev => {
+                Debug.Log("Ranking pulsado"); 
+                Tab_ranking.style.display = DisplayStyle.Flex;
+            });
+        }else{
+            boton_ranking.RegisterCallback<ClickEvent>(mostrarLogin);
+        }
+        Tab_ranking.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
+            Tab_ranking.style.display = DisplayStyle.None; 
+        });
+    }
+
+    private void updateReferencePartidaIA(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
+        boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA_1vs1"));
+
+        boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2");
+        boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA_2vs2"));
+    }
+
+    private void updateReferenceStart(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        boton_start = root.rootVisualElement.Q<Button>("Start");
+        boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
+    }
+
+    private void updateReferencePerfil(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        boton_logOut = root.rootVisualElement.Q<Button>("LogOut_Button");
+        boton_logOut.RegisterCallback<ClickEvent>(ev => {
+            isLogged = false;
+            ChangeScene("Inicio");
+        });
+
+        boton_perfil = root.rootVisualElement.Q<Button>("Profile_Button");
+        boton_perfil.RegisterCallback<ClickEvent>(ev => MostrarPerfil());
+        boton_historial = root.rootVisualElement.Q<Button>("History_Button");
+        boton_historial.RegisterCallback<ClickEvent>(ev => MostrarHistorial());
+
+        
+        scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
+        scroll_historial.style.display = DisplayStyle.None;
+        
+        //consultar el historial a la BD
+        StartCoroutine(Consultas.GetHistorialUsuario(username));
     }
 
     private void mostrarLogin(ClickEvent evt)

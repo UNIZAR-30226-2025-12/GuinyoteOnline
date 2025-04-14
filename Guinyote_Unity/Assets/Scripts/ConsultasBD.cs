@@ -37,7 +37,7 @@ namespace ConsultasBD
     public class Usuario
     {
         // Representa un usuario.
-        public string idUsuario, nombre, correo;
+        public string idUsuario, nombre, correo, nVictorias;
     }
 
     [System.Serializable]
@@ -105,6 +105,15 @@ namespace ConsultasBD
         /// </summary>
         public static event Action OnErrorRechazarSolicitudAmistad;
 
+        /// <summary>
+        /// Evento que se activa al obtener una lista de rankings.
+        /// </summary>
+        public static event Action<Usuario[]> OnRankingConsultado;
+
+        /// <summary>
+        /// Evento que se activa al ocurrir un error al obtener una lista de rankings.
+        /// </summary>
+        public static event Action OnErrorRankingConsultado;
 
 
         /// <summary>
@@ -146,6 +155,28 @@ namespace ConsultasBD
             {
                 Partida[] historial = JsonHelper.FromJson<Partida>(www.downloadHandler.text);
                 OnHistorialConsultado?.Invoke(historial);
+            }
+        }
+
+        /// <summary>
+        /// Consulta el ranking de partidas.
+        /// </summary>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator GetRanking()
+        {
+            Debug.Log("Consultando ranking...");
+            UnityWebRequest www = UnityWebRequest.Get(address + "/rankings/");
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorRankingConsultado?.Invoke();
+            }
+            else
+            {
+                Usuario[] ranking = JsonHelper.FromJson<Usuario>(www.downloadHandler.text);
+                OnRankingConsultado?.Invoke(ranking);
             }
         }
 
