@@ -272,7 +272,7 @@ namespace ConsultasBD
             Debug.Log("idAceptante: " + idAceptante);
             Debug.Log("idSolicitante: " + idSolicitante);
             WWWForm form = new WWWForm();
-            form.AddField("idAceptante", idAceptante);
+            form.AddField("idSolicitado", idAceptante);
             form.AddField("idSolicitante", idSolicitante);
             UnityWebRequest www = UnityWebRequest.Post(address + "/amigos/enviarSolicitud/", form);
             yield return www.SendWebRequest();

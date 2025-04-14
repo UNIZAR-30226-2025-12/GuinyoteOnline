@@ -68,7 +68,10 @@ public class UIManager : MonoBehaviour
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
         Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
-        Consultas.OnAceptarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+        Consultas.OnAceptarSolicitudAmistad += () => {
+            StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+            StartCoroutine(Consultas.GetAmigosUsuario(username));
+        };
         Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username)); 
     }
 
