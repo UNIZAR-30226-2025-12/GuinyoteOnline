@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using ConsultasBD;
 using Unity.VisualScripting;
+using UnityEditor;
 //using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -45,6 +46,7 @@ public class UIManager : MonoBehaviour
     private Button boton_logOut;
     private Tab Tab_ranking;
     private Button boton_ranking;
+    private VisualElement perfil_configuracion;
 
     void Awake()
     {
@@ -280,6 +282,8 @@ public class UIManager : MonoBehaviour
         
         scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
         scroll_historial.style.display = DisplayStyle.None;
+
+        perfil_configuracion = root.rootVisualElement.Q<VisualElement>("Profile_Config");
         
         //consultar el historial a la BD
         StartCoroutine(Consultas.GetHistorialUsuario(username));
@@ -379,6 +383,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Button Clicked");
         boton_historial.SetEnabled(true);
         boton_perfil.SetEnabled(false);
+        perfil_configuracion.style.display = DisplayStyle.Flex;
         scroll_historial.style.display = DisplayStyle.None;
     }
 
@@ -387,6 +392,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Button Clicked");
         boton_historial.SetEnabled(false);
         boton_perfil.SetEnabled(true);
+        perfil_configuracion.style.display = DisplayStyle.None;
         scroll_historial.style.display = DisplayStyle.Flex;
     }
 
