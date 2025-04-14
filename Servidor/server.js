@@ -201,11 +201,23 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
  */
 app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
   try {
-    const { nombre, foto_perfil } = req.body;
-    const usuario = await Usuario.findOneAndUpdate(
-      { correo: req.params.id },
-      { $set: { nombre: nombre, foto_perfil: foto_perfil }}
-    );
+    const { nombre, contrasena, foto_perfil } = req.body;
+    if (!nombre && !contrasena) {
+      return res.status(400).json({ message: "Nombre y contraseña son obligatorios" });
+    }
+    if (!nombre) {
+      const usuario = await Usuario.findOneAndUpdate(
+        { correo: req.params.id },
+        { $set: {contrasena: contrasena, foto_perfil: foto_perfil }}
+      );
+    }
+    if (!contrasena) {
+      const usuario = await Usuario.findOneAndUpdate(
+        { correo: req.params.id },
+        { $set: { nombre: nombre, foto_perfil: foto_perfil }}
+      );
+    }
+
     res.json(usuario);
   } catch (error) {
     res.status(400).json({ message: "Error actualizando perfil", error: error.message });
