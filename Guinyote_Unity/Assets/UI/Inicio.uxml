@@ -71,4 +71,11 @@
             </engine:VisualElement>
         </engine:Tab>
     </engine:TabView>
+    <engine:Tab name="Ranking_Tab" tabindex="1" style="position: absolute; display: none; width: 265px; top: 7px; left: 387px;">
+        <engine:VisualElement name="VisualElement" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(255, 255, 255);">
+            <engine:Label text="Ranking" name="Label" style="right: auto; left: auto; width: 72px; height: 40px;" />
+            <engine:Button text="X" name="atras_Button" style="width: 52px; left: 80%; top: 0; position: absolute;" />
+            <engine:ScrollView name="Ranking_Scroll" style="position: absolute; top: 50px; left: 10px; width: 245px; height: 370px;" />
+        </engine:VisualElement>
+    </engine:Tab>
 </engine:UXML>

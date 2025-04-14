@@ -42,6 +42,8 @@ public class UIManager : MonoBehaviour
     private Button boton_historial;
     private ScrollView scroll_historial;
     private Button boton_logOut;
+    private Tab Tab_ranking;
+    private Button boton_ranking;
 
     void Awake()
     {
@@ -151,12 +153,18 @@ public class UIManager : MonoBehaviour
             tab_solicitudes_amigos = root.rootVisualElement.Q<Tab>("Solicitudes_list_tab");
 
             boton_amigos = root.rootVisualElement.Q<Button>("Friends_Button");
-            boton_amigos.RegisterCallback<ClickEvent>(ev => {
-                Debug.Log("Amigos pulsado"); 
-                root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.Flex; 
-                tab_amigos.style.display = DisplayStyle.Flex; 
-                tab_amigos_list.style.display = DisplayStyle.None; 
-            });
+            if(isLogged){
+                boton_amigos.UnregisterCallback<ClickEvent>(mostrarLogin);
+                boton_amigos.RegisterCallback<ClickEvent>(ev => {
+                    Debug.Log("Amigos pulsado");
+                    root.rootVisualElement.Q<TabView>("Friends_tabview").style.display = DisplayStyle.Flex; 
+                    tab_amigos.style.display = DisplayStyle.Flex; 
+                    tab_amigos_list.style.display = DisplayStyle.None; 
+                });
+            }
+            else {
+                boton_amigos.RegisterCallback<ClickEvent>(mostrarLogin);
+            }
             tab_amigos.Q<Button>("Friends_List_Button").RegisterCallback<ClickEvent>(ev => {
                 tab_amigos.style.display = DisplayStyle.None; 
                 tab_amigos_list.style.display = DisplayStyle.Flex; 
@@ -180,6 +188,21 @@ public class UIManager : MonoBehaviour
             tab_solicitudes_amigos.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
                 tab_amigos.style.display = DisplayStyle.Flex; 
                 tab_solicitudes_amigos.style.display = DisplayStyle.None; 
+            });
+            //Ranking
+            Tab_ranking = root.rootVisualElement.Q<Tab>("Ranking_Tab");
+            boton_ranking = root.rootVisualElement.Q<Button>("Ranking_Button");
+            if(isLogged){
+                boton_ranking.UnregisterCallback<ClickEvent>(mostrarLogin);
+                boton_ranking.RegisterCallback<ClickEvent>(ev => {
+                    Debug.Log("Ranking pulsado"); 
+                    Tab_ranking.style.display = DisplayStyle.Flex;
+                });
+            }else{
+                boton_ranking.RegisterCallback<ClickEvent>(mostrarLogin);
+            }
+            Tab_ranking.Q<Button>("Ranking_Close_Button").RegisterCallback<ClickEvent>(ev => { 
+                Tab_ranking.style.display = DisplayStyle.None; 
             });
         } else if(currentScene.name == "Partida_IA"){
             //PARTIDA IA

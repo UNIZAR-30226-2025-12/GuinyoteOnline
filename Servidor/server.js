@@ -395,8 +395,13 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
     const { idAceptante, idSolicitante } = req.body;
 
     await Usuario.findOneAndUpdate(
-      { correo: idAceptante, "amigos.idUsuario": idSolicitante },
-      { $set: { "amigos.$.pendiente": false} }
+      { correo: idAceptante },
+      { $pull: { amigos: {idUsuario: idSolicitante, pendiente: true} } }
+    );
+
+    await Usuario.findOneAndUpdate(
+      { correo: idAceptante},
+      { $push: { amigos: {idUsuario: idSolicitante, pendiente: false} } }
     );
 
     await Usuario.findOneAndUpdate(
