@@ -78,4 +78,5 @@
             <engine:ScrollView name="Ranking_Scroll" style="position: absolute; top: 50px; left: 10px; width: 384px; height: 370px;" />
         </engine:VisualElement>
     </engine:Tab>
+    <engine:VisualElement style="flex-grow: 1; position: absolute; height: 253px; width: 291px; top: 25%; left: 40%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: 50%; bottom: 50%;" />
 </engine:UXML>
