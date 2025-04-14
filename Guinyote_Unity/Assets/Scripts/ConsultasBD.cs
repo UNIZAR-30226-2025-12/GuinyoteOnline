@@ -292,6 +292,34 @@ namespace ConsultasBD
             }
         }
 
+        /// <summary>
+        /// Registra un nuevo usuario con los datos proporcionados.
+        /// </summary>
+        /// <param name="nombre">El nuevo nombre del usuario.</param>
+        /// <param name="id">El ID del usuario.</param>
+        /// <param name="pwd">La nueva contraseña del usuario.</param>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator CambiarInfoUsuario(string nombre, string id, string pwd)
+        {
+            Debug.Log("Registrando usuario...");
+            WWWForm form = new WWWForm();
+            form.AddField("nombre", nombre);
+            form.AddField("id", id);
+            form.AddField("contrasena", pwd);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/usuarios/actualizacionPerfil/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+                OnErrorRegistroUsuario?.Invoke();
+            }
+            else
+            {
+                OnRegistroUsuario?.Invoke();
+            }
+        }
+
          /// <summary>
         /// Envía una solicitud de amistad con los datos proporcionados.
         /// </summary>
