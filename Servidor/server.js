@@ -401,13 +401,8 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
 
     await Usuario.findOneAndUpdate(
       { correo: idSolicitante },
-      { $pull: { amigos: { idUsuario: idAceptante, pendiente: true } } }
-    );
-
-    await Usuario.findOneAndUpdate(
-      { correo: idSolicitante },
-      { $push: { amigos: { idUsuario: idAceptante, pendiente: false } } }
-    );
+      { $push: { amigos: {idUsuario: idAceptante, pendiente: false} } }
+    )
     
     res.status(202).json({ message: "Solicitud aceptada con éxito"});
   } catch (error) {
