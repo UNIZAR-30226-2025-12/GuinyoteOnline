@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
 using ConsultasBD;
+using Unity.VisualScripting;
 //using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -74,7 +75,8 @@ public class UIManager : MonoBehaviour
             StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
             StartCoroutine(Consultas.GetAmigosUsuario(username));
         };
-        Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username)); 
+        Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+        Consultas.OnRankingConsultado += UpdateRanking;
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -116,6 +118,7 @@ public class UIManager : MonoBehaviour
         if(isLogged){
                 StartCoroutine(Consultas.GetAmigosUsuario(username));
                 StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+                StartCoroutine(Consultas.GetRanking());
             }
             
             boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
@@ -334,6 +337,28 @@ public class UIManager : MonoBehaviour
             else continue; //Caso erroneo
             scroll_historial.Add(resultado);
         }
+    }
+
+    void UpdateRanking(Usuario[] ranking)
+    {
+        Debug.Log("Ranking actualizado");
+        VisualTreeAsset resultadoAsset = Resources.Load<VisualTreeAsset>("Ranking_elemento");
+
+        int posicion = 1;
+        foreach (Usuario r in ranking)
+        {
+            VisualElement resultado = resultadoAsset.CloneTree();
+            SetRankingElementInfo(resultado, posicion, r.nombre, r.nVictorias);
+            Tab_ranking.Q<ScrollView>("Ranking_Scroll").Add(resultado);
+            posicion++;
+        }
+    }
+
+    void SetRankingElementInfo(VisualElement element, int posicion, String nombre, int victorias)
+    {
+        element.Q<Label>("Posicion_Label").text = posicion.ToString();
+        element.Q<Label>("Nombre_Label").text = nombre;
+        element.Q<Label>("Victorias_Label").text = victorias.ToString();
     }
 
     void SetHistoryElementInfo(VisualElement element, String fecha, bool ganada, String nombre1, String nombre2, String nombre3, String nombre4, int puntos1, int puntos2)

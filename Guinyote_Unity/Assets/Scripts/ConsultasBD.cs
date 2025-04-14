@@ -37,7 +37,8 @@ namespace ConsultasBD
     public class Usuario
     {
         // Representa un usuario.
-        public string idUsuario, nombre, correo, nVictorias;
+        public string idUsuario, nombre, correo; 
+        public int nVictorias;
     }
 
     [System.Serializable]

@@ -43,7 +43,7 @@
             <engine:Label name="error_Label" style="position: absolute; top: 342px; left: 75px;" />
         </engine:VisualElement>
     </engine:Tab>
-    <engine:TabView tabindex="0" name="Friends_tabview" style="height: 448px; position: absolute; top: 0; left: 408px; width: 268px; display: none;">
+    <engine:TabView tabindex="0" name="Friends_tabview" style="height: 448px; position: absolute; top: 0; left: 394px; width: 282px; display: none;">
         <engine:Tab name="Friends_tab" closeable="false" enabled="true" style="position: absolute; top: auto; left: auto; height: 448px; width: 264px; display: none;">
             <engine:VisualElement style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(255, 255, 255);">
                 <engine:Label text="Amigos" style="right: auto; left: auto; width: 72px; height: 40px;" />
@@ -63,19 +63,19 @@
                 <engine:ScrollView name="Friends_Scroll" style="position: absolute; top: 174px; left: 10px; width: 245px; height: 246px;" />
             </engine:VisualElement>
         </engine:Tab>
-        <engine:Tab name="Solicitudes_list_tab" tabindex="1" style="position: absolute; display: none; width: 265px;">
+        <engine:Tab name="Solicitudes_list_tab" tabindex="1" style="position: absolute; display: none; width: 417px; left: -152px;">
             <engine:VisualElement name="VisualElement" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(255, 255, 255);">
                 <engine:Label text="Solicitudes de amistad" name="Label" style="right: auto; left: auto; width: 72px; height: 40px;" />
                 <engine:Button text="X" name="atras_Button" style="width: 52px; left: 80%; top: 0; position: absolute;" />
-                <engine:ScrollView name="Friends_Scroll" style="position: absolute; top: 50px; left: 10px; width: 245px; height: 370px;" />
+                <engine:ScrollView name="Friends_Scroll" style="position: absolute; top: 50px; left: 10px; width: 385px; height: 370px;" />
             </engine:VisualElement>
         </engine:Tab>
     </engine:TabView>
-    <engine:Tab name="Ranking_Tab" tabindex="1" style="position: absolute; display: none; width: 265px; top: 7px; left: 387px;">
+    <engine:Tab name="Ranking_Tab" tabindex="1" style="position: absolute; display: none; width: 415px; top: 7px; left: 237px;">
         <engine:VisualElement name="VisualElement" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(255, 255, 255);">
             <engine:Label text="Ranking" name="Label" style="right: auto; left: auto; width: 72px; height: 40px;" />
             <engine:Button text="X" name="atras_Button" style="width: 52px; left: 80%; top: 0; position: absolute;" />
-            <engine:ScrollView name="Ranking_Scroll" style="position: absolute; top: 50px; left: 10px; width: 245px; height: 370px;" />
+            <engine:ScrollView name="Ranking_Scroll" style="position: absolute; top: 50px; left: 10px; width: 384px; height: 370px;" />
         </engine:VisualElement>
     </engine:Tab>
 </engine:UXML>
