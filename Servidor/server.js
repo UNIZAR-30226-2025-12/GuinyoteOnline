@@ -162,7 +162,7 @@ app.post("/usuarios/registro", async (req, res) => {
 app.post("/usuarios/inicioSesion", async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
-    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1 });
+    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1, foto_perfil: 1 });
     if (resultado.length > 0) {
       res.status(202).json(resultado);
     }
@@ -202,12 +202,15 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
 app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
   try {
     const { nombre, contrasena, foto_perfil } = req.body;
-    if (!nombre && !contrasena) {
-      return res.status(400).json({ message: "Nombre y contraseña son obligatorios" });
-    }
-
     let usuario;
-    if (!nombre) {
+    if (!nombre && !contrasena) {
+      usuario = await Usuario.findOneAndUpdate(
+        { correo: req.params.id },
+        { foto_perfil: foto_perfil },
+        { new: true }
+      );
+    }
+    else if (!nombre) {
       usuario = await Usuario.findOneAndUpdate(
         { correo: req.params.id },
         { contrasena: contrasena, foto_perfil: foto_perfil },
