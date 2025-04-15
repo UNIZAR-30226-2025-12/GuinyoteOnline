@@ -130,7 +130,7 @@ namespace ConsultasBD
         /// <summary>
         /// Evento que se activa al iniciar sesión correctamente.
         /// </summary>
-        public static event Action<string> OnInicioSesion;
+        public static event Action<string, string> OnInicioSesion;
 
         /// <summary>
         /// Evento que se activa al ocurrir un error en el inicio de sesión.
@@ -150,7 +150,7 @@ namespace ConsultasBD
         /// <summary>
         /// Evento que se activa al cambiar los datos un usuario correctamente.
         /// </summary>
-        public static event Action OnCambiarInfoUsuario;
+        public static event Action<String> OnCambiarInfoUsuario;
 
         /// <summary>
         /// Consulta el historial de partidas de un usuario por su ID.
@@ -275,7 +275,11 @@ namespace ConsultasBD
             }
             else
             {
-                OnInicioSesion?.Invoke(id);
+                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
+                Usuario[] usuarios = JsonHelper.FromJson<Usuario>(www.downloadHandler.text);
+                string nombre = usuarios[0].nombre;
+
+                OnInicioSesion?.Invoke(id, nombre);
             }
         }
 
@@ -334,7 +338,8 @@ namespace ConsultasBD
             }
             else
             {
-                OnCambiarInfoUsuario?.Invoke();
+                OnCambiarInfoUsuario?.Invoke(nombre);
+                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
             }
         }
 

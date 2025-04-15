@@ -13,7 +13,9 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     private bool isLogged = false;
-    private String username;
+
+    private String username; //Nombre del usuario logueado
+    private String id; //Correo del usuario logueado
 
     private Tab tab_login;
     private Tab tab_register;
@@ -74,11 +76,12 @@ public class UIManager : MonoBehaviour
         Consultas.OnAmigosConsultados += UpdateAmigos;
         Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
         Consultas.OnAceptarSolicitudAmistad += () => {
-            StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
-            StartCoroutine(Consultas.GetAmigosUsuario(username));
+            StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
+            StartCoroutine(Consultas.GetAmigosUsuario(id));
         };
-        Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+        Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
         Consultas.OnRankingConsultado += UpdateRanking;
+        Consultas.OnCambiarInfoUsuario += updateInfoUsuario;
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -118,8 +121,8 @@ public class UIManager : MonoBehaviour
     private void updateReferenceInicio(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         if(isLogged){
-            StartCoroutine(Consultas.GetAmigosUsuario(username));
-            StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+            StartCoroutine(Consultas.GetAmigosUsuario(id));
+            StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
             StartCoroutine(Consultas.GetRanking());
         }
         
@@ -225,7 +228,7 @@ public class UIManager : MonoBehaviour
         });
         tab_amigos_list.Q<Button>("addFriend_Button").RegisterCallback<ClickEvent>(ev => { 
             String nombre = tab_amigos_list.Q<TextField>("friend_Field").value;
-            StartCoroutine(Consultas.EnviarSolicitudAmistad(nombre, username));
+            StartCoroutine(Consultas.EnviarSolicitudAmistad(nombre, id));
         });
         tab_solicitudes_amigos.Q<Button>("atras_Button").RegisterCallback<ClickEvent>(ev => { 
             tab_amigos.style.display = DisplayStyle.Flex; 
@@ -285,11 +288,19 @@ public class UIManager : MonoBehaviour
 
         perfil_configuracion = root.rootVisualElement.Q<VisualElement>("Profile_Config");
         perfil_configuracion.Q<Button>("SaveButton").RegisterCallback<ClickEvent>(ev => { 
-            StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, username, perfil_configuracion.Q<TextField>("Password_Field").value)); 
+            StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, id, perfil_configuracion.Q<TextField>("Password_Field").value));
+            
         });
         
         //consultar el historial a la BD
-        StartCoroutine(Consultas.GetHistorialUsuario(username));
+        StartCoroutine(Consultas.GetHistorialUsuario(id));
+    }
+
+    private void updateInfoUsuario(String name)
+    {
+        if (name != null && name!=""){
+            username = name; 
+        }     
     }
 
     private void mostrarLogin(ClickEvent evt)
@@ -310,8 +321,8 @@ public class UIManager : MonoBehaviour
 
             if (partida.jugadores.Length == 2)
             {
-                bool win = ((partida.jugadores[0].idUsuario == username && partida.jugadores[0].puntuacion > partida.jugadores[1].puntuacion) ||
-                            (partida.jugadores[1].idUsuario == username && partida.jugadores[1].puntuacion > partida.jugadores[0].puntuacion));
+                bool win = ((partida.jugadores[0].idUsuario == id && partida.jugadores[0].puntuacion > partida.jugadores[1].puntuacion) ||
+                            (partida.jugadores[1].idUsuario == id && partida.jugadores[1].puntuacion > partida.jugadores[0].puntuacion));
                 SetHistoryElementInfo(resultado, partida.fecha_inicio, win,  "", partida.jugadores[0].nombre, partida.jugadores[1].nombre, "", partida.jugadores[0].puntuacion, partida.jugadores[1].puntuacion);
             }
             else if (partida.jugadores.Length == 4)
@@ -324,7 +335,7 @@ public class UIManager : MonoBehaviour
 
                 foreach (Jugador j in partida.jugadores)
                 {
-                    if (j.idUsuario == username) equipo = j.equipo;
+                    if (j.idUsuario == id) equipo = j.equipo;
                     if (j.equipo == 1) {
                         if(equipo1_1 == null) equipo1_1 = j.nombre;
                         else equipo1_2 = j.nombre;
@@ -433,13 +444,14 @@ public class UIManager : MonoBehaviour
         tab_register.Q<Label>("error_Label").text = "Error: Error al registrar usuario";
     }
 
-    void Login(String name)
+    void Login(String id, String name)
     {
-        Debug.Log("Username: " + name);
+        Debug.Log("Id: " + id);
 
         tab_login.Q<Label>("error_Label").style.display = DisplayStyle.None;
         isLogged = true;
-        username = name;
+        this.id = id;
+        this.username = name; 
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
 
@@ -496,13 +508,13 @@ public class UIManager : MonoBehaviour
             Button aceptarButton = solicitudElement.Q<Button>("accept_Button");
             aceptarButton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Aceptar solicitud de amistad de: " + solicitud.nombre); 
-                StartCoroutine(Consultas.AceptarSolicitudAmistad(username, solicitud.correo));
+                StartCoroutine(Consultas.AceptarSolicitudAmistad(id, solicitud.correo));
                 //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
             });
             Button rechazarButton = solicitudElement.Q<Button>("reject_Button");
             rechazarButton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Rechazar solicitud de amistad de: " + solicitud.nombre); 
-                StartCoroutine(Consultas.RechazarSolicitudAmistad(username, solicitud.correo));
+                StartCoroutine(Consultas.RechazarSolicitudAmistad(id, solicitud.correo));
                 //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
             });
             friendsScroll.Add(solicitudElement);
