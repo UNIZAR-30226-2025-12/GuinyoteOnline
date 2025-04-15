@@ -2,7 +2,7 @@
     <engine:VisualElement style="flex-grow: 1; position: absolute; height: 253px; width: 291px; top: 25%; left: 40%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: 50%; bottom: 50%;" />
     <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 10%; position: absolute; width: 20%; top: 30%; left: 5%; right: -216px;" />
     <engine:Button name="Login_Button" style="position: absolute; height: 72px; width: 144px; opacity: 1; top: -3px; left: -5px; background-color: rgba(188, 188, 188, 0.61);">
-        <engine:VisualElement style="flex-grow: 1; height: 26px; width: 56px; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;);" />
+        <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 26px; width: 56px; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;);" />
         <engine:Label text="Iniciar &#10;sesión" name="Login_Label" style="height: 24px; width: 64px; position: absolute; top: 22px; left: 72px; white-space: normal;" />
     </engine:Button>
     <engine:Button text="Partida IA" name="IA_Button" style="position: absolute; top: 50%; left: 5%; width: 20%; bottom: auto; right: auto; height: 10%;" />

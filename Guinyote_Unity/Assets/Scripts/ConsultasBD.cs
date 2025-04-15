@@ -39,7 +39,7 @@ namespace ConsultasBD
     public class Usuario
     {
         // Representa un usuario.
-        public string idUsuario, nombre, correo; 
+        public string idUsuario, nombre, correo, foto_perfil; 
         public int nVictorias;
     }
 
@@ -130,7 +130,7 @@ namespace ConsultasBD
         /// <summary>
         /// Evento que se activa al iniciar sesión correctamente.
         /// </summary>
-        public static event Action<string, string> OnInicioSesion;
+        public static event Action<string, string, string> OnInicioSesion;
 
         /// <summary>
         /// Evento que se activa al ocurrir un error en el inicio de sesión.
@@ -278,8 +278,11 @@ namespace ConsultasBD
                 Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
                 Usuario[] usuarios = JsonHelper.FromJson<Usuario>(www.downloadHandler.text);
                 string nombre = usuarios[0].nombre;
+                string profile_picture = usuarios[0].foto_perfil;
 
-                OnInicioSesion?.Invoke(id, nombre);
+                Debug.Log("Foto de perfil: " + profile_picture);
+
+                OnInicioSesion?.Invoke(id, nombre, profile_picture);
             }
         }
 
@@ -317,14 +320,14 @@ namespace ConsultasBD
         /// <param name="nombre">El nuevo nombre del usuario.</param>
         /// <param name="id">El ID del usuario.</param>
         /// <param name="pwd">La nueva contraseña del usuario.</param>
-        public static IEnumerator CambiarInfoUsuario(string nombre, string id, string pwd)
+        public static IEnumerator CambiarInfoUsuario(string nombre, string id, string pwd, string foto_perfil)
         {
             Debug.Log("Cambiando información usuario...");
             WWWForm form = new WWWForm();
             Debug.Log("id: " + id);
             Debug.Log("nombre: " + nombre);
             Debug.Log("contrasena: " + pwd);
-            var userInfo = new UserInfo { nombre = nombre, contrasena = pwd, foto_perfil = "default.png" };
+            var userInfo = new UserInfo { nombre = nombre, contrasena = pwd, foto_perfil = foto_perfil };
             string jsonData = JsonUtility.ToJson(userInfo);
             Debug.Log("JSON: " + jsonData);
             UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/actualizacionPerfil/" + id, System.Text.Encoding.UTF8.GetBytes(jsonData));

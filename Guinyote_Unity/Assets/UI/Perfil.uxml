@@ -12,5 +12,14 @@
         <engine:Button text="Cambiar tapete" name="Tapete_Button" style="position: absolute; top: 217px; left: 54px;" />
         <engine:Button text="Cambiar cartas" name="Cards_Button" style="position: absolute; top: 219px; left: 312px;" />
         <engine:Label text="Mi perfil" />
+        <engine:VisualElement name="Elegir_Foto" style="flex-grow: 1; position: absolute; height: 315px; width: 451px; top: 40px; left: 39px; background-color: rgb(255, 255, 255); display: none;">
+            <engine:ScrollView name="Foto_Scroll" style="position: relative; height: 313px;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="Elegir_Cartas" style="flex-grow: 1; position: absolute; height: 315px; width: 451px; top: 40px; left: 39px; background-color: rgb(255, 255, 255); display: none;">
+            <engine:ScrollView name="Carta_Scroll" style="position: relative; height: 313px;" />
+        </engine:VisualElement>
+        <engine:VisualElement name="Elegir_Tapete" style="flex-grow: 1; position: absolute; height: 315px; width: 451px; top: 40px; left: 39px; background-color: rgb(255, 255, 255); display: none;">
+            <engine:ScrollView name="Tapete_Scroll" style="position: relative; height: 313px;" />
+        </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

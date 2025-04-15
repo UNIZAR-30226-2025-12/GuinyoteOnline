@@ -16,7 +16,16 @@ public class UIManager : MonoBehaviour
 
     private String username; //Nombre del usuario logueado
     private String id; //Correo del usuario logueado
+    private String profile_picture; //Foto de perfil del usuario logueado
 
+    private String carta_picture; //Carta del usuario logueado
+    private String tapete_picure; //Tapete del usuario logueado
+    private VisualElement imagenes_perfil_tab;
+    private VisualElement tapetes_tab;
+    private VisualElement cartas_tab;
+    private ScrollView imagenes_perfil_scroll;
+    private ScrollView cartas_scroll;
+    private ScrollView tapetes_scroll;
     private Tab tab_login;
     private Tab tab_register;
     private Button register_button_close;
@@ -49,6 +58,9 @@ public class UIManager : MonoBehaviour
     private Tab Tab_ranking;
     private Button boton_ranking;
     private VisualElement perfil_configuracion;
+    private Button boton_cambiar_foto;
+    private Button boton_cambiar_tapete;
+    private Button boton_cambiar_cartas;
 
     void Awake()
     {
@@ -82,6 +94,16 @@ public class UIManager : MonoBehaviour
         Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
         Consultas.OnRankingConsultado += UpdateRanking;
         Consultas.OnCambiarInfoUsuario += updateInfoUsuario;
+        
+        tapete_picure = PlayerPrefs.GetString("tapete");
+        if(tapete_picure == null || tapete_picure == ""){
+            tapete_picure = "default";
+        }
+        carta_picture = PlayerPrefs.GetString("carta");
+        if(carta_picture == null || carta_picture == ""){
+            carta_picture = "default";
+        }
+        profile_picture = "default";
     }
 
     void updateReference(Scene scene, LoadSceneMode mode)
@@ -177,6 +199,7 @@ public class UIManager : MonoBehaviour
         boton_login = root.rootVisualElement.Q<Button>("Login_Button");
         if(isLogged){
             boton_login.Q<Label>("Login_Label").text = username;
+            boton_login.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture + ".png");
             boton_login.UnregisterCallback<ClickEvent>(mostrarLogin);
             boton_login.RegisterCallback<ClickEvent>(ev => ChangeScene("Perfil"));
 
@@ -279,16 +302,50 @@ public class UIManager : MonoBehaviour
 
         boton_perfil = root.rootVisualElement.Q<Button>("Profile_Button");
         boton_perfil.RegisterCallback<ClickEvent>(ev => MostrarPerfil());
+
+        imagenes_perfil_tab=root.rootVisualElement.Q<VisualElement>("Elegir_Foto");
+        tapetes_tab=root.rootVisualElement.Q<VisualElement>("Elegir_Tapete");
+        cartas_tab=root.rootVisualElement.Q<VisualElement>("Elegir_Cartas");
+
+        boton_cambiar_foto = root.rootVisualElement.Q<Button>("Photo_Button");
+        boton_cambiar_foto.RegisterCallback<ClickEvent>(ev => { 
+            Debug.Log("Cambiar foto pulsado"); 
+            imagenes_perfil_tab.style.display = DisplayStyle.Flex;
+        });
+
+        boton_cambiar_tapete = root.rootVisualElement.Q<Button>("Tapete_Button");
+        boton_cambiar_tapete.RegisterCallback<ClickEvent>(ev => { 
+            Debug.Log("Cambiar tapete pulsado"); 
+            tapetes_tab.style.display = DisplayStyle.Flex;
+        });
+
+        boton_cambiar_cartas = root.rootVisualElement.Q<Button>("Cards_Button");
+        boton_cambiar_cartas.RegisterCallback<ClickEvent>(ev => { 
+            Debug.Log("Cambiar cartas pulsado"); 
+            cartas_tab.style.display = DisplayStyle.Flex;
+        });
+
         boton_historial = root.rootVisualElement.Q<Button>("History_Button");
         boton_historial.RegisterCallback<ClickEvent>(ev => MostrarHistorial());
-
+        imagenes_perfil_scroll= root.rootVisualElement.Q<ScrollView>("Foto_Scroll");
+        cartas_scroll= root.rootVisualElement.Q<ScrollView>("Carta_Scroll");
+        tapetes_scroll= root.rootVisualElement.Q<ScrollView>("Tapete_Scroll");
+        updateProfilePictures();
+        updateCartas();
+        updateTapetes();
         
         scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
         scroll_historial.style.display = DisplayStyle.None;
 
         perfil_configuracion = root.rootVisualElement.Q<VisualElement>("Profile_Config");
-        perfil_configuracion.Q<Button>("SaveButton").RegisterCallback<ClickEvent>(ev => { 
-            StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, id, perfil_configuracion.Q<TextField>("Password_Field").value));
+        perfil_configuracion.Q<Button>("SaveButton").RegisterCallback<ClickEvent>(ev => {
+            if(tapete_picure != null && tapete_picure != ""){
+                PlayerPrefs.SetString("tapete", tapete_picure);
+            }
+            if(carta_picture != null && carta_picture != ""){
+                PlayerPrefs.SetString("carta", carta_picture);
+            }
+            StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, id, perfil_configuracion.Q<TextField>("Password_Field").value, profile_picture));
             
         });
         
@@ -308,6 +365,67 @@ public class UIManager : MonoBehaviour
         tab_login.style.display = DisplayStyle.Flex;
     }
 
+    void updateProfilePictures()
+    {
+        VisualTreeAsset fotoAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
+        foreach (String foto in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Profile_pictures", "*.png"))
+        {
+            Debug.Log("Foto: " + foto);
+            String fotoName = System.IO.Path.GetFileNameWithoutExtension(foto);
+            VisualElement fotoElement = fotoAsset.CloneTree();
+            Button imagen_boton = fotoElement.Q<Button>("Imagen_Button");
+            string relativePath = "Sprites/Profile_pictures/" + fotoName;
+            imagen_boton.style.backgroundImage = Resources.Load<Texture2D>(relativePath);
+            fotoElement.Q<Label>("Name").text = fotoName;
+            imagen_boton.RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Cambiar foto pulsado"); 
+                profile_picture= fotoName;
+                imagenes_perfil_tab.style.display = DisplayStyle.None;
+            });
+            imagenes_perfil_scroll.Add(fotoElement);
+        }
+    }
+
+    void updateTapetes()
+    {
+        VisualTreeAsset tapeteAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
+        foreach (String tapete in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Tapetes", "*.png"))
+        {
+            Debug.Log("Tapete: " + tapete);
+            String tapeteName = System.IO.Path.GetFileNameWithoutExtension(tapete);
+            VisualElement tapeteElement = tapeteAsset.CloneTree();
+            Button imagen_boton = tapeteElement.Q<Button>("Imagen_Button");
+            string relativePath = "Sprites/Tapetes/" + tapeteName;
+            imagen_boton.style.backgroundImage = Resources.Load<Texture2D>(relativePath);
+            tapeteElement.Q<Label>("Name").text = tapeteName;
+            imagen_boton.RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Cambiar foto pulsado"); 
+                tapete_picure= tapeteName;
+                tapetes_tab.style.display = DisplayStyle.None;
+            });
+            tapetes_scroll.Add(tapeteElement);
+        }
+    }
+    void updateCartas()
+    {
+        VisualTreeAsset cartaAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
+        foreach (String carta in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Carta", "*.png"))
+        {
+            Debug.Log("Carta: " + carta);
+            String cartaName = System.IO.Path.GetFileNameWithoutExtension(carta);
+            VisualElement cartaElement = cartaAsset.CloneTree();
+            Button imagen_boton = cartaElement.Q<Button>("Imagen_Button");
+            string relativePath = "Sprites/Carta/" + cartaName;
+            imagen_boton.style.backgroundImage = Resources.Load<Texture2D>(relativePath);
+            cartaElement.Q<Label>("Name").text = cartaName;
+            imagen_boton.RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Cambiar foto pulsado"); 
+                carta_picture= cartaName;
+                cartas_tab.style.display = DisplayStyle.None;
+            });
+            cartas_scroll.Add(cartaElement);
+        }
+    }
     void UpdateHistorial(Partida[] historial)
     {
         Consultas.MostrarCamposArray(historial);
@@ -444,7 +562,7 @@ public class UIManager : MonoBehaviour
         tab_register.Q<Label>("error_Label").text = "Error: Error al registrar usuario";
     }
 
-    void Login(String id, String name)
+    void Login(String id, String name, string foto_perfil)
     {
         Debug.Log("Id: " + id);
 
@@ -452,6 +570,7 @@ public class UIManager : MonoBehaviour
         isLogged = true;
         this.id = id;
         this.username = name; 
+        this.profile_picture = System.IO.Path.GetFileNameWithoutExtension(foto_perfil);
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
 
