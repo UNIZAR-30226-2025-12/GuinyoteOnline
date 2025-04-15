@@ -210,13 +210,13 @@ app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
     if (!nombre) {
       usuario = await Usuario.findOneAndUpdate(
         { correo: req.params.id },
-        { $set: { contrasena: contrasena, foto_perfil: foto_perfil } },
+        { contrasena: contrasena, foto_perfil: foto_perfil },
         { new: true }
       );
     } else if (!contrasena) {
       usuario = await Usuario.findOneAndUpdate(
         { correo: req.params.id },
-        { $set: { nombre: nombre, foto_perfil: foto_perfil } },
+        { nombre: nombre, foto_perfil: foto_perfil },
         { new: true }
       );
     }
