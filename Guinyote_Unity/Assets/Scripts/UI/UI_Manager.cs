@@ -118,22 +118,22 @@ public class UIManager : MonoBehaviour
     private void updateReferenceInicio(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         if(isLogged){
-                StartCoroutine(Consultas.GetAmigosUsuario(username));
-                StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
-                StartCoroutine(Consultas.GetRanking());
-            }
-            
-            boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
-            boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
+            StartCoroutine(Consultas.GetAmigosUsuario(username));
+            StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(username));
+            StartCoroutine(Consultas.GetRanking());
+        }
+        
+        boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
+        boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
 
-            //REGISTRO
-            updateReferenceRegister(root, currentScene, mode);
-            //LOGIN
-            updateReferenceLogin(root, currentScene, mode);
-            //AMIGOS
-            updateReferenceAmigos(root, currentScene, mode);
-            //Ranking
-            updateReferenceRanking(root, currentScene, mode);
+        //REGISTRO
+        updateReferenceRegister(root, currentScene, mode);
+        //LOGIN
+        updateReferenceLogin(root, currentScene, mode);
+        //AMIGOS
+        updateReferenceAmigos(root, currentScene, mode);
+        //Ranking
+        updateReferenceRanking(root, currentScene, mode);
     }
 
     private void updateReferenceRegister(UIDocument root,Scene currentScene, LoadSceneMode mode)
@@ -284,6 +284,9 @@ public class UIManager : MonoBehaviour
         scroll_historial.style.display = DisplayStyle.None;
 
         perfil_configuracion = root.rootVisualElement.Q<VisualElement>("Profile_Config");
+        perfil_configuracion.Q<Button>("SaveButton").RegisterCallback<ClickEvent>(ev => { 
+            StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, username, perfil_configuracion.Q<TextField>("Password_Field").value)); 
+        });
         
         //consultar el historial a la BD
         StartCoroutine(Consultas.GetHistorialUsuario(username));

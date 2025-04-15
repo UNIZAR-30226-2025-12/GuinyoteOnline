@@ -4,11 +4,13 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Reflection;
+using UnityEngine.InputSystem.Interactions;
 
 namespace ConsultasBD
 {
     public static class JsonHelper
     {
+
         /// <summary>
         /// Deserializa un string JSON en un array de objetos del tipo T.
         /// </summary>
@@ -39,6 +41,14 @@ namespace ConsultasBD
         // Representa un usuario.
         public string idUsuario, nombre, correo; 
         public int nVictorias;
+    }
+
+    [System.Serializable]
+    public class UserInfo
+    {
+        public string nombre;
+        public string contrasena;
+        public string foto_perfil;
     }
 
     [System.Serializable]
@@ -136,6 +146,11 @@ namespace ConsultasBD
         /// Evento que se activa al ocurrir un error en el registro de usuario.
         /// </summary>
         public static event Action OnErrorRegistroUsuario;
+
+        /// <summary>
+        /// Evento que se activa al cambiar los datos un usuario correctamente.
+        /// </summary>
+        public static event Action OnCambiarInfoUsuario;
 
         /// <summary>
         /// Consulta el historial de partidas de un usuario por su ID.
@@ -298,25 +313,28 @@ namespace ConsultasBD
         /// <param name="nombre">El nuevo nombre del usuario.</param>
         /// <param name="id">El ID del usuario.</param>
         /// <param name="pwd">La nueva contraseña del usuario.</param>
-        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
         public static IEnumerator CambiarInfoUsuario(string nombre, string id, string pwd)
         {
-            Debug.Log("Registrando usuario...");
+            Debug.Log("Cambiando información usuario...");
             WWWForm form = new WWWForm();
-            form.AddField("nombre", nombre);
-            form.AddField("id", id);
-            form.AddField("contrasena", pwd);
-            UnityWebRequest www = UnityWebRequest.Post(address + "/usuarios/actualizacionPerfil/", form);
+            Debug.Log("id: " + id);
+            Debug.Log("nombre: " + nombre);
+            Debug.Log("contrasena: " + pwd);
+            var userInfo = new UserInfo { nombre = nombre, contrasena = pwd, foto_perfil = "default.png" };
+            string jsonData = JsonUtility.ToJson(userInfo);
+            Debug.Log("JSON: " + jsonData);
+            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/actualizacionPerfil/" + id, System.Text.Encoding.UTF8.GetBytes(jsonData));
+            www.SetRequestHeader("Content-Type", "application/json");
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.Log("error: " + www.error);
-                OnErrorRegistroUsuario?.Invoke();
+                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
             }
             else
             {
-                OnRegistroUsuario?.Invoke();
+                OnCambiarInfoUsuario?.Invoke();
             }
         }
 
