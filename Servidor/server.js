@@ -219,6 +219,12 @@ app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
         { nombre: nombre, foto_perfil: foto_perfil },
         { new: true }
       );
+    } else {
+      usuario = await Usuario.findOneAndUpdate(
+        { correo: req.params.id },
+        { nombre: nombre, contrasena: contrasena, foto_perfil: foto_perfil },
+        { new: true }
+      );
     }
 
     res.json(usuario);
