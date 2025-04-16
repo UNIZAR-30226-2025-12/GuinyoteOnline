@@ -12,16 +12,17 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
-    private bool isLogged = false;
+    private bool isLogged = false; //Indica si el usuario está logueado o no
+
+    public static Stack<string> lastScene = new Stack<string>(); //Pila para almacenar las escenas anteriores
 
     private String username; //Nombre del usuario logueado
     private String id; //Correo del usuario logueado
     private String profile_picture; //Foto de perfil del usuario logueado
     static public String carta_picture; //Dorso de la carta del usuario logueado
     static public String tapete_picure; //Tapete del usuario logueado
-
-    private String temp_profile_picture;
-    private VisualElement imagenes_perfil_tab;
+    private String temp_profile_picture; //Foto de perfil temporal del usuario logueado
+    private VisualElement imagenes_perfil_tab; 
     private VisualElement tapetes_tab;
     private VisualElement cartas_tab;
     private ScrollView imagenes_perfil_scroll;
@@ -31,7 +32,6 @@ public class UIManager : MonoBehaviour
     private Tab tab_register;
     private Button register_button_close;
     private Button login_button_close;
-    public static Stack<string> lastScene = new Stack<string>();
     private Button boton_IA;
     private Button boton_reglas;
     private Button boton_atras;
@@ -64,6 +64,9 @@ public class UIManager : MonoBehaviour
     private Button boton_cambiar_cartas;
     private Button boton_online;
 
+    /// <summary>
+    /// Singleton pattern para asegurar que solo haya una instancia de UIManager en la escena.
+    /// </summary>>
     void Awake()
     {
         if (Instance == null)
@@ -77,6 +80,9 @@ public class UIManager : MonoBehaviour
         }      
     }
    
+   /// <summary>
+   /// Inicia el UIManager y registra los eventos necesarios.
+   /// </summary>
     void Start()
     {   
         SceneManager.sceneLoaded += updateReference;
@@ -108,6 +114,11 @@ public class UIManager : MonoBehaviour
         profile_picture = "default";
     }
 
+    /// <summary>
+    /// Se llama cuando se carga una nueva escena. Actualiza las referencias de los elementos de la UI según la escena actual.
+    /// </summary>
+    /// <param name="scene">La escena que se ha cargado.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     void updateReference(Scene scene, LoadSceneMode mode)
     {
         Scene currentScene = SceneManager.GetActiveScene();
@@ -129,12 +140,9 @@ public class UIManager : MonoBehaviour
             //PARTIDA IA
             updateReferencePartidaOnline(root, scene, mode);
         }
-        else if (currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2")
+        else if (currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             updateReferenceStart(root, scene, mode);
-        }
-        else if (currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2"){
-            updateReferenceStartPartidaOnline(root, scene, mode);
         }
         else if (currentScene.name == "Perfil")
         {
@@ -144,12 +152,21 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para volver a la escena anterior.
+    /// </summary>
     private void updateReferencegoBack(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         boton_atras = root.rootVisualElement.Q<Button>("atras");
         boton_atras.RegisterCallback<ClickEvent>(ev => goBack());
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la escena de inicio.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceInicio(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tapete_picure = PlayerPrefs.GetString("tapete");
@@ -188,6 +205,12 @@ public class UIManager : MonoBehaviour
         updateReferenceRanking(root, currentScene, mode);
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la ventana de registro.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceRegister(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tab_register = root.rootVisualElement.Q<Tab>("Register_Tab");
@@ -207,6 +230,12 @@ public class UIManager : MonoBehaviour
         register_field_password2 = tab_register.Q<TextField>("Password2_Field");
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la ventana de inicio de sesión.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceLogin(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tab_login = root.rootVisualElement.Q<Tab>("Login_Tab");
@@ -242,6 +271,12 @@ public class UIManager : MonoBehaviour
         login_field_password = tab_login.Q<TextField>("Password_Field");
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la ventana de amigos.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceAmigos( UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tab_amigos = root.rootVisualElement.Q<Tab>("Friends_tab");
@@ -287,6 +322,12 @@ public class UIManager : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la ventana de ranking.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceRanking(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         Tab_ranking = root.rootVisualElement.Q<Tab>("Ranking_Tab");
@@ -305,6 +346,12 @@ public class UIManager : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la escena de partida IA.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferencePartidaIA(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
@@ -314,12 +361,24 @@ public class UIManager : MonoBehaviour
         boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA_2vs2"));
     }
 
+    /// <summary>
+    /// Inicia el juego con la configuración especificada.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceStart(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         boton_start = root.rootVisualElement.Q<Button>("Start");
         boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
     }
 
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la escena de partida online.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferencePartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
@@ -329,12 +388,12 @@ public class UIManager : MonoBehaviour
         boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
     }
 
-    private void updateReferenceStartPartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
-    {
-        boton_start = root.rootVisualElement.Q<Button>("Start");
-        boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name)); 
-    }
-
+    /// <summary>
+    /// Actualiza las referencias de los elementos de la UI para la escena de perfil.
+    /// </summary>
+    /// <param name="root">El UIDocument de la escena actual.</param>
+    /// <param name="currentScene">La escena actual.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferencePerfil(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         boton_logOut = root.rootVisualElement.Q<Button>("LogOut_Button");
@@ -399,6 +458,10 @@ public class UIManager : MonoBehaviour
         StartCoroutine(Consultas.GetHistorialUsuario(id));
     }
 
+    /// <summary>
+    /// Cambia el nombre de ususuario al especificado si no es nulo o vacío.
+    /// </summary>
+    /// <param name="name">El nuevo nombre de usuario.</param>
     private void updateInfoUsuario(String name)
     {
         if (name != null && name!=""){
@@ -406,11 +469,19 @@ public class UIManager : MonoBehaviour
         }     
     }
 
+    /// <summary>
+    /// Muestra la ventana de inicio de sesión.
+    /// </summary>
+    /// <param name="evt">El evento de clic.</param>
     private void mostrarLogin(ClickEvent evt)
     {
         tab_login.style.display = DisplayStyle.Flex;
     }
 
+    /// <summary>
+    /// Actualiza la lista de fotos de perfil disponibles en la interfaz de usuario.
+    /// Carga un recurso visual y añade elementos visuales para cada foto de perfil encontrada en la carpeta especificada.
+    /// </summary>
     void updateProfilePictures()
     {
         VisualTreeAsset fotoAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
@@ -432,6 +503,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actualiza la lista de tapetes disponibles en la interfaz de usuario.
+    /// Carga un recurso visual y añade elementos visuales para cada tapete encontrado en la carpeta especificada.
+    /// </summary>
     void updateTapetes()
     {
         VisualTreeAsset tapeteAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
@@ -452,6 +527,11 @@ public class UIManager : MonoBehaviour
             tapetes_scroll.Add(tapeteElement);
         }
     }
+
+    /// <summary>
+    /// Actualiza la lista de dorsales de cartas disponibles en la interfaz de usuario.
+    /// Carga un recurso visual y añade elementos visuales para cada dorsal encontrado en la carpeta especificada.
+    /// </summary>
     void updateCartas()
     {
         VisualTreeAsset cartaAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
@@ -472,6 +552,12 @@ public class UIManager : MonoBehaviour
             cartas_scroll.Add(cartaElement);
         }
     }
+
+    /// <summary>
+    /// Actualiza el historial de partidas en la interfaz de usuario.
+    /// Carga un recurso visual y añade elementos visuales para cada partida en el historial.
+    /// </summary>
+    /// <param name="historial">El historial de partidas.</param>
     void UpdateHistorial(Partida[] historial)
     {
         Consultas.MostrarCamposArray(historial);
@@ -521,6 +607,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actualiza el ranking de jugadores en la interfaz de usuario.
+    /// Carga un recurso visual y añade elementos visuales para cada jugador en el ranking.
+    /// </summary>
     void UpdateRanking(Usuario[] ranking)
     {
         Debug.Log("Ranking actualizado");
@@ -536,6 +626,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Establece la información de un elemento de ranking en la interfaz de usuario.
+    /// </summary>
+    /// <param name="element">El elemento visual donde se mostrará la información.</param>
+    /// <param name="posicion">La posición del jugador en el ranking.</param>
+    /// <param name="nombre">El nombre del jugador.</param>
+    /// <param name="victorias">El número de victorias del jugador.</param>
+    /// <param name="foto_perfil">La foto de perfil del jugador.</param>
     void SetRankingElementInfo(VisualElement element, int posicion, String nombre, int victorias, String foto_perfil)
     {
         element.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(foto_perfil));
@@ -543,7 +641,19 @@ public class UIManager : MonoBehaviour
         element.Q<Label>("Nombre_Label").text = nombre;
         element.Q<Label>("Victorias_Label").text = victorias.ToString();
     }
-
+    
+    /// <summary>
+    /// Establece la información de un elemento de historial en la interfaz de usuario.
+    /// </summary>
+    /// <param name="element">El elemento visual donde se mostrará la información.</param>
+    /// <param name="fecha">La fecha de la partida.</param>
+    /// <param name="ganada">Indica si la partida fue ganada o perdida.</param>
+    /// <param name="nombre1">El nombre del jugador 1.</param>
+    /// <param name="nombre2">El nombre del jugador 2.</param>
+    /// <param name="nombre3">El nombre del jugador 3. si existe</param>
+    /// <param name="nombre4">El nombre del jugador 4. si existe</param>
+    /// <param name="puntos1">Los puntos del jugador/equipo 1.</param>
+    /// <param name="puntos2">Los puntos del jugador/equipo 2.</param>
     void SetHistoryElementInfo(VisualElement element, String fecha, bool ganada, String nombre1, String nombre2, String nombre3, String nombre4, int puntos1, int puntos2)
     {
         element.Q<Label>("Fecha").text = "Fecha: " + fecha;
@@ -557,6 +667,9 @@ public class UIManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Muestra la configuración del perfil y oculta el historial.
+    /// </summary>
     void MostrarPerfil()
     {
         Debug.Log("Button Clicked");
@@ -566,6 +679,9 @@ public class UIManager : MonoBehaviour
         scroll_historial.style.display = DisplayStyle.None;
     }
 
+    /// <summary>
+    /// Muestra el historial de partidas y oculta la configuración del perfil.
+    /// </summary>
     void MostrarHistorial()
     {
         Debug.Log("Button Clicked");
@@ -576,6 +692,15 @@ public class UIManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Registra un nuevo usuario con la información proporcionada.
+    /// Verifica que las contraseñas coincidan y llama a la función de registro correspondiente.
+    /// Si las contraseñas no coinciden, muestra un mensaje de error en la interfaz de usuario.
+    /// </summary>
+    /// <param name="email">El correo electrónico del usuario.</param>
+    /// <param name="name">El nombre de usuario.</param>
+    /// <param name="password">La contraseña del usuario.</param>
+    /// <param name="password2">La confirmación de la contraseña.</param>
     void Registrar(String email, String name, String password, String password2)
     {
 
@@ -595,6 +720,10 @@ public class UIManager : MonoBehaviour
         StartCoroutine(Consultas.RegistroUsuario(name, email, password));
     }
 
+    /// <summary>
+    /// Muestra un mensaje de éxito al registrar un usuario.
+    /// Oculta la pestaña de registro en la interfaz de usuario.
+    /// </summary>
     void RegistroUsuario()
     {
         Debug.Log("Usuario registrado");
@@ -602,6 +731,9 @@ public class UIManager : MonoBehaviour
         tab_register.style.display = DisplayStyle.None;
     }
 
+    /// <summary>
+    /// Muestra un mensaje de error en la interfaz de usuario al registrar un usuario.
+    /// </summary>
     void RegistroUsuarioFail()
     {
         Debug.Log("Error al registrar usuario");
@@ -609,6 +741,14 @@ public class UIManager : MonoBehaviour
         tab_register.Q<Label>("error_Label").text = "Error: Error al registrar usuario";
     }
 
+    /// <summary>
+    /// Inicia sesión con el usuario proporcionado.
+    /// Si el inicio de sesión es exitoso, oculta la pestaña de inicio de sesión y actualiza las referencias de la escena.
+    /// Si falla, muestra un mensaje de error en la interfaz de usuario.
+    /// </summary>
+    /// <param name="id">El correo del usuario.</param>
+    /// <param name="name">El nombre del usuario.</param>
+    /// <param name="foto_perfil">La foto de perfil del usuario.</param>
     void Login(String id, String name, string foto_perfil)
     {
         Debug.Log("Id: " + id);
@@ -624,6 +764,9 @@ public class UIManager : MonoBehaviour
         tab_login.style.display = DisplayStyle.None;
     }
 
+    /// <summary>
+    /// Muestra un mensaje de error en la interfaz de usuario al fallar el inicio de sesión.
+    /// </summary>
     void LoginFail()
     {
         Debug.Log("Login erroneo");
@@ -656,6 +799,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actualiza la lista de solicitudes de amistad en la interfaz de usuario.
+    /// Obtiene un ScrollView, limpia su contenido y añade elementos visuales para cada solicitud proporcionada.
+    /// </summary>
+    /// <param name="solicitudes">Array de objetos Usuario que representan las solicitudes de amistad.</param>
     void UpdateSolicitudesAmigos(Usuario[] solicitudes)
     {
         // Obtener el ScrollView donde se mostrarán las solicitudes de amistad
@@ -687,7 +835,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Inicia el juego con la configuración especificada.
+    /// Dependiendo del tipo de partida, se establece el número de jugadores y si es online o no.
+    /// Luego, se cambia a la escena del juego.
     void beginGame(string tipo)
     {
         Debug.Log("Button Clicked");
@@ -708,12 +859,19 @@ public class UIManager : MonoBehaviour
         ChangeScene("Juego");
     }
 
+    /// <summary>
+    /// Regresa a la escena anterior almacenada en la pila de escenas.
+    /// </summary>
     public static void goBack()
     {   
         Debug.Log("Button Clicked");
         SceneManager.LoadScene(lastScene.Pop());
     }
 
+    /// <summary>
+    /// Cambia a la escena especificada y almacena la escena actual en la pila de escenas.
+    /// </summary>
+    /// <param name="sceneName">El nombre de la escena a la que se desea cambiar.</param>
     public static void ChangeScene(string sceneName)
     {   
         Debug.Log("Button Clicked");
