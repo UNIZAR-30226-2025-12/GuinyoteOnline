@@ -485,14 +485,15 @@ public class UIManager : MonoBehaviour
         foreach (Usuario r in ranking)
         {
             VisualElement resultado = resultadoAsset.CloneTree();
-            SetRankingElementInfo(resultado, posicion, r.nombre, r.nVictorias);
+            SetRankingElementInfo(resultado, posicion, r.nombre, r.nVictorias, r.foto_perfil);
             Tab_ranking.Q<ScrollView>("Ranking_Scroll").Add(resultado);
             posicion++;
         }
     }
 
-    void SetRankingElementInfo(VisualElement element, int posicion, String nombre, int victorias)
+    void SetRankingElementInfo(VisualElement element, int posicion, String nombre, int victorias, String foto_perfil)
     {
+        element.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(foto_perfil));
         element.Q<Label>("Posicion_Label").text = posicion.ToString();
         element.Q<Label>("Nombre_Label").text = nombre;
         element.Q<Label>("Victorias_Label").text = victorias.ToString();
@@ -603,6 +604,7 @@ public class UIManager : MonoBehaviour
         foreach (Usuario amigo in amigos)
         {
             VisualElement amigoElement = amigoAsset.CloneTree();
+            amigoElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(amigo.foto_perfil));
             Label nombreAmigoLabel = amigoElement.Q<Label>("Nombre_Amigo");
             nombreAmigoLabel.text = amigo.nombre;
             friendsScroll.Add(amigoElement);
@@ -623,6 +625,7 @@ public class UIManager : MonoBehaviour
         {
 
             VisualElement solicitudElement = solicitudAsset.CloneTree();
+            solicitudElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(solicitud.foto_perfil));
             Label nombreUsuarioLabel = solicitudElement.Q<Label>("Nombre_usuario");
             nombreUsuarioLabel.text = solicitud.nombre;
             Button aceptarButton = solicitudElement.Q<Button>("accept_Button");
