@@ -61,6 +61,7 @@ public class UIManager : MonoBehaviour
     private Button boton_cambiar_foto;
     private Button boton_cambiar_tapete;
     private Button boton_cambiar_cartas;
+    private Button boton_online;
 
     void Awake()
     {
@@ -111,7 +112,8 @@ public class UIManager : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
 
-        if(currentScene.name == "Partida_IA" || currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name == "Perfil"){   
+        if(currentScene.name == "Partida_IA" || currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name == "Perfil" || 
+            currentScene.name == "Partida_Online" || currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2"){   
             updateReferencegoBack(root, currentScene, mode);
         }
 
@@ -122,9 +124,16 @@ public class UIManager : MonoBehaviour
             //PARTIDA IA
             updateReferencePartidaIA(root, scene, mode);
         }
+        else if(currentScene.name == "Partida_Online"){
+            //PARTIDA IA
+            updateReferencePartidaOnline(root, scene, mode);
+        }
         else if (currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2")
         {
             updateReferenceStart(root, scene, mode);
+        }
+        else if (currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2"){
+            updateReferenceStartPartidaOnline(root, scene, mode);
         }
         else if (currentScene.name == "Perfil")
         {
@@ -150,6 +159,15 @@ public class UIManager : MonoBehaviour
         
         boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
         boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
+
+        if(isLogged){
+            boton_online.UnregisterCallback<ClickEvent>(mostrarLogin);
+            boton_online = root.rootVisualElement.Q<Button>("Online_Button");
+            boton_online.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online"));
+        }else{
+            boton_online = root.rootVisualElement.Q<Button>("Online_Button");
+            boton_online.RegisterCallback<ClickEvent>(mostrarLogin);
+        }
 
         //REGISTRO
         updateReferenceRegister(root, currentScene, mode);
@@ -291,6 +309,21 @@ public class UIManager : MonoBehaviour
     {
         boton_start = root.rootVisualElement.Q<Button>("Start");
         boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
+    }
+
+    private void updateReferencePartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
+        boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_1vs1"));
+
+        boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2");
+        boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
+    }
+
+    private void updateReferenceStartPartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    {
+        boton_start = root.rootVisualElement.Q<Button>("Start");
+        boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name)); 
     }
 
     private void updateReferencePerfil(UIDocument root,Scene currentScene, LoadSceneMode mode)
@@ -651,8 +684,16 @@ public class UIManager : MonoBehaviour
 
         if(tipo == "Partida_IA_1vs1"){
             GameManager.numJugadores = 2;
+            GameManager.esOnline = false;
         } else if(tipo == "Partida_IA_2vs2"){
             GameManager.numJugadores = 4;
+            GameManager.esOnline = false;
+        } else if (tipo == "Partida_Online_1vs1"){
+            GameManager.numJugadores = 2;
+            GameManager.esOnline = true;
+        } else if (tipo == "Partida_Online_2vs2"){
+            GameManager.numJugadores = 4;
+            GameManager.esOnline = true;
         }
         ChangeScene("Juego");
     }

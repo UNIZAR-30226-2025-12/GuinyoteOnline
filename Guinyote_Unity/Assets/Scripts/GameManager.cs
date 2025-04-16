@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour
     public IA_Player iAPrefab;
     public Player[] jugadores;
     public int[] orden;
-    public static int numJugadores = 4; 
+    public static int numJugadores = 4;
+    public static bool esOnline = false; 
     public Baraja Baraja;
     public Carta[] cartasJugadas;
     public Carta triunfo;
