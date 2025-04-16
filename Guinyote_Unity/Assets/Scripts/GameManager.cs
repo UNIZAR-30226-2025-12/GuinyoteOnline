@@ -54,6 +54,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Start()
     {
+        GameObject tapete = GameObject.Find("Tapete");
+        SpriteRenderer spriteRenderer = tapete.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/Tapetes/" + UIManager.tapete_picure);
         arrastre = false;
         segundaBaraja = false;
         finRonda = false;

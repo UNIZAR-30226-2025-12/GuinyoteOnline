@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
     private String id; //Correo del usuario logueado
     private String profile_picture; //Foto de perfil del usuario logueado
 
-    private String carta_picture; //Carta del usuario logueado
-    private String tapete_picure; //Tapete del usuario logueado
+    static public String carta_picture; //Carta del usuario logueado
+    static public String tapete_picure; //Tapete del usuario logueado
     private VisualElement imagenes_perfil_tab;
     private VisualElement tapetes_tab;
     private VisualElement cartas_tab;
