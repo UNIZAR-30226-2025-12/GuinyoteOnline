@@ -199,7 +199,8 @@ public class UIManager : MonoBehaviour
         boton_login = root.rootVisualElement.Q<Button>("Login_Button");
         if(isLogged){
             boton_login.Q<Label>("Login_Label").text = username;
-            boton_login.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture + ".png");
+            Debug.Log("Profile picture: " + profile_picture);
+            boton_login.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
             boton_login.UnregisterCallback<ClickEvent>(mostrarLogin);
             boton_login.RegisterCallback<ClickEvent>(ev => ChangeScene("Perfil"));
 
