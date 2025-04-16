@@ -17,9 +17,10 @@ public class UIManager : MonoBehaviour
     private String username; //Nombre del usuario logueado
     private String id; //Correo del usuario logueado
     private String profile_picture; //Foto de perfil del usuario logueado
-
     static public String carta_picture; //Dorso de la carta del usuario logueado
     static public String tapete_picure; //Tapete del usuario logueado
+
+    private String temp_profile_picture;
     private VisualElement imagenes_perfil_tab;
     private VisualElement tapetes_tab;
     private VisualElement cartas_tab;
@@ -151,6 +152,14 @@ public class UIManager : MonoBehaviour
 
     private void updateReferenceInicio(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
+        tapete_picure = PlayerPrefs.GetString("tapete");
+        if(tapete_picure == null || tapete_picure == ""){
+            tapete_picure = "default";
+        }
+        carta_picture = PlayerPrefs.GetString("carta");
+        if(carta_picture == null || carta_picture == ""){
+            carta_picture = "default";
+        }
         if(isLogged){
             StartCoroutine(Consultas.GetAmigosUsuario(id));
             StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
@@ -379,6 +388,9 @@ public class UIManager : MonoBehaviour
             if(carta_picture != null && carta_picture != ""){
                 PlayerPrefs.SetString("carta", carta_picture);
             }
+            if(temp_profile_picture != null && temp_profile_picture != ""){
+                profile_picture = temp_profile_picture;
+            }
             StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, id, perfil_configuracion.Q<TextField>("Password_Field").value, profile_picture));
             
         });
@@ -413,7 +425,7 @@ public class UIManager : MonoBehaviour
             fotoElement.Q<Label>("Name").text = fotoName;
             imagen_boton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Cambiar foto pulsado"); 
-                profile_picture= fotoName;
+                temp_profile_picture= fotoName;
                 imagenes_perfil_tab.style.display = DisplayStyle.None;
             });
             imagenes_perfil_scroll.Add(fotoElement);
@@ -665,13 +677,11 @@ public class UIManager : MonoBehaviour
             aceptarButton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Aceptar solicitud de amistad de: " + solicitud.nombre); 
                 StartCoroutine(Consultas.AceptarSolicitudAmistad(id, solicitud.correo));
-                //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
             });
             Button rechazarButton = solicitudElement.Q<Button>("reject_Button");
             rechazarButton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Rechazar solicitud de amistad de: " + solicitud.nombre); 
                 StartCoroutine(Consultas.RechazarSolicitudAmistad(id, solicitud.correo));
-                //solicitudElement.RemoveFromHierarchy(); // Eliminar el elemento de la interfaz 
             });
             friendsScroll.Add(solicitudElement);
         }
