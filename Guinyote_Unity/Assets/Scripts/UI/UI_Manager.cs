@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
     private String id; //Correo del usuario logueado
     private String profile_picture; //Foto de perfil del usuario logueado
 
-    static public String carta_picture; //Carta del usuario logueado
+    static public String carta_picture; //Dorso de la carta del usuario logueado
     static public String tapete_picure; //Tapete del usuario logueado
     private VisualElement imagenes_perfil_tab;
     private VisualElement tapetes_tab;
@@ -410,13 +410,13 @@ public class UIManager : MonoBehaviour
     void updateCartas()
     {
         VisualTreeAsset cartaAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String carta in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Carta", "*.png"))
+        foreach (String carta in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Dorso_Carta", "*.png"))
         {
             Debug.Log("Carta: " + carta);
             String cartaName = System.IO.Path.GetFileNameWithoutExtension(carta);
             VisualElement cartaElement = cartaAsset.CloneTree();
             Button imagen_boton = cartaElement.Q<Button>("Imagen_Button");
-            string relativePath = "Sprites/Carta/" + cartaName;
+            string relativePath = "Sprites/Dorso_Carta/" + cartaName;
             imagen_boton.style.backgroundImage = Resources.Load<Texture2D>(relativePath);
             cartaElement.Q<Label>("Name").text = cartaName;
             imagen_boton.RegisterCallback<ClickEvent>(ev => { 
