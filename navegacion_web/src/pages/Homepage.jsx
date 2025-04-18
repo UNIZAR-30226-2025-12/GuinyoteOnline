@@ -10,6 +10,7 @@ import RankingModal from '../components/RankingModal';
 import FriendsModal from '../components/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
+import { useUser } from '../context/UserContext';
 
 function Homepage() {
 
