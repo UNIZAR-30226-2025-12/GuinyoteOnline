@@ -24,13 +24,22 @@ function Homepage() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [isUserRegistered, setIsUserRegistered] = useState(false);
+  //const [isUserRegistered, setIsUserRegistered] = useState(false);
   const [showRanking, setShowRanking] = useState(false);
-  const [showFriends, setShowFriends] = useState(false);
+  const [showFriends, setShowFriends] = useState(false); 
 
   // Almacenamos los datos del usuario para la correcta ejecución de la aplicación
-  const [username, setUsername] = useState('');
-  const [mail, setMail] = useState('');
+  /*const [username, setUsername] = useState('');
+  const [mail, setMail] = useState('');*/
+
+  const {
+    username,
+    setUsername,
+    mail,
+    setMail,
+    isUserRegistered,
+    setIsUserRegistered
+  } = useUser();
 
   const handleLoginModalClose = () => {
     setShowLoginModal(false);
