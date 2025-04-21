@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileButton from '../components/buttons/ProfileButton';
 import HistorialPartidasButton from '../components/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
+import ProfileModal from '../components/ProfileModal';
 
 function AccountManagement() {
   const navigate = useNavigate();
@@ -23,13 +24,18 @@ function AccountManagement() {
 
   return (
     <div className="account-management-container">
+      
       <div className="left-panel">
-        <ProfileButton onClick={handlePerfilClick} />
-        <HistorialPartidasButton onClick={handleHistorialClick} />
+        <button className="back-button" onClick={handleBackClick}> Volver</button>
+
+        <div className="options">
+          <ProfileButton onClick={handlePerfilClick} isActive={selectedOption === 'perfil'} />
+          <HistorialPartidasButton onClick={handleHistorialClick} isActive={selectedOption === 'historial'} />
+        </div>
       </div>
 
       <div className="right-panel">
-        {selectedOption === 'perfil' && <p>Perfil seleccionado</p>}
+        {selectedOption === 'perfil' && <ProfileModal />}
         {selectedOption === 'historial' && <p>Historial Partidas seleccionado</p>}
       </div>
     </div>

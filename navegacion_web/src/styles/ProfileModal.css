@@ -1,0 +1,129 @@
+.profile-modal {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.9);
+    padding: 40px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    gap: 20px;
+    box-sizing: border-box;
+  }
+  
+  .profile-modal h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  /* Nueva sección superior con info del usuario */
+  .user-info-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+  }
+  
+  /* Foto de perfil */
+  .profile-pic-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #666;
+    object-fit: cover;
+  }
+  
+  .change-pic-button {
+    padding: 6px 10px;
+    font-size: 14px;
+    background-color: #3a3a3a;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .name-password-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+  }
+  
+  .name-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .name-field input {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    background-color: #222;
+    color: #fff;
+    flex: 1;
+  }
+  
+  .edit-icon {
+    color: #ccc;
+    cursor: pointer;
+  }
+  
+  /* Botón cambiar contraseña */
+  .name-password-section button {
+    padding: 8px 12px;
+    background-color: #3a3a3a;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .name-password-section button:hover {
+    background-color: #555;
+  }
+  
+  /* Línea divisoria */
+  .divider {
+    border-top: 1px solid #555;
+    margin: 20px 0;
+  }
+  
+  /* Personalización: tapete y cartas */
+  .customization-section {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+  }
+  
+  .customization-box {
+    flex: 1;
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .customization-box:hover {
+    background-color: #333;
+  }
+  
+  .logout-button {
+    margin-top: 30px;
+    color: red;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
