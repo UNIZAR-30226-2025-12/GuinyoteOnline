@@ -731,6 +731,33 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Buscar partida
+  socket.on('buscarPartida', ({ tipo, userId }) => {
+    let sala = Array.from(salasEspera.values()).find(s => s.tipo === tipo && s.jugadores.length < (tipo === '1v1' ? 2 : 4));
+
+    if (!sala) {
+        sala = {
+            id: Date.now().toString(),
+            tipo,
+            jugadores: [userId],
+            estado: 'esperando'
+        };
+        salasEspera.set(sala.id, sala);
+    } else {
+        sala.jugadores.push(userId);
+    }
+
+    socket.join(sala.id);
+    io.to(sala.id).emit('actualizacionSala', sala);
+
+    if (sala.jugadores.length === (tipo === '1v1' ? 2 : 4)) {
+        const nuevaPartida = iniciarPartida(sala);
+        partidasActivas.set(nuevaPartida.id, nuevaPartida);
+        io.to(sala.id).emit('inicioPartida', nuevaPartida);
+        salasEspera.delete(sala.id);
+    }
+  });
+
   // Desconexión
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);

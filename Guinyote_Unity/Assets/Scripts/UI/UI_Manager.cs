@@ -11,6 +11,7 @@ using UnityEditor;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
+    private WebSocketClient webSocketClient; //Cliente WebSocket para la comunicación en tiempo real
 
     private bool isLogged = false; //Indica si el usuario está logueado o no
 
@@ -80,9 +81,9 @@ public class UIManager : MonoBehaviour
         }      
     }
    
-   /// <summary>
-   /// Inicia el UIManager y registra los eventos necesarios.
-   /// </summary>
+    /// <summary>
+    /// Inicia el UIManager y registra los eventos necesarios.
+    /// </summary>
     void Start()
     {   
         SceneManager.sceneLoaded += updateReference;
@@ -186,14 +187,31 @@ public class UIManager : MonoBehaviour
         boton_IA = root.rootVisualElement.Q<Button>("IA_Button");
         boton_IA.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_IA"));
 
-        if(isLogged){
-            boton_online.UnregisterCallback<ClickEvent>(mostrarLogin);
-            boton_online = root.rootVisualElement.Q<Button>("Online_Button");
-            boton_online.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online"));
-        }else{
-            boton_online = root.rootVisualElement.Q<Button>("Online_Button");
-            boton_online.RegisterCallback<ClickEvent>(mostrarLogin);
-        }
+        boton_online = root.rootVisualElement.Q<Button>("Online_Button");
+        boton_online.UnregisterCallback<ClickEvent>(mostrarLogin);
+        boton_online.UnregisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online"));
+
+        boton_online.RegisterCallback<ClickEvent>(ev => {
+            if (isLogged)
+            {
+                ChangeScene("Partida_Online");
+            }
+            else
+            {
+                tab_login.style.display = DisplayStyle.Flex;
+                login_button_accept.RegisterCallback<ClickEvent>(ev => {
+                    tab_login.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
+                    tab_login.Q<Label>("error_Label").text = "Cargando";
+                    StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value));
+                });
+
+                Consultas.OnInicioSesion += (id, name, profilePicture) => {
+                    isLogged = true;
+                    tab_login.style.display = DisplayStyle.None;
+                    ChangeScene("Partida_Online");
+                };
+            }
+        });
 
         //REGISTRO
         updateReferenceRegister(root, currentScene, mode);
@@ -210,7 +228,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="root">El UIDocument de la escena actual.</param>
     /// <param name="currentScene">La escena actual.</param>
-    /// <param name="mode">El modo de carga de la escena.</param>
+    /// <param="mode">El modo de carga de la escena.</param>
     private void updateReferenceRegister(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tab_register = root.rootVisualElement.Q<Tab>("Register_Tab");
@@ -276,7 +294,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="root">El UIDocument de la escena actual.</param>
     /// <param name="currentScene">La escena actual.</param>
-    /// <param name="mode">El modo de carga de la escena.</param>
+    /// <param "mode">El modo de carga de la escena.</param>
     private void updateReferenceAmigos( UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tab_amigos = root.rootVisualElement.Q<Tab>("Friends_tab");
@@ -839,32 +857,51 @@ public class UIManager : MonoBehaviour
     /// Inicia el juego con la configuración especificada.
     /// Dependiendo del tipo de partida, se establece el número de jugadores y si es online o no.
     /// Luego, se cambia a la escena del juego.
+    /// </summary>
     void beginGame(string tipo)
     {
         Debug.Log("Button Clicked");
 
-        if(tipo == "Partida_IA_1vs1"){
-            GameManager.numJugadores = 2;
+        if (tipo == "Partida_IA_1vs1" || tipo == "Partida_IA_2vs2")
+        {
+            GameManager.numJugadores = (tipo == "Partida_IA_1vs1") ? 2 : 4;
             GameManager.esOnline = false;
-        } else if(tipo == "Partida_IA_2vs2"){
-            GameManager.numJugadores = 4;
-            GameManager.esOnline = false;
-        } else if (tipo == "Partida_Online_1vs1"){
-            GameManager.numJugadores = 2;
-            GameManager.esOnline = true;
-        } else if (tipo == "Partida_Online_2vs2"){
-            GameManager.numJugadores = 4;
-            GameManager.esOnline = true;
+            ChangeScene("Juego");
         }
-        ChangeScene("Juego");
+        else if (tipo == "Partida_Online_1vs1" || tipo == "Partida_Online_2vs2")
+        {
+            GameManager.numJugadores = (tipo == "Partida_Online_1vs1") ? 2 : 4;
+            GameManager.esOnline = true;
+
+            // Configurar WebSocket para partidas online
+            if (webSocketClient == null)
+            {
+                webSocketClient = new WebSocketClient();
+                webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+            }
+
+            string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
+            webSocketClient.JoinRoom(roomType);
+
+            // Cambiar a la pantalla de espera
+            ChangeScene("PantallaEspera");
+        }
     }
 
     /// <summary>
     /// Regresa a la escena anterior almacenada en la pila de escenas.
     /// </summary>
     public static void goBack()
-    {   
+    {
         Debug.Log("Button Clicked");
+
+        // Cerrar conexión WebSocket si está activa
+        if (Instance.webSocketClient != null)
+        {
+            Instance.webSocketClient.Close();
+            Instance.webSocketClient = null;
+        }
+
         SceneManager.LoadScene(lastScene.Pop());
     }
 
@@ -873,8 +910,16 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="sceneName">El nombre de la escena a la que se desea cambiar.</param>
     public static void ChangeScene(string sceneName)
-    {   
+    {
         Debug.Log("Button Clicked");
+
+        // Cerrar conexión WebSocket si se cambia a una escena no relacionada con partidas online
+        if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2"))
+        {
+            Instance.webSocketClient.Close();
+            Instance.webSocketClient = null;
+        }
+
         lastScene.Push(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(sceneName);
         Debug.Log("updateReference");

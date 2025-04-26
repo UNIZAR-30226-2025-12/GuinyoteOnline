@@ -1,6 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Label text="Partida Online" style="top: 10%; left: 40%; width: 85px; position: absolute; font-size: 30px;" />
-    <engine:Button text="1 vs 1" name="1vs1" style="top: 40%; left: 25%; width: 167px; height: 86px; position: absolute;" />
-    <engine:Button text="2 vs 2" name="2vs2" style="top: 40%; left: 55%; width: 167px; height: 86px; position: absolute;" />
+    <engine:Button text="1 vs 1" name="1vs1_Button" style="top: 40%; left: 25%; width: 167px; height: 86px; position: absolute;" />
+    <engine:Button text="2 vs 2" name="2vs2_Button" style="top: 40%; left: 55%; width: 167px; height: 86px; position: absolute;" />
     <engine:Button icon-image="project://database/Assets/Resources/Sprites/UI/atras.png?fileID=2800000&amp;guid=e1424596349e675458de8a62305ce426&amp;type=3#atras" name="atras" style="width: 93px; height: 78px; background-color: rgba(188, 188, 188, 0); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); position: absolute;" />
 </engine:UXML>

@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
+using WebSocketSharp;
 
 /// <summary>
 /// Clase principal que gestiona el estado del juego, los turnos y los jugadores.
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
     public bool mostrandoCantar;
 
     public string test_state = "";
+
+    private WebSocketClient webSocketClient;
 
     /// <summary>
     /// Inicializa la instancia singleton del GameManager.
@@ -101,6 +104,11 @@ public class GameManager : MonoBehaviour
         }
 
         TurnManager.Tick();
+
+        webSocketClient = new WebSocketClient();
+        webSocketClient.Connect("ws://localhost:10000");
+
+        webSocketClient.OnGameStarted += HandleGameStarted;
         
     }
 
@@ -595,5 +603,25 @@ public class GameManager : MonoBehaviour
         // Enviar el estado actual del juego al servidor y recibir actualizaciones.
         Debug.Log("Sincronizando estado del juego...");
         // Implementar lógica de sincronización aquí.
+    }
+
+    public void SearchMatch(string matchType)
+    {
+        Debug.Log("Buscando partida: " + matchType);
+        webSocketClient.JoinRoom(matchType);
+    }
+
+    private void HandleGameStarted(string message)
+    {
+        Debug.Log("Partida iniciada: " + message);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Juego");
+    }
+
+    private void OnDestroy()
+    {
+        if (webSocketClient != null)
+        {
+            webSocketClient.Close();
+        }
     }
 }
