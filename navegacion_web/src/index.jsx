@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './index.css'
 import Homepage from './pages/Homepage.jsx'
-import GameOnlinepage from './components/GameOnlinepage.jsx'
+import GameOnlinepage from './components/GameOnlinepage.jsx';
 import AccountManagement from './pages/AccountManagement.jsx';
 import { UserProvider } from './context/UserContext';
 
