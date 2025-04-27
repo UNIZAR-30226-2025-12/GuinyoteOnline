@@ -228,7 +228,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="root">El UIDocument de la escena actual.</param>
     /// <param name="currentScene">La escena actual.</param>
-    /// <param="mode">El modo de carga de la escena.</param>
+    /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceRegister(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
         tab_register = root.rootVisualElement.Q<Tab>("Register_Tab");
@@ -883,8 +883,17 @@ public class UIManager : MonoBehaviour
             string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
             webSocketClient.JoinRoom(roomType);
 
-            // Cambiar a la pantalla de espera
-            ChangeScene("PantallaEspera");
+            // Mostrar UI de PantallaEspera
+            VisualTreeAsset pantallaEsperaAsset = Resources.Load<VisualTreeAsset>("PantallaEspera");
+            VisualElement pantallaEspera = pantallaEsperaAsset.CloneTree();
+            var root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+            root.rootVisualElement.Add(pantallaEspera);
+
+            Button cancelButton = pantallaEspera.Q<Button>("CancelButton");
+            cancelButton.RegisterCallback<ClickEvent>(ev => {
+                pantallaEspera.RemoveFromHierarchy();
+                webSocketClient.Close();
+            });
         }
     }
 
