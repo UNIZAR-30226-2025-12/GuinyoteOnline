@@ -93,7 +93,8 @@ app.get("/usuarios", async (req, res) => {
   }
 });
 
-// * DONE Documentación y prueba de funcionalidad actual
+// * DONE Documentación
+// ! NOT DONE Falta cifrar contraseña y prueba funcionalidad actual
 /**
  * POST /usuarios/registro
  *
@@ -125,7 +126,7 @@ app.get("/usuarios", async (req, res) => {
 app.post("/usuarios/registro", async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
-    const usuario = new Usuario({ nombre, correo, contrasena, foto_perfil: "default.png" });
+    const usuario = new Usuario({ nombre, correo, contrasena, foto_perfil: "default_avatar.png", nVictorias: 0, amigos: [], tapete: "default_tapete.png", imagen_carta: "default_cartas.png" });
     await usuario.save();
     res.status(201).json(usuario);
   } catch (error) {
@@ -174,7 +175,246 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
   }
 })
 
+// * DONE Documentación
+// ! NOT DONE Faltan pruebas
+/**
+ * PUT /usuarios/perfil/cambiarUsername/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de modificar el nombre de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} id - Correo electrónico del usuario.
+ * - @params {string} nuevo_nombre - Nuevo nombre del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
+ * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
+app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
+  try {
+    const { nombre } = req.body;
+    const usuario = await Usuario.findOneAndUpdate(
+      { correo: req.params.id },
+      { nombre: nombre },
+      { new: true }
+    );
+
+    if(!usuario) {
+      res.status(404).json({ message: "Usuario no encontrado"});
+    }
+
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ message: "Error actualizando nombre de usuario", error: error.message });
+  }
+})
+
+// * DONE Documentación
+// ! NOT DONE Falta cifrar contraseña y pruebas
+/**
+ * PUT /usuarios/perfil/cambiarContrasena/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de modificar la contraseña de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} id - Correo electrónico del usuario.
+ * - @params {string} contrasena_nueva - Contraseña nueva del usuario.
+ * - @params {string} contrasena_antigua - Contraseña antigua del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 401 Unauthorized: Devuelve error, no se ha podido cambiar la contraseña
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
+ * - 400 Bad Request: Devuelve error, no se ha podido cambiar la contraseña.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
+app.put("usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
+  try {
+    const { contrasena_antigua, contrasena_nueva } = req.body;
+    const usuario = await Usuario.findOneAndUpdate(
+      { correo: req.params.id },
+      { contrasena: contrasena_antigua }
+    );
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    if (usuario.contrasena !== contrasena_antigua) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
+    }
+
+    usuario.contrasena = contrasena_nueva;
+    await usuario.save();
+
+    res.json(usuarioActualizado);
+  } catch (error) {
+    res.status(400).json({ message: "Error actualizando contraseña", error: error.message });
+  }
+})
+
+// * DONE Documentación
+// ! NOT DONE Faltan pruebas
+/**
+ * PUT /usuarios/perfil/cambiarFoto/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de modificar la foto de perfil de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} id - Correo electrónico del usuario.
+ * - @params {string} foto_perfil - Nombre de la nueva foto de perfil del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
+ * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
+app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
+  try {
+    const { foto_perfil } = req.body;
+    const usuario = await Usuario.findOneAndUpdate(
+      { correo: req.params.id },
+      { nombre: foto_perfil },
+      { new: true }
+    );
+
+    if(!usuario) {
+      res.status(404).json({ message: "Usuario no encontrado"});
+    }
+
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ message: "Error actualizando foto de perfil", error: error.message });
+  }
+})
+
+// * DONE Documentación
+// ! NOT DONE Faltan pruebas
+/**
+ * PUT /usuarios/perfil/cambiarTapete/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de modificar el tapete de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} id - Correo electrónico del usuario.
+ * - @params {string} tapete - Nombre del nuevo tapete del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
+ * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
+app.put("/usuarios/perfil/cambiarTapete/:id", async (req, res) => {
+  try {
+    const { tapete } = req.body;
+    const usuario = await Usuario.findOneAndUpdate(
+      { correo: req.params.id },
+      { tapete: tapete },
+      { new: true }
+    );
+
+    if(!usuario) {
+      res.status(404).json({ message: "Usuario no encontrado"});
+    }
+
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ message: "Error actualizando el tapete", error: error.message });
+  }
+})
+
+// * DONE Documentación
+// ! NOT DONE Faltan pruebas
+/**
+ * PUT /usuarios/perfil/cambiarCartas/:id
+ *
+ * Descripción:
+ * Esta ruta se encarga de modificar la imagen de las cartas de un usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} id - Correo electrónico del usuario.
+ * - @params {string} imagen_carta - Nombre de la nueva imagen de las cartas del usuario.
+ *
+ * Respuesta:
+ * - 202 Accepted: Devuelve el correo y el nombre del usuario
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
+ * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
+ * 
+ * Ejemplo de respuesta exitosa:
+ * [
+ *   {
+ *       "_id": "67f40268b679013fe7fa6548",
+ *       "correo": "pruebaRegistro@gmail.com",
+ *       "nombre": "pruebaRegistro"
+ *   }
+ * ]
+ *
+ */
+app.put("/usuarios/perfil/cambiarCartas/:id", async (req, res) => {
+  try {
+    const { imagen_carta } = req.body;
+    const usuario = await Usuario.findOneAndUpdate(
+      { correo: req.params.id },
+      { imagen_carta: imagen_carta },
+      { new: true }
+    );
+
+    if(!usuario) {
+      res.status(404).json({ message: "Usuario no encontrado"});
+    }
+
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ message: "Error actualizando la imagen de las cartas", error: error.message });
+  }
+})
+
 // ! NOT DONE Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// ! //////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * POST /usuarios/actualizacionPerfil/:id
  *
@@ -246,7 +486,6 @@ app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
  *
  * Parámetros de la solicitud:
  * - @params {string} id - Correo electrónico del usuario (Dentro de la ruta).
- *  ! Dentro de la ruta
  * 
  * Respuesta:
  * - 200 OK: Devuelve un objeto con la información del usuario.
@@ -267,12 +506,14 @@ app.put("/usuarios/actualizacionPerfil/:id", async (req, res) => {
  */
 app.get("/usuarios/perfil/:id", async (req, res) => {
   try {
-    const usuario = await Usuario.find({correo: req.params.id}, {amigos: 0});
+    const usuario = await Usuario.findOne({correo: req.params.id}, {amigos: 0});
     res.json(usuario);
   } catch (error) {
     res.status(400).json({ message: "Error obteniendo el perfil", error: error.message});
   }
 });
+
+// ! //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // * DONE Prueba de funcionalidad actual
 // ! NOT DONE Documentar la respuesta obtenida
