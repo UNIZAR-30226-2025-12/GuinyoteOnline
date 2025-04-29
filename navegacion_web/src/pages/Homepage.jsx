@@ -11,6 +11,7 @@ import FriendsModal from '../components/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
 import { useUser } from '../context/UserContext';
+import ProfilePic from '../components/ProfilePic';
 
 function Homepage() {
 
@@ -37,6 +38,7 @@ function Homepage() {
     setUsername,
     mail,
     setMail,
+    profilePic,
     isUserRegistered,
     setIsUserRegistered
   } = useUser();
@@ -161,7 +163,7 @@ function Homepage() {
       <div className='background-layer'>
 
       </div>
-      <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} onClick={handleLoginClick}/>
+      <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} loginButtonIcon={profilePic} onClick={handleLoginClick}/>
       <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
       <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handlePartidaOnlineClick}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>

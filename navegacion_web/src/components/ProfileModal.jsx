@@ -1,36 +1,65 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '/src/styles/ProfileModal.css';
 import ProfilePic from './ProfilePic';
 import PicChangeModal from './PicChangeModal';
 import { useUser } from '../context/UserContext';
 import UsernameChangeModal from './UsernameChangeModal';
+import SignOutButton from './buttons/SignOutButton'
+import av5 from '/src/assets/avatares/av5.png';
 
 function ProfileModal() {
 
   const [showPicChangeModal,setShowPicChangeModal] = useState(false);
   const [showUsernameChangeModal,setShowUsernameChangeModal] = useState(false);
 
-    const {
-      username,
-    } = useUser();
+  const navigate = useNavigate();
 
-    const handlePicChange = () => {
-        console.log("Abrir modal para cambiar la foto de perfil");
-        // Aquí iría la lógica para abrir el modal de selección de imagen
-        setShowPicChangeModal(true);
-    };
+  const {
+    username,
+    setUsername,
+    mail,
+    setMail,
+    profilePic,
+    setProfilePic,
+    isUserRegistered,
+    setIsUserRegistered
+  } = useUser();
 
-    const handlePicChangeModalClose = () => {
-        setShowPicChangeModal(false);
-    };
+  const handlePicChange = () => {
+      console.log("Abrir modal para cambiar la foto de perfil");
+      // Aquí iría la lógica para abrir el modal de selección de imagen
+      setShowPicChangeModal(true);
+  };
 
-    const handleUsernameChangeModallOpen = () => {
-      setShowUsernameChangeModal(true);
-    }
+  const handlePicChangeModalClose = () => {
+      setShowPicChangeModal(false);
+  };
 
-    const handleUsernameChangeModalClose = () => {
-      setShowUsernameChangeModal(false);
-    }
+  const handleUsernameChangeModallOpen = () => {
+    setShowUsernameChangeModal(true);
+  }
+
+  const handleUsernameChangeModalClose = () => {
+    setShowUsernameChangeModal(false);
+  }
+
+  const handleSignOut = () => {
+    console.log("Cerrar sesión");
+  
+    // Limpiar estado
+    setUsername('');
+    setMail('');
+    setIsUserRegistered(false);
+  
+    // Limpiar localStorage
+    localStorage.removeItem('username');
+    localStorage.removeItem('mail');
+    localStorage.removeItem('isUserRegistered');
+  
+    // Redirigir
+    navigate('/');
+  };
       
   return (
     <div className="profile-modal">
@@ -39,7 +68,7 @@ function ProfileModal() {
       <div className="user-info-section">
         
 
-        <ProfilePic imageUrl="https://via.placeholder.com/80" onChangePic={handlePicChange} />
+        <ProfilePic imageUrl={profilePic} onChangePic={handlePicChange} />
         <PicChangeModal show={showPicChangeModal} handleClose={handlePicChangeModalClose}/>
         <div className="name-password-section">
           <div className="name-field"> 
@@ -59,7 +88,7 @@ function ProfileModal() {
         <div className="customization-box">Parte trasera cartas <br /> Pulsar para cambiar</div>
       </div>
 
-      <div className="logout-button">Cerrar sesión</div>
+      <SignOutButton className="logout-button" onClick={handleSignOut} />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import defaultAvatar from '/src/assets/login_button.png';
 
 // Creamos el contexto
 const UserContext = createContext();
@@ -9,6 +10,7 @@ export const UserProvider = ({ children }) => {
   // Estado inicial basado en localStorage (solo se ejecuta una vez)
   const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
   const [mail, setMail] = useState(() => localStorage.getItem('mail') || '');
+  const [profilePic, setProfilePic] = useState(() => localStorage.getItem('profilePic') || defaultAvatar);
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });
@@ -17,11 +19,21 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('username', username);
     localStorage.setItem('mail', mail);
+    localStorage.setItem('profilePic', profilePic);
     localStorage.setItem('isUserRegistered', JSON.stringify(isUserRegistered));
-  }, [username, mail, isUserRegistered]);
+  }, [username, mail, profilePic, isUserRegistered]);
 
   return (
-    <UserContext.Provider value={{ username, setUsername, mail, setMail, isUserRegistered, setIsUserRegistered }}>
+    <UserContext.Provider value={{ 
+      username,
+      setUsername,
+      mail,
+      setMail,
+      profilePic,
+      setProfilePic,
+      isUserRegistered,
+      setIsUserRegistered,
+    }}>
       {children}
     </UserContext.Provider>
   );

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import loginButtonIcon from '/src/assets/login_button.png';
 import '/src/styles/LoginButton.css';
 
-const LoginButton = ({ className, loginButtonText, onClick }) => {
+const LoginButton = ({ className, loginButtonText, loginButtonIcon, onClick }) => {
 
     return (
         <button className={`login-button ${className}`} onClick={onClick}>

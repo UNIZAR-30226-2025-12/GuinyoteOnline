@@ -1,19 +1,24 @@
 import React from 'react';
 import '/src/styles/PicChangeModal.css';
+import { useUser } from '../context/UserContext';
+
+import av1 from '/src/assets/avatares/av1.png';
+import av2 from '/src/assets/avatares/av2.png';
+import av3 from '/src/assets/avatares/av3.png';
+import av4 from '/src/assets/avatares/av4.png';
+import av5 from '/src/assets/avatares/av5.png';
 
 function PicChangeModal({ show, handleClose }) {
   if (!show) return null;
 
-  const exampleImages = [
-    "https://i.imgur.com/4Z7bK3J.jpg",
-    "https://i.imgur.com/JgG2kU8.png",
-    "https://i.imgur.com/RRUe0Mo.png"
-  ];
-
+  const exampleImages = [av1, av2, av3, av4, av5];
+  const {profilePic, setProfilePic } = useUser();
+  
   const handleImageSelect = (url) => {
     console.log("Imagen seleccionada:", url);
-    // Aquí podrías llamar a una función para cambiar la imagen de perfil en el estado global
-    handleClose(); // Cerrar el modal después de seleccionar
+    // Aquí puedes actualizar la imagen de perfil en el estado global
+    setProfilePic(url);
+    handleClose(); // Cierra el modal después de seleccionar
   };
 
   return (
