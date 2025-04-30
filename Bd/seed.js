@@ -28,8 +28,7 @@ const seedDB = async () => {
                 idUsuario: faker.string.uuid(),
                 nombre: faker.person.fullName(),
                 correo: faker.internet.email(),
-                contrasena: faker.internet.password(),
-                foto_perfil: faker.image.avatar()
+                contrasena: faker.internet.password()
             });
         }
         const usuariosCreados = await Usuario.insertMany(usuarios);

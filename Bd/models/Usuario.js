@@ -9,8 +9,10 @@ const UsuarioSchema = new mongoose.Schema({
     correo: { type: String, required: true, unique: true },
     nombre: { type: String, required: true },
     contrasena: { type: String, required: true },
-    foto_perfil: { type: String },
+    foto_perfil: { type: String, default: 'default.png' },
     nVictorias: { type: Number, default: 0 },
+    tapete: { type: String, default: 'default.png' },
+    imagen_carta : { type: String, default: 'default.png' },
     amigos: [AmigoSchema]
 });
 
