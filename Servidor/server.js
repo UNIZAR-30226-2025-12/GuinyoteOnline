@@ -2,9 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const http = require('http');
 const socketIo = require('socket.io');
+const bcrypt = require('bcrypt');
 const { iniciarPartida, procesarJugada, guardarEstadoPartida } = require('./gameManager');
 const { connectDB } = require('../Bd/db');
 require("dotenv").config();
+
+const saltRounds = 10; // Nivel de complejidad de las contraseñas
 
 const app = express();
 const server = http.createServer(app);
@@ -94,7 +97,7 @@ app.get("/usuarios", async (req, res) => {
 });
 
 // * DONE Documentación
-// ! NOT DONE Falta cifrar contraseña y prueba funcionalidad actual
+// ! NOT DONE Falta probar el cifrado y prueba funcionalidad actual
 /**
  * POST /usuarios/registro
  *
@@ -110,23 +113,14 @@ app.get("/usuarios", async (req, res) => {
  * - 201 Created: Devuelve el contenido del nuevo usuario.
  * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
  *
- * Ejemplo de respuesta exitosa:
- * {
- *   "correo": "pruebaRegistro@gmail.com",
- *   "nombre": "pruebaRegistro",
- *   "contrasena": "pruebaRegistro",
- *   "foto_perfil": "default.png",
- *   "nVictorias": 0,
- *   "_id": "67f40268b679013fe7fa6548",
- *   "amigos": [],
- *   "__v": 0
- * }
- *
  */
 app.post("/usuarios/registro", async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
-    const usuario = new Usuario({ nombre, correo, contrasena, foto_perfil: "default.png", nVictorias: 0, amigos: [], tapete: "default.png", imagen_carta: "default.png" });
+
+    const hash = await bcrypt.hash(contrasena, saltRounds);
+
+    const usuario = new Usuario({ nombre, correo, hash, foto_perfil: "default.png", nVictorias: 0, amigos: [], tapete: "default.png", imagen_carta: "default.png" });
     await usuario.save();
     res.status(201).json(usuario);
   } catch (error) {
@@ -135,7 +129,7 @@ app.post("/usuarios/registro", async (req, res) => {
 });
 
 // * DONE Documentación y prueba de funcionalidad actual
-// ! NOT DONE Falta cifrar contraseña
+// ! NOT DONE Falta probar el cifrado de la contraseña contraseña
 /**
  * POST /usuarios/inicioSesion
  *
@@ -149,6 +143,7 @@ app.post("/usuarios/registro", async (req, res) => {
  * Respuesta:
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 401 Unauthorized: Devuelve error, no se ha podido iniciar sesión.
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * 
  * Ejemplo de respuesta exitosa:
  * [
@@ -163,17 +158,30 @@ app.post("/usuarios/registro", async (req, res) => {
 app.post("/usuarios/inicioSesion", async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
-    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1, foto_perfil: 1 });
-    if (resultado.length > 0) {
-      res.status(202).json(resultado);
+
+    // Buscar usuario por correo
+    const usuario = await Usuario.findOne({ correo });
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    else {
-      res.status(401).json({ message: "Correo o contraseña incorrectos"});
+
+    // Comparar contrasena ingresada con el hash almacenado
+    const coinciden = await bcrypt.compare(contrasena, usuario.contrasena);
+
+    if (!coinciden) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
+
+    // Si todo está bien, responder con los datos públicos
+    const { nombre, correo: correoUsuario, foto_perfil } = usuario;
+    res.status(202).json({ nombre, correo: correoUsuario, foto_perfil });
+
   } catch (error) {
-    res.status(401).json({ message: "Error en el inicio de sesión", error: error.message });
+    res.status(500).json({ message: "Error en el inicio de sesión", error: error.message });
   }
-})
+});
+
 
 // * DONE Documentación
 // ! NOT DONE Faltan pruebas
@@ -191,15 +199,6 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
@@ -222,7 +221,7 @@ app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
 })
 
 // * DONE Documentación
-// ! NOT DONE Falta cifrar contraseña y pruebas
+// ! NOT DONE Falta probar cifrado contraseña y el funcionamiento
 /**
  * PUT /usuarios/perfil/cambiarContrasena/:id
  *
@@ -239,41 +238,36 @@ app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
  * - 401 Unauthorized: Devuelve error, no se ha podido cambiar la contraseña
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar la contraseña.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
-app.put("usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
+app.put("/usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
   try {
     const { contrasena_antigua, contrasena_nueva } = req.body;
-    const usuario = await Usuario.findOneAndUpdate(
-      { correo: req.params.id },
-      { contrasena: contrasena_antigua }
-    );
+    const correo = req.params.id;
+
+    const usuario = await Usuario.findOne({ correo });
 
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    if (usuario.contrasena !== contrasena_antigua) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
+    const coincide = await bcrypt.compare(contrasena_antigua, usuario.contrasena);
+
+    if (!coincide) {
+      return res.status(401).json({ message: "Contraseña antigua incorrecta" });
     }
 
-    usuario.contrasena = contrasena_nueva;
+    const hash = await bcrypt.hash(contrasena_nueva, saltRounds);
+
+    usuario.contrasena = hash;
     await usuario.save();
 
-    res.json(usuarioActualizado);
+    res.status(200).json({ message: "Contraseña actualizada correctamente" });
   } catch (error) {
     res.status(400).json({ message: "Error actualizando contraseña", error: error.message });
   }
-})
+});
+
 
 // * DONE Documentación
 // ! NOT DONE Faltan pruebas
@@ -291,15 +285,6 @@ app.put("usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
@@ -337,15 +322,6 @@ app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarTapete/:id", async (req, res) => {
@@ -383,15 +359,6 @@ app.put("/usuarios/perfil/cambiarTapete/:id", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarCartas/:id", async (req, res) => {
@@ -566,18 +533,6 @@ app.get("/rankings", async (req, res) => {
  * Respuesta:
  * - 201 Created: Se ha creado bien la solicitud o se ha añadido un nuevo amigo si tenías una petición de dicho usuario.
  * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- *
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *     "_id": "607d1b2f531123456789abcd",
- *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
- *   },
- *   ...
- * ]
  *
  */
 app.post("/amigos/enviarSolicitud", async (req, res) => {
@@ -588,13 +543,13 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
       return res.status(400).json({ message: "No puedes enviarte una solicitud a ti mismo" });
     }
 
-    const amigos = await Usuario.findOne(
+    const amigo = await Usuario.findOne(
       { correo: idSolicitante }, { amigos: 1 }
     )
 
-    if (amigos) {
+    if (amigo) {
       // Si el usuario ya tiene una solicitud pendiente de amistad se hacen amigos
-      if (amigos.amigos.find(amigo => amigo.idUsuario === idSolicitado && amigo.pendiente)) {
+      if (amigo.amigos.find(amigo => amigo.idUsuario === idSolicitado && amigo.pendiente)) {
         await Usuario.findOneAndUpdate(
           { correo: idSolicitado },
           { $push: { amigos: {idUsuario: idSolicitante, pendiente: false} } }
@@ -610,7 +565,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
       }
 
       // Si ya son amigos se manda error
-      if (amigos.amigos.find(amigo => amigo.idUsuario === idSolicitado && !amigo.pendiente)) {
+      if (amigo.amigos.find(amigo => amigo.idUsuario === idSolicitado && !amigo.pendiente)) {
         return res.status(400).json({ message: "Este usuario ya es amigo tuyo" });
       }
     }
@@ -641,18 +596,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
  * 
  * Respuesta:
  * - 202 OK: Devuelve un arreglo con los .
- * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- *
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *     "_id": "607d1b2f531123456789abcd",
- *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
- *   },
- *   ...
- * ]
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
  *
  */
 app.post("/amigos/aceptarSolicitud", async (req, res) => {
@@ -697,17 +641,6 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
  * - 202 OK: Devuelve un arreglo con los .
  * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
  *
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *     "_id": "607d1b2f531123456789abcd",
- *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
- *   },
- *   ...
- * ]
- *
  */
 app.post("/amigos/rechazarSolicitud", async (req, res) => {
   try {
@@ -727,7 +660,7 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
 // * DONE Prueba de funcionalidad actual
 // ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
 /**
- * POST /amigos/:idUsuario
+ * GET /amigos/:idUsuario
  *
  * Descripción:
  * Esta ruta se encarga de obtener los datos de los amigos del usuario :idUsuario.
@@ -788,7 +721,7 @@ app.get("/amigos/:idUsuario", async (req, res) => {
 // * DONE Prueba de funcionalidad actual
 // ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
 /**
- * POST /solicitudes/:idUsuario
+ * GET /solicitudes/:idUsuario
  *
  * Descripción:
  * Esta ruta se encarga de obtener los datos de las solicitudes del usuario :idUsuario.
