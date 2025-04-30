@@ -135,7 +135,7 @@ function Homepage() {
       console.log('Respuesta:', response.responseData);
       setIsUserRegistered(true);
       setShowLoginModal(false);
-      setUsername(response.responseData[0].nombre);
+      setUsername(response.responseData.nombre);
       setMail(mail);
     }
   };
