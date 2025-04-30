@@ -1,29 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
 import Carta from "./Carta";
 import '../styles/Game.css';
 
-
-
-const Player = ({ controller, cartaJugada, handleCartaClick }) => {
+const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete }) => {
   const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 
+  const [isHovered, setIsHovered] = useState([false, false, false, false, false]);
+
+  const palos = [ "bastos", "copas", "espadas", "oros" ];
+
+  const handleMouseEnter = (index) => {
+    const newHovered = [...isHovered]; // Copia del array
+    newHovered[index] = true; 
+    setIsHovered(newHovered);
+  };
+
+  const handleMouseLeave = (index) => {
+    const newHovered = [...isHovered];
+    newHovered[index] = false; 
+    setIsHovered(newHovered); 
+  };
+
   return (
     <>
-      <button className="botonCantar"
-        style={{
-          backgroundColor: controller.state.sePuedeCantar ? "green" : "gray",
-          color: "white",
-          border: `2px solid ${controller.state.sePuedeCantar ? "darkgreen" : "darkgray"}`,
-        }}
-        onClick={() => {
-          if (esCantarActivo) {
-            console.log("Cantar activado");
-          }
-        }}
-      >
-        Cantar
-      </button>
+      {palos.map((palo, index) => (
+        <button
+          key={index}
+          className={`boton cantar${palo} ${
+            controller.state.sePuedeCantar[index]
+              ? isHovered[index]
+                ? "hover"
+                : "activo"
+              : "inactivo"
+          }`}
+          onMouseEnter={() => handleMouseEnter(index)} // Activa el hover
+          onMouseLeave={() => handleMouseLeave(index)} // Desactiva el hover
+          onClick={() => {
+            if (controller.state.sePuedeCantar[index]) {
+              controller.cantar(index);
+              console.log(`Cantar activado para ${palo}`);
+            } else {
+              console.log(`Cantar desactivado para ${palo}`);
+            }
+          }}
+        >
+          Cantar {palo}
+        </button>
+      ))}
+      <button
+          className={`boton siete ${
+            esMiTurno && controller.state.sePuedeCambiarSiete
+              ? isHovered[4]
+                ? "hover"
+                : "activo"
+              : "inactivo"
+          }`}
+          onMouseEnter={() => handleMouseEnter(4)} // Activa el hover
+          onMouseLeave={() => handleMouseLeave(4)} // Desactiva el hover
+          onClick={() => {
+            if (controller.state.sePuedeCambiarSiete) {
+              handleCambiarSiete();
+              console.log(`Cambiar siete activado`);
+            } else {
+              console.log(`Cambiar siete desactivado`);
+            }
+          }}
+        >
+          Cambiar siete
+        </button>
       <div className="cartaJugada">
         {cartaJugada && (
           <Carta

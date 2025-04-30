@@ -12,10 +12,12 @@ function Game() {
     const [gameManager] = useState(new GameManager(numJugadores)); // Componente GameManager con las funciones
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
+    const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
 
     const handleInit = () => {
         gameManager.Init();
         setPlayers([...gameManager.state.players]);
+        setTriunfo(gameManager.state.triunfo);
         setIniciado(true);
     };
 
@@ -38,14 +40,28 @@ function Game() {
         player.state.mano[index] = null;
         player.state.esMiTurno = false;
 
-
         setPlayers([...gameManager.state.players]);
 
         gameManager.state.turnManager.tick();
     };
 
-    const handleCantarPlayer = () => {
-        
+    const handleCambiarSiete = async () => {
+        let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
+        let player = gameManager.state.players[playerIndex];
+
+        const index = player.state.mano.findIndex(
+            (c) => c && c.numero === 6 && c.palo === gameManager.state.triunfo.palo
+        );
+        if (index === -1) {console.log("Error cambiar siete invocado cuando no se puede cambiar"); return;}
+
+        const triunfoAux = gameManager.state.triunfo;
+
+        setTriunfo(player.state.mano[index]);
+        player.state.mano[index] = triunfoAux;
+        player.state.sePuedeCambiarSiete = false;
+        player.state.sieteCambiado = true;
+        setPlayers([...gameManager.state.players]);
+
     }
 
     return (
@@ -57,11 +73,12 @@ function Game() {
                     <>
                         <Tapete />
                         <Baraja controller={gameManager.state.baraja} />
-                        <Triunfo triunfo={gameManager.state.triunfo} />
+                        <Triunfo triunfo={triunfo} />
                         <Player
                             controller={gameManager.state.players[0]}
                             cartaJugada={gameManager.state.cartasJugadas[0]}
                             handleCartaClick={handleCartaClick}
+                            handleCambiarSiete={handleCambiarSiete}
                         />
                         {numJugadores === 2 && (
                             <IA_Player
@@ -69,6 +86,7 @@ function Game() {
                                 numIA={2}
                                 handleCartaClick={handleCartaClick}
                                 cartaJugada={gameManager.state.cartasJugadas[1]}
+                                handleCambiarSiete={handleCambiarSiete}
                             />
                         )}
                         {numJugadores === 4 && (
@@ -78,16 +96,19 @@ function Game() {
                                     numIA={1}
                                     handleCartaClick={handleCartaClick}
                                     cartaJugada={gameManager.state.cartasJugadas[1]}
+                                    handleCambiarSiete={handleCambiarSiete}
                                 />
                                 <IA_Player
                                     controller={gameManager.state.players[2]}
                                     numIA={2} handleCartaClick={handleCartaClick}
                                     cartaJugada={gameManager.state.cartasJugadas[2]}
+                                    handleCambiarSiete={handleCambiarSiete}
                                 />
                                 <IA_Player
                                     controller={gameManager.state.players[3]}
                                     numIA={3} handleCartaClick={handleCartaClick}
                                     cartaJugada={gameManager.state.cartasJugadas[3]}
+                                    handleCambiarSiete={handleCambiarSiete}
                                 />
                             </div>
                         )}
