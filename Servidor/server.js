@@ -120,7 +120,7 @@ app.post("/usuarios/registro", async (req, res) => {
 
     const hash = await bcrypt.hash(contrasena, saltRounds);
 
-    const usuario = new Usuario({ nombre, correo, hash, foto_perfil: "default.png", nVictorias: 0, amigos: [], tapete: "default.png", imagen_carta: "default.png" });
+    const usuario = new Usuario({ nombre, correo, contrasena: hash, foto_perfil: "default.png", nVictorias: 0, amigos: [], tapete: "default.png", imagen_carta: "default.png" });
     await usuario.save();
     res.status(201).json(usuario);
   } catch (error) {
