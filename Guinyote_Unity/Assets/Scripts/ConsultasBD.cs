@@ -51,7 +51,7 @@ namespace ConsultasBD
     public class Usuario
     {
         // Representa un usuario.
-        public string idUsuario, nombre, correo, foto_perfil; 
+        public string idUsuario, nombre, correo, foto_perfil, tapete, imagen_carta; 
         public int nVictorias;
     }
 
@@ -80,7 +80,7 @@ namespace ConsultasBD
     public static class Consultas
     {
         // URL base para las solicitudes API.
-        private static string address = "http://localhost:10000";//"https://guinyoteonline-hkio.onrender.com";
+        private static string address = "https://guinyoteonline-hkio.onrender.com";
 
         /// <summary>
         /// Evento que se activa al consultar el historial de partidas.
@@ -142,7 +142,7 @@ namespace ConsultasBD
         /// <summary>
         /// Evento que se activa al iniciar sesión correctamente.
         /// </summary>
-        public static event Action<string, string, string> OnInicioSesion;
+        public static event Action<string, string, string, string, string> OnInicioSesion;
 
         /// <summary>
         /// Evento que se activa al ocurrir un error en el inicio de sesión.
@@ -297,10 +297,16 @@ namespace ConsultasBD
                 Usuario usuario = JsonUtility.FromJson<Usuario>(www.downloadHandler.text);
                 string nombre = usuario.nombre;
                 string profile_picture = usuario.foto_perfil;
+                string tapete = usuario.tapete;
+                string carta = usuario.imagen_carta;
 
+                Debug.Log("ID: " + id);
+                Debug.Log("Nombre: " + nombre);
                 Debug.Log("Foto de perfil: " + profile_picture);
+                Debug.Log("Tapete: " + tapete);
+                Debug.Log("Carta: " + carta);
 
-                OnInicioSesion?.Invoke(id, nombre, profile_picture);
+                OnInicioSesion?.Invoke(id, nombre, profile_picture, tapete, carta);
             }
         }
 
@@ -333,34 +339,141 @@ namespace ConsultasBD
         }
 
         /// <summary>
-        /// Registra un nuevo usuario con los datos proporcionados.
+        /// Cambia la información del usuario con los datos proporcionados.
         /// </summary>
         /// <param name="nombre">El nuevo nombre del usuario.</param>
         /// <param name="id">El ID del usuario.</param>
         /// <param name="pwd">La nueva contraseña del usuario.</param>
-        public static IEnumerator CambiarInfoUsuario(string nombre, string id, string pwd, string foto_perfil)
+        /// <param name="tapete">El nuevo diseño del tapete del usuario.</param>
+        /// <param name="carta">El nuevo estilo de carta del usuario.</param>
+        public static IEnumerator CambiarInfoUsuario(string id, string nombre = null, string pwd_antiguo = null, string pwd_nuevo=null, string foto_perfil = null, string tapete = null, string carta = null)
         {
-            Debug.Log("Cambiando información usuario...");
+            if (!string.IsNullOrEmpty(nombre))
+            {
+            yield return CambiarNombreUsuario(id, nombre);
+            }
+
+            if (!string.IsNullOrEmpty(pwd_nuevo))
+            {
+            yield return CambiarContrasenaUsuario(id, pwd_antiguo, pwd_nuevo);
+            }
+
+            if (!string.IsNullOrEmpty(foto_perfil))
+            {
+            yield return CambiarFotoPerfilUsuario(id, foto_perfil);
+            }
+
+            if (!string.IsNullOrEmpty(tapete))
+            {
+            yield return CambiarTapeteUsuario(id, tapete);
+            }
+
+            if (!string.IsNullOrEmpty(carta))
+            {
+            yield return CambiarCartaUsuario(id, carta);
+            }
+        }
+
+        private static IEnumerator CambiarNombreUsuario(string id, string nombre)
+        {
+            Debug.Log("Cambiando nombre de usuario...");
             WWWForm form = new WWWForm();
-            Debug.Log("id: " + id);
-            Debug.Log("nombre: " + nombre);
-            Debug.Log("contrasena: " + pwd);
-            var userInfo = new UserInfo { nombre = nombre, contrasena = pwd, foto_perfil = foto_perfil };
-            string jsonData = JsonUtility.ToJson(userInfo);
-            Debug.Log("JSON: " + jsonData);
-            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/actualizacionPerfil/" + id, System.Text.Encoding.UTF8.GetBytes(jsonData));
-            www.SetRequestHeader("Content-Type", "application/json");
+            form.AddField("nombre", nombre);
+            byte[] formData = form.data;
+            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/perfil/cambiarUsername/" + id, formData);
+            www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log("error: " + www.error);
-                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
+            Debug.Log("Error al cambiar nombre: " + www.error);
             }
             else
             {
-                OnCambiarInfoUsuario?.Invoke(nombre);
-                Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
+            OnCambiarInfoUsuario?.Invoke(nombre);
+            Debug.Log("Nombre cambiado correctamente." + nombre);
+            }
+        }
+
+        private static IEnumerator CambiarContrasenaUsuario(string id, string pwd_antiguo, string pwd_nuevo)
+        {
+            Debug.Log("Cambiando contraseña de usuario...");
+            WWWForm form = new WWWForm();
+            form.AddField("contrasena_antigua", pwd_antiguo);
+            form.AddField("contrasena_nueva", pwd_nuevo);
+
+            byte[] formData = form.data;
+            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/perfil/cambiarContrasena/" + id, formData);
+            www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+            Debug.Log("Error al cambiar contraseña: " + www.error);
+            }
+            else
+            {
+            Debug.Log("Contraseña cambiada correctamente." + pwd_nuevo);
+            }
+        }
+
+        private static IEnumerator CambiarFotoPerfilUsuario(string id, string foto_perfil)
+        {
+            Debug.Log("Cambiando foto de perfil de usuario...");
+            WWWForm form = new WWWForm();
+            form.AddField("foto_perfil", foto_perfil);
+            byte[] formData = form.data;
+            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/perfil/cambiarFoto/" + id, formData);
+            www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+            Debug.Log("Error al cambiar foto de perfil: " + www.error);
+            }
+            else
+            {
+            Debug.Log("Foto de perfil cambiada correctamente."+ foto_perfil);
+            }
+        }
+
+        private static IEnumerator CambiarTapeteUsuario(string id, string tapete)
+        {
+            Debug.Log("Cambiando tapete de usuario...");
+            WWWForm form = new WWWForm();
+            form.AddField("tapete", tapete);
+            byte[] formData = form.data;
+            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/perfil/cambiarTapete/" + id, formData);
+            www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+            Debug.Log("Error al cambiar tapete: " + www.error);
+            }
+            else
+            {
+            Debug.Log("Tapete cambiado correctamente." + tapete);
+            }
+        }
+
+        private static IEnumerator CambiarCartaUsuario(string id, string carta)
+        {
+            Debug.Log("Cambiando carta de usuario...");
+            WWWForm form = new WWWForm();
+            form.AddField("carta", carta);
+            byte[] formData = form.data;
+            UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/perfil/cambiarCartas/" + id, formData);
+            www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+            Debug.Log("Error al cambiar carta: " + www.error);
+            }
+            else
+            {
+            Debug.Log("Carta cambiada correctamente." + carta);
             }
         }
 

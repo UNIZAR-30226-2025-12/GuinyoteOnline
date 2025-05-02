@@ -21,10 +21,16 @@ public class UIManager : MonoBehaviour
 
     private String username; //Nombre del usuario logueado
     public String id; //Correo del usuario logueado
+
+    private String psw; //Contraseña del usuario logueado
+    private String new_pwd; //Nueva contraseña elegida por usuario logueado
     private String profile_picture; //Foto de perfil del usuario logueado
     static public String carta_picture; //Dorso de la carta del usuario logueado
-    static public String tapete_picure; //Tapete del usuario logueado
+    static public String tapete_picture; //Tapete del usuario logueado
     private String temp_profile_picture; //Foto de perfil temporal del usuario logueado
+    private String temp_tapete_picture; //Tapete temporal del usuario logueado
+
+    private String temp_carta_picture; //Dorso de carta temporal del usuario logueado
     private VisualElement imagenes_perfil_tab; 
     private VisualElement tapetes_tab;
     private VisualElement cartas_tab;
@@ -107,15 +113,9 @@ public class UIManager : MonoBehaviour
         Consultas.OnCambiarInfoUsuario += updateInfoUsuario;
         Consultas.OnPartidaEncontrada += JoinRoom;
         
-        tapete_picure = PlayerPrefs.GetString("tapete");
-        if(tapete_picure == null || tapete_picure == ""){
-            tapete_picure = "default";
-        }
-        carta_picture = PlayerPrefs.GetString("carta");
-        if(carta_picture == null || carta_picture == ""){
-            carta_picture = "default";
-        }
-        profile_picture = "default";
+        tapete_picture = "default";
+        carta_picture = "default";
+
     }
 
     /// <summary>
@@ -173,14 +173,6 @@ public class UIManager : MonoBehaviour
     /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferenceInicio(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
-        tapete_picure = PlayerPrefs.GetString("tapete");
-        if(tapete_picure == null || tapete_picure == ""){
-            tapete_picure = "default";
-        }
-        carta_picture = PlayerPrefs.GetString("carta");
-        if(carta_picture == null || carta_picture == ""){
-            carta_picture = "default";
-        }
         if(isLogged){
             StartCoroutine(Consultas.GetAmigosUsuario(id));
             StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
@@ -208,7 +200,7 @@ public class UIManager : MonoBehaviour
                     StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value));
                 });
 
-                Consultas.OnInicioSesion += (id, name, profilePicture) => {
+                Consultas.OnInicioSesion += (id, name, profilePicture, tapete, carta) => {
                     isLogged = true;
                     tab_login.style.display = DisplayStyle.None;
                     ChangeScene("Partida_Online");
@@ -269,7 +261,8 @@ public class UIManager : MonoBehaviour
         login_button_accept = tab_login.Q<Button>("accept_Button");
         login_button_accept.RegisterCallback<ClickEvent>(ev => { 
             tab_login.Q<Label>("error_Label").style.display = DisplayStyle.Flex;
-            tab_login.Q<Label>("error_Label").text = "Cargando"; 
+            tab_login.Q<Label>("error_Label").text = "Cargando";
+            psw = login_field_password.value; 
             StartCoroutine(Consultas.InicioDeSesion(login_field_username.value, login_field_password.value)); 
         });
 
@@ -462,16 +455,17 @@ public class UIManager : MonoBehaviour
 
         perfil_configuracion = root.rootVisualElement.Q<VisualElement>("Profile_Config");
         perfil_configuracion.Q<Button>("SaveButton").RegisterCallback<ClickEvent>(ev => {
-            if(tapete_picure != null && tapete_picure != ""){
-                PlayerPrefs.SetString("tapete", tapete_picure);
+            if(temp_tapete_picture != null && temp_tapete_picture != ""){
+                tapete_picture = temp_tapete_picture;
             }
-            if(carta_picture != null && carta_picture != ""){
-                PlayerPrefs.SetString("carta", carta_picture);
+            if(temp_carta_picture != null && temp_carta_picture != ""){
+                carta_picture = temp_carta_picture;
             }
             if(temp_profile_picture != null && temp_profile_picture != ""){
                 profile_picture = temp_profile_picture;
             }
-            StartCoroutine(Consultas.CambiarInfoUsuario(perfil_configuracion.Q<TextField>("Name_Field").value, id, perfil_configuracion.Q<TextField>("Password_Field").value, profile_picture));
+            new_pwd = perfil_configuracion.Q<TextField>("Password_Field").value;
+            StartCoroutine(Consultas.CambiarInfoUsuario(id, perfil_configuracion.Q<TextField>("Name_Field").value, psw, new_pwd, profile_picture +".png", tapete_picture+".png", carta_picture+".png"));
             
         });
         
@@ -480,14 +474,15 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Cambia el nombre de ususuario al especificado si no es nulo o vacío.
+    /// Cambia el nombre de usuario al especificado si no es nulo o vacío.
     /// </summary>
     /// <param name="name">El nuevo nombre de usuario.</param>
     private void updateInfoUsuario(String name)
     {
         if (name != null && name!=""){
             username = name; 
-        }     
+        }
+        psw = new_pwd;     
     }
 
     /// <summary>
@@ -542,7 +537,7 @@ public class UIManager : MonoBehaviour
             tapeteElement.Q<Label>("Name").text = tapeteName;
             imagen_boton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Cambiar foto pulsado"); 
-                tapete_picure= tapeteName;
+                temp_tapete_picture= tapeteName;
                 tapetes_tab.style.display = DisplayStyle.None;
             });
             tapetes_scroll.Add(tapeteElement);
@@ -567,7 +562,7 @@ public class UIManager : MonoBehaviour
             cartaElement.Q<Label>("Name").text = cartaName;
             imagen_boton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Cambiar foto pulsado"); 
-                carta_picture= cartaName;
+                temp_carta_picture= cartaName;
                 cartas_tab.style.display = DisplayStyle.None;
             });
             cartas_scroll.Add(cartaElement);
@@ -770,7 +765,9 @@ public class UIManager : MonoBehaviour
     /// <param name="id">El correo del usuario.</param>
     /// <param name="name">El nombre del usuario.</param>
     /// <param name="foto_perfil">La foto de perfil del usuario.</param>
-    void Login(String id, String name, string foto_perfil)
+    /// <param name="tapete">El tapete del usuario.</param>
+    /// <param name="carta">El dorsal de las cartas del usuario.</param>
+    void Login(String id, String name, string foto_perfil, string tapete, string carta)
     {
         Debug.Log("Id: " + id);
 
@@ -779,6 +776,8 @@ public class UIManager : MonoBehaviour
         this.id = id;
         this.username = name; 
         this.profile_picture = System.IO.Path.GetFileNameWithoutExtension(foto_perfil);
+        UIManager.tapete_picture = System.IO.Path.GetFileNameWithoutExtension(tapete);
+        UIManager.carta_picture = System.IO.Path.GetFileNameWithoutExtension(carta);
         updateReference(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
 

@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject tapete = GameObject.Find("Tapete");
         SpriteRenderer spriteRenderer = tapete.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/Tapetes/" + UIManager.tapete_picure);
+        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/Tapetes/" + UIManager.tapete_picture);
         arrastre = false;
         segundaBaraja = false;
         finRonda = false;
@@ -107,9 +107,14 @@ public class GameManager : MonoBehaviour
 
         TurnManager.Tick();
 
-        webSocketClient = UIManager.Instance.webSocketClient;
+        if (esOnline)
+        {
+            webSocketClient = UIManager.Instance.webSocketClient;
 
-        webSocketClient.OnGameStarted += HandleGameStarted;
+            webSocketClient.OnGameStarted += HandleGameStarted;
+        }
+
+        
         
     }
 
