@@ -295,7 +295,7 @@ app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
     const { foto_perfil } = req.body;
     const usuario = await Usuario.findOneAndUpdate(
       { correo: req.params.id },
-      { nombre: foto_perfil },
+      { foto_perfil: foto_perfil },
       { new: true }
     );
 
