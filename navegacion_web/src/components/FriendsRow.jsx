@@ -8,18 +8,23 @@
  * @param {string} img - URL de la imagen de perfil del amigo.
  * @param {string} username - Nombre de usuario del amigo.
  * @param {string} mail - Correo electrónico del amigo.
+ * @param {function} onDelete - Callback para notificar al componente padre cuando se elimina un amigo.
  * 
  * @returns {JSX.Element} Componente de fila de amigos.
  */
 
 import React, { useState, useRef } from 'react';
 import '../styles/FriendsRow.css';
+import usePost from '../customHooks/usePost';
 
 const assetsUrl = '/src/assets/';
 const avataresUrl = '/src/assets/avatares/';
 
-const FriendsRow = ({ img, username, mail }) => {
+const {postData}  = usePost('https://guinyoteonline-hkio.onrender.com/amigos/eliminarAmigo/');
+
+const FriendsRow = ({ img, username, mail, usrMail, onDelete }) => {
     const [showModal, setShowModal] = useState(false);
+    const [isDeleted, setIsDeleted] = useState(false);
     const [modalPosition, setModalPosition] = useState({ left: 0, top: 0 });
     const buttonRef = useRef(null);
 
@@ -39,14 +44,24 @@ const FriendsRow = ({ img, username, mail }) => {
         setShowModal(false);
     }
 
-    const onClickDeleteFriend = () => {
-        console.log("Pulsado eliminar amigo");
-        setShowModal(false);
-    }
+    const onClickDeleteFriend = async () => {
+        const { responsesData, error } = await postData({ idEliminador: usrMail, idEliminado: mail }, '');
+        if (error) {
+            alert("Error al eliminar amigo " + username);
+            return;
+        }
+        alert("Amigo " + username + " eliminado correctamente");
+        setIsDeleted(true);
+        onDelete(mail); // Notify parent to remove the row
+    };
 
     const onClickInviteGroup = () => {
         console.log("Pulsado invitar a grupo");
         setShowModal(false);
+    }
+
+    if(isDeleted) {
+        return null; // Si el amigo ha sido eliminado, no se muestra nada
     }
 
     return (
