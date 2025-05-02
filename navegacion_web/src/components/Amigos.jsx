@@ -62,7 +62,7 @@ const Amigos = ({ show, handleBack, mail }) => {
                 <div className="friends-table-container">
                     {loading && <p>Cargando ...</p>}
                     {error && <p>Error al cargar los datos</p>}
-                    {!dataShown && !loading && (
+                    { ( !dataShown || dataShown.length === 0)  && !loading && (
                             <p>Todavía no tienes amigos</p>
                     )}
                     {dataShown && (
