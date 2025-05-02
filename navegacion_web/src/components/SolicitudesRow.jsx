@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/SolicitudesRow.css';
 
 import usePost from '../customHooks/usePost';
-const assetsUrl = '/src/assets/';
+const avataresUrl = '/src/assets/avatares/';
 
 const SolicitudesRow = ({ foto_perfil, nombre, mail, myMail }) => {
 
@@ -23,7 +23,7 @@ const SolicitudesRow = ({ foto_perfil, nombre, mail, myMail }) => {
 
     return (
         <tr className="solicitudes-row">
-            <td><img src={assetsUrl + foto_perfil} alt="Solicitud" className="solicitud-img" /></td>
+            <td><img src={avataresUrl + foto_perfil} alt="Solicitud" className="solicitud-img" /></td>
             <td><p className="solicitud-label">{nombre}</p></td>
             <td>
                 {!isAccepted && !isDeclined && (

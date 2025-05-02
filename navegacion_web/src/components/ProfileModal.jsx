@@ -6,7 +6,6 @@ import PicChangeModal from './PicChangeModal';
 import { useUser } from '../context/UserContext';
 import UsernameChangeModal from './UsernameChangeModal';
 import SignOutButton from './buttons/SignOutButton'
-import av5 from '/src/assets/avatares/av5.png';
 
 function ProfileModal() {
 

@@ -6,7 +6,7 @@ import av1 from '/src/assets/avatares/av1.png';
 import av2 from '/src/assets/avatares/av2.png';
 import av3 from '/src/assets/avatares/av3.png';
 import av4 from '/src/assets/avatares/av4.png';
-import av5 from '/src/assets/avatares/av5.png';
+import av5 from '/src/assets/avatares/default.png';
 
 function PicChangeModal({ show, handleClose }) {
   if (!show) return null;
