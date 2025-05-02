@@ -45,7 +45,7 @@ const FriendsRow = ({ img, username, mail, usrMail, onDelete }) => {
     }
 
     const onClickDeleteFriend = async () => {
-        const { responsesData, error } = await postData({ idEliminador: usrMail, idEliminado: mail }, '');
+        const { error } = await postData({ idEliminador: usrMail, idEliminado: mail }, '');
         if (error) {
             alert("Error al eliminar amigo " + username);
             return;
