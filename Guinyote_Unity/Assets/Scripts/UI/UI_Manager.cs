@@ -6,19 +6,21 @@ using System;
 using ConsultasBD;
 using Unity.VisualScripting;
 using UnityEditor;
+using WebSocketClient;
+using System.Threading.Tasks;
 //using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
-    private WebSocketClient webSocketClient; //Cliente WebSocket para la comunicación en tiempo real
+    public wsClient webSocketClient; //Cliente WebSocket para la comunicación en tiempo real
 
     private bool isLogged = false; //Indica si el usuario está logueado o no
 
     public static Stack<string> lastScene = new Stack<string>(); //Pila para almacenar las escenas anteriores
 
     private String username; //Nombre del usuario logueado
-    private String id; //Correo del usuario logueado
+    public String id; //Correo del usuario logueado
     private String profile_picture; //Foto de perfil del usuario logueado
     static public String carta_picture; //Dorso de la carta del usuario logueado
     static public String tapete_picure; //Tapete del usuario logueado
@@ -103,6 +105,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnRechazarSolicitudAmistad += () => StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
         Consultas.OnRankingConsultado += UpdateRanking;
         Consultas.OnCambiarInfoUsuario += updateInfoUsuario;
+        Consultas.OnPartidaEncontrada += JoinRoom;
         
         tapete_picure = PlayerPrefs.GetString("tapete");
         if(tapete_picure == null || tapete_picure == ""){
@@ -399,10 +402,10 @@ public class UIManager : MonoBehaviour
     /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferencePartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
-        boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1");
+        boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1_Button");
         boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_1vs1"));
 
-        boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2");
+        boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2_Button");
         boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
     }
 
@@ -853,6 +856,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    async void JoinRoom(Lobby lobby, string idUsuario)
+    {
+        Debug.Log(webSocketClient);
+        Debug.Log(lobby.id);
+        await webSocketClient.JoinRoom(lobby.id, idUsuario);
+    }
+
     /// <summary>
     /// Inicia el juego con la configuración especificada.
     /// Dependiendo del tipo de partida, se establece el número de jugadores y si es online o no.
@@ -876,12 +886,12 @@ public class UIManager : MonoBehaviour
             // Configurar WebSocket para partidas online
             if (webSocketClient == null)
             {
-                webSocketClient = new WebSocketClient();
-                webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+                webSocketClient = new wsClient();
+                webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
             }
 
             string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
-            webSocketClient.JoinRoom(roomType);
+            StartCoroutine(Consultas.BuscarPartidaPublica(id, roomType));
 
             // Mostrar UI de PantallaEspera
             VisualTreeAsset pantallaEsperaAsset = Resources.Load<VisualTreeAsset>("PantallaEspera");

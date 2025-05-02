@@ -4,6 +4,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const bcrypt = require('bcrypt');
 const { iniciarPartida, procesarJugada, guardarEstadoPartida } = require('./gameManager');
+const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
 require("dotenv").config();
 
@@ -17,6 +18,8 @@ const io = socketIo(server, {
     methods: ["GET", "POST"]
   }
 });
+module.exports = { io };
+gameManager.init(io);
 
 // Middleware
 app.use(cors());
@@ -771,24 +774,9 @@ app.get("/solicitudes/:idUsuario", async (req, res) => {
 });
 
 
-// Rutas de Partida y Sala
-app.post("/salas/crear", async (req, res) => {
-  try {
-    const { idCreador, tipo, codigoAcceso } = req.body;
-    const sala = {
-      id: Date.now().toString(),
-      idCreador,
-      tipo,
-      codigoAcceso,
-      jugadores: [idCreador],
-      estado: 'esperando'
-    };
-    salasEspera.set(sala.id, sala);
-    res.status(201).json(sala);
-  } catch (error) {
-    res.status(400).json({ message: "Error creando sala", error: error.message });
-  }
-});
+// Rutas de Salas
+app.use("/salas", salasRoutes);
+
 
 app.get("/partidas/historial/:userId", async (req, res) => {
   try {
@@ -842,9 +830,6 @@ app.get("/partidas/historial/:userId", async (req, res) => {
   }
 });
 
-// Rutas de Salas
-app.use("/salas", salasRoutes);
-
 // Configuración de Socket.IO para tiempo real
 io.on('connection', (socket) => {
   console.log('Usuario conectado:', socket.id);
@@ -867,8 +852,15 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('join-lobby', ({ lobbyId, playerId }) => {
+    socket.emit('hello', '¡Hola desde el servidor!');
+    socket.join(lobbyId);
+    socket.to(lobbyId).emit('player-joined', playerId);
+    console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
+  });
+
   // Unirse a una sala
-  socket.on('unirSala', async ({ salaId, userId, codigoAcceso }) => {
+  socket.on('unirSalaPrivada', async ({ salaId, userId, codigoAcceso }) => {
     const sala = salasEspera.get(salaId);
     if (sala && sala.codigoAcceso === codigoAcceso && !sala.jugadores.includes(userId)) {
       sala.jugadores.push(userId);

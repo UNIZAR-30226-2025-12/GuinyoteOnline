@@ -27,7 +27,8 @@ public class Player : MonoBehaviour
         input.cantar = -1;
     }
 
-    void Start(){
+    protected void Start()
+    {
         m_MoveTarget = transform.position + transform.up * 6.35f;
     }
 

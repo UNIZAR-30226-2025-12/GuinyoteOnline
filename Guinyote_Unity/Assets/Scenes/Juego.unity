@@ -587,6 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4567506422114939746, guid: 69e4d3412fdab1548842a8e9bb0e8643, type: 3}
+  onlinePlayerPrefab: {fileID: 6162005271170736536, guid: b836e2675ab6bdb40a7e8a06be77d452, type: 3}
   iAPrefab: {fileID: 4957967394400320949, guid: 469f00d525e7dad4790172f8299806f5, type: 3}
   jugadores: []
   orden: 
@@ -600,6 +601,7 @@ MonoBehaviour:
   ubicacionGanador: {x: 0, y: 0, z: 0}
   UIDoc: {fileID: 0}
   ganador: 0
+  mostrandoCantar: 0
   test_state: 
 --- !u!4 &2094930379
 Transform:

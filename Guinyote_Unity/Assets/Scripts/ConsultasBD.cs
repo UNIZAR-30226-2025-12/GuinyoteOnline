@@ -8,6 +8,18 @@ using UnityEngine.InputSystem.Interactions;
 
 namespace ConsultasBD
 {
+    [Serializable]
+    public class Lobby
+    {
+        public string id;
+        public int maxPlayers;
+        public string idCreador;
+        public string tipo;
+        public string codigoAcceso;
+        public string[] jugadores;
+        public string estado;
+    }
+
     public static class JsonHelper
     {
 
@@ -68,7 +80,7 @@ namespace ConsultasBD
     public static class Consultas
     {
         // URL base para las solicitudes API.
-        private static string address = "https://guinyoteonline-hkio.onrender.com";
+        private static string address = "http://localhost:10000";//"https://guinyoteonline-hkio.onrender.com";
 
         /// <summary>
         /// Evento que se activa al consultar el historial de partidas.
@@ -151,6 +163,12 @@ namespace ConsultasBD
         /// Evento que se activa al cambiar los datos un usuario correctamente.
         /// </summary>
         public static event Action<String> OnCambiarInfoUsuario;
+
+        /// <summary>
+        /// Evento que se activa al encontrar una partida online.
+        /// </summary>
+        public static event Action<Lobby, String> OnPartidaEncontrada;
+
 
         /// <summary>
         /// Consulta el historial de partidas de un usuario por su ID.
@@ -276,9 +294,9 @@ namespace ConsultasBD
             else
             {
                 Debug.Log("Respuesta del servidor: " + www.downloadHandler.text);
-                Usuario[] usuarios = JsonHelper.FromJson<Usuario>(www.downloadHandler.text);
-                string nombre = usuarios[0].nombre;
-                string profile_picture = usuarios[0].foto_perfil;
+                Usuario usuario = JsonUtility.FromJson<Usuario>(www.downloadHandler.text);
+                string nombre = usuario.nombre;
+                string profile_picture = usuario.foto_perfil;
 
                 Debug.Log("Foto de perfil: " + profile_picture);
 
@@ -534,12 +552,13 @@ namespace ConsultasBD
         /// </summary>
         /// <param name="idUsuario">El ID del usuario que busca partida.</param>
         /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
-        public static IEnumerator BuscarPartidaPublica(string idUsuario)
+        public static IEnumerator BuscarPartidaPublica(string idUsuario, string roomType)
         {
             Debug.Log("Buscando partida pública...");
             WWWForm form = new WWWForm();
-            form.AddField("idUsuario", idUsuario);
-            UnityWebRequest www = UnityWebRequest.Post(address + "/salas/buscarPublica", form);
+            form.AddField("playerId", idUsuario);
+            form.AddField("maxPlayers", roomType);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/salas/matchmake", form);
             yield return www.SendWebRequest();
 
             if (www.result != UnityWebRequest.Result.Success)
@@ -549,7 +568,8 @@ namespace ConsultasBD
             else
             {
                 Debug.Log("Partida pública encontrada: " + www.downloadHandler.text);
-                // Manejar la respuesta del servidor.
+                Lobby lobby = JsonUtility.FromJson<Lobby>(www.downloadHandler.text);
+                OnPartidaEncontrada?.Invoke(lobby, idUsuario);
             }
         }
     } 
