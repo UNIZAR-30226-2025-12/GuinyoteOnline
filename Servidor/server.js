@@ -177,8 +177,8 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
     }
 
     // Si todo está bien, responder con los datos públicos
-    const { nombre, correo: correoUsuario, foto_perfil } = usuario;
-    res.status(202).json({ nombre, correo: correoUsuario, foto_perfil });
+    const { nombre, correo: correoUsuario, foto_perfil, tapete, imagen_carta } = usuario;
+    res.status(202).json({ nombre, correo: correoUsuario, foto_perfil, tapete, imagen_carta });
 
   } catch (error) {
     res.status(500).json({ message: "Error en el inicio de sesión", error: error.message });
