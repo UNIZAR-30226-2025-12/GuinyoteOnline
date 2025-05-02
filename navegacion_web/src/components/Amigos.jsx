@@ -74,6 +74,7 @@ const Amigos = ({ show, handleBack, mail }) => {
                                 img={data.foto_perfil}
                                 username={data.nombre}
                                 mail={data.correo}
+                                onClickOptions={() => console.log('Clicked options for:', data.correo)}
                             />
                             ))}
                         </tbody>
