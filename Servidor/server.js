@@ -99,8 +99,7 @@ app.get("/usuarios", async (req, res) => {
   }
 });
 
-// * DONE Documentación
-// ! NOT DONE Falta probar el cifrado y prueba funcionalidad actual
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /usuarios/registro
  *
@@ -132,7 +131,6 @@ app.post("/usuarios/registro", async (req, res) => {
 });
 
 // * DONE Documentación y prueba de funcionalidad actual
-// ! NOT DONE Falta probar el cifrado de la contraseña contraseña
 /**
  * POST /usuarios/inicioSesion
  *
@@ -485,8 +483,7 @@ app.get("/usuarios/perfil/:id", async (req, res) => {
 
 // ! //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE Documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * GET /rankings
  *
@@ -505,8 +502,8 @@ app.get("/usuarios/perfil/:id", async (req, res) => {
  *   {
  *     "_id": "607d1b2f531123456789abcd",
  *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
+ *     "nVictorias": 10,
+ *     "foto_perfil": "default.png"
  *   },
  *   ...
  * ]
@@ -521,8 +518,7 @@ app.get("/rankings", async (req, res) => {
   }
 });
 
-// * DONE Prueba de funcionalidad básica
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /amigos/enviarSolicitud
  *
@@ -585,8 +581,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
 });
 
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /amigos/aceptarSolicitud
  *
@@ -628,8 +623,7 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
 });
 
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /amigos/rechazarSolicitud
  *
@@ -659,9 +653,42 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
+// * DONE Documentación
+// ! NOT DONE Falta probar la nueva funcionalidad y documentar
+/**
+ * POST /amigos/eliminarAmigo
+ *
+ * Descripción:
+ * Esta ruta se encarga de eliminar un amigo de la lista de amigos del usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idEliminador - Correo electrónico del usuario que elimina al amigo.
+ * - @params {string} idEliminado - Correo electrónico del amigo a eliminar.
+ * 
+ * Respuesta:
+ * - 203 No Content: Devuelve un objeto con un mensaje de éxito.
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ */
+app.post("/amigos/eliminarAmigo", async (req, res) => {
+  try {
+    const { idEliminador, idEliminado } = req.body;
+    await Usuario.findOneAndUpdate(
+      { correo: idEliminador },
+      { $pull: { amigos: {idUsuario: idEliminado} } }
+    );
+    await Usuario.findOneAndUpdate(
+      { correo: idEliminado },
+      { $pull: { amigos: {idUsuario: idEliminador} } }
+    );
+    res.status(203).json({ message: "Amigo eliminado con éxito"});
+  } catch (error) {
+    res.status(400).json({ message: "Error eliminando amigo", error: error.message });
+  }
+});
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * GET /amigos/:idUsuario
  *
@@ -721,8 +748,7 @@ app.get("/amigos/:idUsuario", async (req, res) => {
 });
 
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * GET /solicitudes/:idUsuario
  *
