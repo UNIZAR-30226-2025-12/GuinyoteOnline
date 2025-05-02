@@ -461,7 +461,7 @@ namespace ConsultasBD
         {
             Debug.Log("Cambiando carta de usuario...");
             WWWForm form = new WWWForm();
-            form.AddField("carta", carta);
+            form.AddField("imagen_carta", carta);
             byte[] formData = form.data;
             UnityWebRequest www = UnityWebRequest.Put(address + "/usuarios/perfil/cambiarCartas/" + id, formData);
             www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
