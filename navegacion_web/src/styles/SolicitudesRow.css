@@ -89,25 +89,4 @@
     background-color: #242424;
     color: white;
   }
-
-  .ranking-overlay {
-    background-color: #242424;
-  }
-
-  .ranking-table th {
-    background-color: #242424;
-    color: white;
-  }
-
-  .ranking-table td {
-    color: white;
-  }
-
-  .ranking-table tr:nth-child(even) {
-    background-color: #444;
-  }
-
-  .ranking-table tr:nth-child(odd) {
-    background-color: #333;
-  }
 }
