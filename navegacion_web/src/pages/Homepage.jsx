@@ -39,6 +39,7 @@ function Homepage() {
     mail,
     setMail,
     profilePic,
+    setProfilePic,
     isUserRegistered,
     setIsUserRegistered
   } = useUser();
@@ -137,6 +138,7 @@ function Homepage() {
       setShowLoginModal(false);
       setUsername(response.responseData.nombre);
       setMail(mail);
+      setProfilePic(response.responseData.foto_perfil);
     }
   };
 
@@ -163,7 +165,7 @@ function Homepage() {
       <div className='background-layer'>
 
       </div>
-      <LoginButton className='login-button-position' loginButtonText={username != '' ? username : 'Iniciar sesión'} loginButtonIcon={profilePic} onClick={handleLoginClick}/>
+      <LoginButton className='login-button-position' isLoggedIn={isUserRegistered} loginButtonText={username != '' ? username : 'Iniciar sesión'} loginButtonIcon={profilePic} onClick={handleLoginClick}/>
       <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
       <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handlePartidaOnlineClick}/>
       <RulesButton className='rules-button-position' onClick={redirigirReglas}/>

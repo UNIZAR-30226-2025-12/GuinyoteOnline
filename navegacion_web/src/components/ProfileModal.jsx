@@ -6,6 +6,7 @@ import PicChangeModal from './PicChangeModal';
 import { useUser } from '../context/UserContext';
 import UsernameChangeModal from './UsernameChangeModal';
 import SignOutButton from './buttons/SignOutButton'
+const avataresUrl = '/src/assets/avatares/';
 
 function ProfileModal() {
 
@@ -67,7 +68,7 @@ function ProfileModal() {
       <div className="user-info-section">
         
 
-        <ProfilePic imageUrl={profilePic} onChangePic={handlePicChange} />
+        <ProfilePic imageUrl={avataresUrl + profilePic} onChangePic={handlePicChange} />
         <PicChangeModal show={showPicChangeModal} handleClose={handlePicChangeModalClose}/>
         <div className="name-password-section">
           <div className="name-field"> 
