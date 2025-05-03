@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Carta from "./Carta";
 import '../styles/Game.css';
 
-const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick }) => {
+const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCambiarSiete }) => {
   const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 

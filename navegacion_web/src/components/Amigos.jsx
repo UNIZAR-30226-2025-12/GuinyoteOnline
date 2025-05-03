@@ -45,6 +45,13 @@ const Amigos = ({ show, handleBack, mail }) => {
         setShowAddFriendModal(true);
     }
 
+    function handleDeleteFriend(mailToDelete) {
+        console.log("Amigo eliminado: " + mailToDelete);
+        console.log("Lista de amigos antes de eliminar: ", dataShown);
+        setDataShown((prevData) => prevData.filter((friend) => friend.correo !== mailToDelete));
+        console.log("Lista de amigos después de eliminar: ", dataShown);
+    }
+
     return ( !show ? null : 
         <>
             <button className='friend-list-back-button' onClick={handleBack} >
@@ -62,7 +69,7 @@ const Amigos = ({ show, handleBack, mail }) => {
                 <div className="friends-table-container">
                     {loading && <p>Cargando ...</p>}
                     {error && <p>Error al cargar los datos</p>}
-                    {!dataShown && !loading && (
+                    { ( !dataShown || dataShown.length === 0)  && !loading && (
                             <p>Todavía no tienes amigos</p>
                     )}
                     {dataShown && (
@@ -70,10 +77,12 @@ const Amigos = ({ show, handleBack, mail }) => {
                         <tbody> 
                             {dataShown.map((data, index) => (
                             <FriendsRow 
-                                key={index+1}
+                                key={index}
                                 img={data.foto_perfil}
                                 username={data.nombre}
                                 mail={data.correo}
+                                usrMail={mail}
+                                onDelete={handleDeleteFriend}
                             />
                             ))}
                         </tbody>

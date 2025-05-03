@@ -4,7 +4,8 @@ using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
-using WebSocketSharp;
+using WebSocketClient;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Clase principal que gestiona el estado del juego, los turnos y los jugadores.
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public TurnManager TurnManager { get; private set; }
     public Player_Controller playerPrefab;
+    public Online_Player onlinePlayerPrefab;
     public IA_Player iAPrefab;
     public Player[] jugadores;
     public int[] orden;
@@ -35,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     public string test_state = "";
 
-    private WebSocketClient webSocketClient;
+    public wsClient webSocketClient;
 
     /// <summary>
     /// Inicializa la instancia singleton del GameManager.
@@ -60,7 +62,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject tapete = GameObject.Find("Tapete");
         SpriteRenderer spriteRenderer = tapete.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/Tapetes/" + UIManager.tapete_picure);
+        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/Tapetes/" + UIManager.tapete_picture);
         arrastre = false;
         segundaBaraja = false;
         finRonda = false;
@@ -105,10 +107,14 @@ public class GameManager : MonoBehaviour
 
         TurnManager.Tick();
 
-        webSocketClient = new WebSocketClient();
-        webSocketClient.Connect("ws://localhost:10000");
+        if (esOnline)
+        {
+            webSocketClient = UIManager.Instance.webSocketClient;
 
-        webSocketClient.OnGameStarted += HandleGameStarted;
+            webSocketClient.OnGameStarted += HandleGameStarted;
+        }
+
+        
         
     }
 
@@ -239,7 +245,8 @@ public class GameManager : MonoBehaviour
         jugadores[0].puntos = puntosJugadores[0];
         if(numJugadores == 2)
         {
-            if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            if (esOnline) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            else if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             else jugadores[1] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             for (int j = 0; j < 6; j++)
             {
@@ -249,21 +256,24 @@ public class GameManager : MonoBehaviour
         }
         else if(numJugadores == 4)
         {
-            if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(12, 0, 0), Quaternion.Euler(0, 0, 90));
+            if (esOnline) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
+            else if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(12, 0, 0), Quaternion.Euler(0, 0, 90));
             else jugadores[1] = Instantiate(playerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[1].AnyadirCarta(Baraja.DarCarta());
             }
             jugadores[1].puntos = puntosJugadores[1];
-            if (test_state == "" || test_state == "testIA") jugadores[2] = Instantiate(iAPrefab, new Vector3(0, 12, 0), Quaternion.Euler(0, 0, 180));
+            if (esOnline) jugadores[2] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            else if (test_state == "" || test_state == "testIA") jugadores[2] = Instantiate(iAPrefab, new Vector3(0, 12, 0), Quaternion.Euler(0, 0, 180));
             else jugadores[2] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             for (int j = 0; j < 6; j++)
             {
                 jugadores[2].AnyadirCarta(Baraja.DarCarta());
             }
             jugadores[2].puntos = puntosJugadores[2];
-            if (test_state == "" || test_state == "testIA") jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
+            if (esOnline) jugadores[3] = Instantiate(onlinePlayerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
+            else if (test_state == "" || test_state == "testIA") jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
             else jugadores[3] = Instantiate(playerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
             for (int j = 0; j < 6; j++)
             {
@@ -592,7 +602,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void BuscarPartidaPublica()
     {
-        StartCoroutine(ConsultasBD.Consultas.BuscarPartidaPublica("idUsuarioEjemplo"));
+        StartCoroutine(ConsultasBD.Consultas.BuscarPartidaPublica("idUsuarioEjemplo", "1v1"));
     }
 
     /// <summary>
@@ -605,10 +615,10 @@ public class GameManager : MonoBehaviour
         // Implementar lógica de sincronización aquí.
     }
 
-    public void SearchMatch(string matchType)
+    public async Task SearchMatch(string matchType)
     {
         Debug.Log("Buscando partida: " + matchType);
-        webSocketClient.JoinRoom(matchType);
+        await webSocketClient.JoinRoom(matchType, UIManager.Instance.id);
     }
 
     private void HandleGameStarted(string message)

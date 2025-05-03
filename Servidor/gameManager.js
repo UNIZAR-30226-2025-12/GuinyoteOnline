@@ -8,9 +8,16 @@ const {
     verificarCante
 } = require('./gameLogic');
 
+function init(ioInstance) {
+    io = ioInstance;
+}
+let io = null;
 const Partida = require('../Bd/models/Partida');
 
 async function iniciarPartida(sala) {
+    console.log(`emitiendo iniciar partida a ${sala.id}`);
+    io.to(sala.id).emit("iniciarPartida", 'iniciarPartida');
+    /*
     const baraja = mezclarBaraja(crearBaraja());
     const { manos, triunfo, mazo } = repartirCartas(baraja, sala.jugadores.length);
     
@@ -41,7 +48,7 @@ async function iniciarPartida(sala) {
     });
     await nuevaPartida.save();
 
-    return partida;
+    return partida;*/
 }
 
 function procesarJugada(partida, jugada) {
@@ -134,6 +141,7 @@ async function guardarEstadoPartida(partida) {
 }
 
 module.exports = {
+    init,
     iniciarPartida,
     procesarJugada,
     guardarEstadoPartida

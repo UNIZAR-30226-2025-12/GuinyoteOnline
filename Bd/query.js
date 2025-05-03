@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcrypt');
+const saltRounds = 10; // Nivel de complejidad de las contraseñas
 
 const Usuario = require('./models/Usuario');
 const Partida = require('./models/Partida');
@@ -21,40 +23,28 @@ const seedDB = async () => {
         usuarios.push({
             nombre: "Juan Gomez",
             correo: "juan.gomez@gmail.com",
-            contrasena: "juan12345",
-            foto_perfil: "",
-            fechaNacimiento: "1990-05-15",
-            direccion: "Calle Falsa 123, Ciudad, País",
+            contrasena: await bcrypt.hash("juan12345", 10),
             nVictorias: 10
         });
         
         usuarios.push({
             nombre: "Maria Lopez",
             correo: "maria.lopez@hotmail.com",
-            contrasena: "maria12345",
-            foto_perfil: "",
-            fechaNacimiento: "1985-03-22",
-            direccion: "Avenida Principal 456, Ciudad, País",
+            contrasena: await bcrypt.hash("maria12345", 10),
             nVictorias: 5
         });
         
         usuarios.push({
             nombre: "Pedro Martinez",
             correo: "pedro.martinez@yahoo.com",
-            contrasena: "pedro12345",
-            foto_perfil: "",
-            fechaNacimiento: "1982-11-10",
-            direccion: "Calle Luna 789, Ciudad, País",
+            contrasena: await bcrypt.hash("pedro12345", 10),
             nVictorias: 30
         });
         
         usuarios.push({
             nombre: "Laura Rodriguez",
             correo: "laura.rodriguez@outlook.com",
-            contrasena: "laura12345",
-            foto_perfil: "",
-            fechaNacimiento: "1995-07-30",
-            direccion: "Calle Sol 101, Ciudad, País",
+            contrasena: await bcrypt.hash("laura12345", 10),
             nVictorias: 20
         });
 
@@ -220,7 +210,7 @@ const getRankingOrdenado = async () => {
 // Ejecutar el script
 seedDB();
 
-getUsuarioById("juan.gomez@gmail.com")
+/*getUsuarioById("juan.gomez@gmail.com")
 
 getJugadoresByPartida("3")
 
@@ -230,4 +220,4 @@ getJugadoresByPartida("1")
 
 getAmigosByUsuario("maria.lopez@hotmail.com")
 
-getRankingOrdenado()
+getRankingOrdenado()*/

@@ -44,6 +44,66 @@
   background-color: #d6d6d6;
 }
 
+.btn-profile {
+  background-color: #007bff; /* Blue */
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-profile:hover {
+  background-color: #0056b3;
+}
+
+.btn-delete-friend {
+  background-color: #f44336; /* Red */
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-delete-friend:hover {
+  background-color: #d32f2f;
+}
+
+.btn-invite-friend {
+  background-color: #4caf50; /* Green */
+  color: white;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-invite-friend:hover {
+  background-color: #388e3c;
+}
+
+.modal button {
+  display: block;
+  width: 100%;
+  margin: 5px 0; /* Vertical margin */
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal .btn-profile,
+.modal .btn-delete-friend,
+.modal .btn-invite-friend {
+  margin: 5px 5px 5px 0; /* Add horizontal gap between buttons */
+}
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
   .friend-row {
@@ -65,5 +125,29 @@
 
   .friend-row-options:hover {
     background-color: #333;
+  }
+
+  .btn-profile {
+    background-color: #0056b3;
+  }
+
+  .btn-profile:hover {
+    background-color: #003f7f;
+  }
+
+  .btn-delete-friend {
+    background-color: #d32f2f;
+  }
+
+  .btn-delete-friend:hover {
+    background-color: #b71c1c;
+  }
+
+  .btn-invite-friend {
+    background-color: #388e3c;
+  }
+
+  .btn-invite-friend:hover {
+    background-color: #2e7d32;
   }
 }

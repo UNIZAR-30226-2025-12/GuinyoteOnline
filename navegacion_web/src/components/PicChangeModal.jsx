@@ -1,12 +1,12 @@
 import React from 'react';
 import '/src/styles/PicChangeModal.css';
 import { useUser } from '../context/UserContext';
-
-import av1 from '/src/assets/avatares/av1.png';
-import av2 from '/src/assets/avatares/av2.png';
-import av3 from '/src/assets/avatares/av3.png';
-import av4 from '/src/assets/avatares/av4.png';
-import av5 from '/src/assets/avatares/av5.png';
+const avataresUrl = '/src/assets/avatares/';
+const av1 = 'av1.png';
+const av2 = 'av2.png';
+const av3 = 'av3.png';
+const av4 = 'av4.png';
+const av5 = 'default.png';
 
 function PicChangeModal({ show, handleClose }) {
   if (!show) return null;
@@ -14,10 +14,10 @@ function PicChangeModal({ show, handleClose }) {
   const exampleImages = [av1, av2, av3, av4, av5];
   const {profilePic, setProfilePic } = useUser();
   
-  const handleImageSelect = (url) => {
-    console.log("Imagen seleccionada:", url);
+  const handleImageSelect = (pic) => {
+    console.log("Imagen seleccionada:", avataresUrl + pic);
     // Aquí puedes actualizar la imagen de perfil en el estado global
-    setProfilePic(url);
+    setProfilePic(pic);
     handleClose(); // Cierra el modal después de seleccionar
   };
 
@@ -26,12 +26,12 @@ function PicChangeModal({ show, handleClose }) {
       <div className="modal-content">
         <h3>Selecciona una nueva imagen de perfil</h3>
         <div className="image-options">
-          {exampleImages.map((url, index) => (
+          {exampleImages.map((pic, index) => (
             <img
               key={index}
-              src={url}
+              src={avataresUrl + pic}
               alt={`Opción ${index + 1}`}
-              onClick={() => handleImageSelect(url)}
+              onClick={() => handleImageSelect(pic)}
             />
           ))}
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import '/src/styles/RankingModal.css';
 import RankingRow from './RankingRow';
 import useFetch from '../customHooks/useFetch';
@@ -41,7 +41,7 @@ function RankingModal({ show, handleClose }) {
                                 keyValue={index + 1} 
                                 ranking={index + 1} 
                                 usuario={data.nombre} 
-                                img={data.foto_perfil} 
+                                foto_perfil={data.foto_perfil} 
                                 victorias={data.nVictorias} 
                             />
                         ))}

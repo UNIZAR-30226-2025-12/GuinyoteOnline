@@ -52,8 +52,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Match the friends modal overlay */
     z-index: 999;
+    background-color: rgba(0, 0, 0, 0.5); /* Match the friends modal overlay */
     display: block;
 }
 
@@ -114,7 +114,7 @@
     }
 
     .ranking-overlay {
-        background-color: rgba(0, 0, 0, 0.5); /* Match the ranking overlay background */
+        background-color: rgba(0, 0, 0, 0.5); /* Match the friends modal overlay */
     }
 
     .ranking-table th {

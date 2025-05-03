@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import userIcon from '/src/assets/login_button.png';
 import '/src/styles/RankingModal.css';
+
+const avataresUrl = '/src/assets/avatares/';
 
 class RankingRow extends Component {
     render() {
@@ -11,7 +12,7 @@ class RankingRow extends Component {
             <tr key={keyValue}>
             <td>{ranking}</td>
             <td style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <img src={userIcon} alt="User Icon" style={{ marginRight: '10px', width: '30px', height: '30px', borderRadius: '50%' }} />
+                <img src={avataresUrl + foto_perfil} alt="User Icon" style={{ marginRight: '10px', width: '30px', height: '30px', borderRadius: '50%' }} />
                 <span>{usuario}</span>
             </td>
             <td>{victorias}</td>

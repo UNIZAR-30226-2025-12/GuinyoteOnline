@@ -1,71 +1,107 @@
 using System;
-using WebSocketSharp;
+using SocketIOClient;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Threading.Tasks;
 
-public class WebSocketClient
-{
-    private WebSocket ws;
-
-    public event Action<string> OnPlayerJoined;
-    public event Action<string> OnGameStarted;
-
-    public void Connect(string url)
+namespace WebSocketClient {
+    public class wsClient
     {
-        ws = new WebSocket(url);
-        ws.OnMessage += (sender, e) =>
-        {
-            Console.WriteLine("Mensaje recibido: " + e.Data);
-            HandleServerMessage(e.Data);
-        };
-        ws.OnOpen += (sender, e) =>
-        {
-            Console.WriteLine("Conexión establecida con el servidor.");
-        };
-        ws.OnError += (sender, e) =>
-        {
-            Console.WriteLine("Error en la conexión: " + e.Message);
-        };
-        ws.OnClose += (sender, e) =>
-        {
-            Console.WriteLine("Conexión cerrada.");
-        };
-        ws.Connect();
-    }
+        private SocketIOUnity ws;
+        private TaskCompletionSource<bool> connectionTCS;
+        public event Action<string> OnPlayerJoined;
+        public event Action<string> OnGameStarted;
+        public event Action<string> OnInputReceived;
 
-    public void JoinRoom(string roomType)
-    {
-        if (ws != null && ws.IsAlive)
+        public async Task Connect(string url)
         {
-            var message = $"{{\"action\":\"buscarPartida\",\"tipo\":\"{roomType}\"}}";
-            ws.Send(message);
+            connectionTCS = new TaskCompletionSource<bool>();
+
+            Debug.Log("conectando...");
+            ws = new SocketIOUnity(url, new SocketIOOptions
+            {
+                Query = new Dictionary<string, string>
+                {
+                    { "token", "UNITY" }
+                },
+                Transport = SocketIOClient.Transport.TransportProtocol.WebSocket
+            });
+
+            ws.On("hello", (response) =>
+            {
+                Debug.Log("Mensaje del servidor: " + response.GetValue<string>());
+            });
+
+            ws.On("iniciarPartida", (response) =>{
+                Debug.Log("iniciando partida");
+                UIManager.ChangeScene("Juego");
+            });
+
+            ws.OnConnected += async (sender, e) =>
+            {
+                Debug.Log("Conectado al servidor");
+                await ws.EmitAsync("hello", "¡Hola desde Unity!");
+                connectionTCS.TrySetResult(true);
+            };
+
+            ws.OnError += (sender, e) =>
+            {
+                Console.WriteLine("Error en la conexión: " + e);
+                connectionTCS.TrySetResult(false);
+            };
+            ws.OnDisconnected += (sender, e) =>
+            {
+                Console.WriteLine("Conexión cerrada.");
+            };
+            ws.Connect();
+            await connectionTCS.Task;
         }
-    }
 
-    private void HandleServerMessage(string message)
-    {
-        // Procesar mensajes del servidor
-        if (message.Contains("playerJoined"))
+        public async Task JoinRoom(string lobbyId, string playerId)
         {
-            OnPlayerJoined?.Invoke(message);
+            Debug.Log(ws.Connected);
+            if (ws != null && ws.Connected)
+            {
+                var data = new Dictionary<string, object>
+                {
+                    { "lobbyId", lobbyId },
+                    { "playerId", playerId }
+                };
+                await ws.EmitAsync("join-lobby", data);
+            }
         }
-        else if (message.Contains("gameStarted"))
-        {
-            OnGameStarted?.Invoke(message);
-        }
-    }
 
-    public void SendMessage(string message)
-    {
-        if (ws != null && ws.IsAlive)
+        private void HandleServerMessage(string message)
         {
-            ws.Send(message);
+            // Procesar mensajes del servidor
+            if (message.Contains("playerJoined"))
+            {
+                OnPlayerJoined?.Invoke(message);
+            }
+            else if (message.Contains("gameStarted"))
+            {
+                OnGameStarted?.Invoke(message);
+            }
+            else if (message.Contains("input"))
+            {
+                OnInputReceived?.Invoke(message);
+            }
         }
-    }
 
-    public void Close()
-    {
-        if (ws != null)
+        public async void SendMessage(string message)
         {
-            ws.Close();
+            if (ws != null && ws.Connected)
+            {
+                await ws.EmitAsync(message);
+            }
+        }
+
+        public void Close()
+        {
+            if (ws != null)
+            {
+                ws.Disconnect();
+            }
         }
     }
 }

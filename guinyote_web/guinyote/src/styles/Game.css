@@ -1,6 +1,6 @@
 /*=========================Variables globales=========================*/
 :root {
-    --escala: 0.15;
+    --escala: 0.12;
     --offsetY: 1500px;
     --offsetX: 2350px;
     --offsetBaraja: 2400px;
@@ -53,14 +53,52 @@
 
 
 /*=========================Jugador=========================*/
-.botonCantar {
+
+.boton {
     display: flex;
     align-items: center;
     justify-content: center;
     position: fixed;
     bottom: 5%;
-    right: 30%;
     height: 10%;
+    width: 6%;
+}
+
+.boton.cantarbastos{
+    right: 30%;
+}
+
+.boton.cantarcopas{
+    right: 23%;
+}
+
+.boton.cantarespadas{
+    right: 16%;
+}
+
+.boton.cantaroros{
+    right: 9%;
+}
+
+.boton.siete{
+    right: 2%;
+}
+
+.boton.activo {
+    background-color: hsla(0, 0%, 50%, 1);
+    border-color: hsla(0, 0%, 50%, 0);
+}
+  
+.boton.hover {
+    background-color:  hsl(0, 0%, 75%);
+    border-color:  hsla(0, 0%, 75%);
+}
+  
+.boton.inactivo {
+    background-color: hsla(0, 0%, 50%, 0.15);
+    border-color: hsla(0, 0%, 50%, 0);
+    color: hsla(0, 0%, 100%, 0.15);
+    cursor: not-allowed;
 }
 
 .cartaJugada {

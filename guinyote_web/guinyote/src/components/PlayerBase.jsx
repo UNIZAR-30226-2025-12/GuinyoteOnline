@@ -9,9 +9,10 @@ class PlayerBase {
             esMiTurno: false,
             input: { carta: -1, cantar: -1, cambiarSiete: false },
             palosCantados: [false, false, false, false],
-            gameManager: GManager,
-            sePuedeCantar: false,
+            sePuedeCantar: [false, false, false, false],
             sePuedeCambiarSiete: false,
+            sieteCambiado: false,
+            gameManager: GManager,
         };
     }
 
@@ -21,39 +22,50 @@ class PlayerBase {
         if (index !== -1) {
             this.state.mano[index] = carta;
         }
-        this.state.sePuedeCantar = this.puedoCantar();
-
+        this.comprobarCantar(carta);
     }
 
-    puedoCantar() {
+    comprobarCantar(carta) {
         let hayRey;
         let haySota;
         for (let i = 0; i < 4; i++) {
+            if(this.state.sePuedeCantar[i] || this.state.palosCantados[i]) {
+                continue; 
+            }
             hayRey = false;
             haySota = false;
-            for (var c in this.state.mano) {
-                if (c == null) continue;
-                if (c.numero == 10 && c.palo == i) haySota = true;
-                if (c.numero == 12 && c.palo == i) hayRey = true;
+            for (var c of this.state.mano) {
+                if (c === null) continue;
+                if (c.numero === 7 && c.palo === i) haySota = true;
+                if (c.numero === 9 && c.palo === i) hayRey = true;
             }
             if (hayRey && haySota) {
-                return true; //CANTABLE
+                this.state.sePuedeCantar[i] = true; //CANTABLE
             }
         }
-        return false; //NO CANTABLE
+
+        if(this.state.sePuedeCambiarSiete || this.state.sieteCambiado) return;
+        if (carta.numero === 6 && carta.palo === this.state.gameManager.state.triunfo.palo) this.state.sePuedeCambiarSiete = true;
     }
 
-    cambiarSieteTriunfo(triunfo) {
+    cambiarSieteTriunfo() {
         const index = this.state.mano.findIndex(
-            (c) => c && c.Numero === 7 && c.Palo === triunfo.Palo
+            (c) => c && c.numero === 6 && c.palo === this.state.gameManager.state.triunfo.palo
         );
-        if (index === -1) return;
+        if (index === -1) {console.log("Error cambiar siete invocado cuando no se puede cambiar"); return;}
 
-        this.state.mano[index] = triunfo;
+        const triunfoAux = this.state.gameManager.state.triunfo;
+
+        this.state.gameManager.setTriunfo(this.state.mano[index]);
+        this.state.mano[index] = triunfoAux;
+        this.state.sePuedeCambiarSiete = false;
+        this.state.sieteCambiado = true;
     }
 
-    cantar(palo, triunfo) {
-        this.state.puntos += (palo === triunfo.Palo ? 40 : 20);
+    cantar(palo) {
+        this.state.puntos += (palo === this.state.gameManager.state.triunfo.Palo ? 40 : 20);
+        this.state.palosCantados[palo] = true;
+        this.state.sePuedeCantar[palo] = false;
     }
 
     reset() {
@@ -155,8 +167,10 @@ class PlayerBase {
                 return false;
             }
         }
-        else if (this.state.input.cambiarSiete) {
-            if (this.state.ganador && !this.state.gameManager.state.arrastre) this.cambiarSieteTriunfo();
+        /*else if (this.state.input.cambiarSiete) {
+            if (this.state.ganador && !this.state.gameManager.state.arrastre){
+
+            }
         }
         else if (this.state.input.cantar > -1 && this.state.input.cantar < 4) {
             if (this.state.ganador && !this.state.cantadoEsteTurno && !this.state.palosCantados[this.state.input.cantar]) {
@@ -175,7 +189,7 @@ class PlayerBase {
                     this.state.cantadoEsteTurno = true;
                 }
             }
-        }
+        }*/
         return true;
     }
 

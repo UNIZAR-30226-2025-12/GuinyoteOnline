@@ -122,8 +122,7 @@ class IA_PlayerBase extends PlayerBase {
             {
                 let puntosEquipo1 = 0, puntosEquipo2 = 0;
                 let equipo1 = false;
-
-                let j = this.state.gameManager.state.players[i];
+                
                 equipo1 = (this.state.numIA === 2);
                 puntosEquipo1 = this.state.gameManager.state.players[0].puntos + this.state.gameManager.state.players[2].puntos;
                 puntosEquipo2 = this.state.gameManager.state.players[1].puntos + this.state.gameManager.state.players[3].puntos;
@@ -186,7 +185,7 @@ class IA_PlayerBase extends PlayerBase {
         for (let i = 0; i < 4; i++) {
             hayRey = false;
             haySota = false;
-            for (var c in mano) {
+            for (var c of mano) {
                 if (c == null) continue;
                 if (c.numero == 10 && c.palo == i) haySota = true;
                 if (c.numero == 12 && c.palo == i) hayRey = true;

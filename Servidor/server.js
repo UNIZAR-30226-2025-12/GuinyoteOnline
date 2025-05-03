@@ -2,9 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const http = require('http');
 const socketIo = require('socket.io');
+const bcrypt = require('bcrypt');
 const { iniciarPartida, procesarJugada, guardarEstadoPartida } = require('./gameManager');
+const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
+const { findLobby } = require('./lobbies');
 require("dotenv").config();
+
+const saltRounds = 10; // Nivel de complejidad de las contraseñas
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +19,8 @@ const io = socketIo(server, {
     methods: ["GET", "POST"]
   }
 });
+module.exports = { io };
+gameManager.init(io);
 
 // Middleware
 app.use(cors());
@@ -93,8 +100,7 @@ app.get("/usuarios", async (req, res) => {
   }
 });
 
-// * DONE Documentación
-// ! NOT DONE Falta cifrar contraseña y prueba funcionalidad actual
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /usuarios/registro
  *
@@ -110,23 +116,14 @@ app.get("/usuarios", async (req, res) => {
  * - 201 Created: Devuelve el contenido del nuevo usuario.
  * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
  *
- * Ejemplo de respuesta exitosa:
- * {
- *   "correo": "pruebaRegistro@gmail.com",
- *   "nombre": "pruebaRegistro",
- *   "contrasena": "pruebaRegistro",
- *   "foto_perfil": "default.png",
- *   "nVictorias": 0,
- *   "_id": "67f40268b679013fe7fa6548",
- *   "amigos": [],
- *   "__v": 0
- * }
- *
  */
 app.post("/usuarios/registro", async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
-    const usuario = new Usuario({ nombre, correo, contrasena, foto_perfil: "default_avatar.png", nVictorias: 0, amigos: [], tapete: "default_tapete.png", imagen_carta: "default_cartas.png" });
+
+    const hash = await bcrypt.hash(contrasena, saltRounds);
+
+    const usuario = new Usuario({ nombre, correo, contrasena: hash, foto_perfil: "default.png", nVictorias: 0, amigos: [], tapete: "default.png", imagen_carta: "default.png" });
     await usuario.save();
     res.status(201).json(usuario);
   } catch (error) {
@@ -135,7 +132,6 @@ app.post("/usuarios/registro", async (req, res) => {
 });
 
 // * DONE Documentación y prueba de funcionalidad actual
-// ! NOT DONE Falta cifrar contraseña
 /**
  * POST /usuarios/inicioSesion
  *
@@ -149,6 +145,7 @@ app.post("/usuarios/registro", async (req, res) => {
  * Respuesta:
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 401 Unauthorized: Devuelve error, no se ha podido iniciar sesión.
+ * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * 
  * Ejemplo de respuesta exitosa:
  * [
@@ -163,17 +160,30 @@ app.post("/usuarios/registro", async (req, res) => {
 app.post("/usuarios/inicioSesion", async (req, res) => {
   try {
     const { correo, contrasena } = req.body;
-    const resultado = await Usuario.find({correo: correo, contrasena: contrasena}, { nombre: 1, correo: 1, foto_perfil: 1 });
-    if (resultado.length > 0) {
-      res.status(202).json(resultado);
+
+    // Buscar usuario por correo
+    const usuario = await Usuario.findOne({ correo });
+
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    else {
-      res.status(401).json({ message: "Correo o contraseña incorrectos"});
+
+    // Comparar contrasena ingresada con el hash almacenado
+    const coinciden = await bcrypt.compare(contrasena, usuario.contrasena);
+
+    if (!coinciden) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
+
+    // Si todo está bien, responder con los datos públicos
+    const { nombre, correo: correoUsuario, foto_perfil, tapete, imagen_carta } = usuario;
+    res.status(202).json({ nombre, correo: correoUsuario, foto_perfil, tapete, imagen_carta });
+
   } catch (error) {
-    res.status(401).json({ message: "Error en el inicio de sesión", error: error.message });
+    res.status(500).json({ message: "Error en el inicio de sesión", error: error.message });
   }
-})
+});
+
 
 // * DONE Documentación
 // ! NOT DONE Faltan pruebas
@@ -191,15 +201,6 @@ app.post("/usuarios/inicioSesion", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
@@ -222,7 +223,7 @@ app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
 })
 
 // * DONE Documentación
-// ! NOT DONE Falta cifrar contraseña y pruebas
+// ! NOT DONE Falta probar cifrado contraseña y el funcionamiento
 /**
  * PUT /usuarios/perfil/cambiarContrasena/:id
  *
@@ -239,41 +240,36 @@ app.put("/usuarios/perfil/cambiarUsername/:id", async (req, res) => {
  * - 401 Unauthorized: Devuelve error, no se ha podido cambiar la contraseña
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar la contraseña.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
-app.put("usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
+app.put("/usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
   try {
     const { contrasena_antigua, contrasena_nueva } = req.body;
-    const usuario = await Usuario.findOneAndUpdate(
-      { correo: req.params.id },
-      { contrasena: contrasena_antigua }
-    );
+    const correo = req.params.id;
+
+    const usuario = await Usuario.findOne({ correo });
 
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    if (usuario.contrasena !== contrasena_antigua) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
+    const coincide = await bcrypt.compare(contrasena_antigua, usuario.contrasena);
+
+    if (!coincide) {
+      return res.status(401).json({ message: "Contraseña antigua incorrecta" });
     }
 
-    usuario.contrasena = contrasena_nueva;
+    const hash = await bcrypt.hash(contrasena_nueva, saltRounds);
+
+    usuario.contrasena = hash;
     await usuario.save();
 
-    res.json(usuarioActualizado);
+    res.status(200).json({ message: "Contraseña actualizada correctamente" });
   } catch (error) {
     res.status(400).json({ message: "Error actualizando contraseña", error: error.message });
   }
-})
+});
+
 
 // * DONE Documentación
 // ! NOT DONE Faltan pruebas
@@ -291,15 +287,6 @@ app.put("usuarios/perfil/cambiarContrasena/:id", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
@@ -307,7 +294,7 @@ app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
     const { foto_perfil } = req.body;
     const usuario = await Usuario.findOneAndUpdate(
       { correo: req.params.id },
-      { nombre: foto_perfil },
+      { foto_perfil: foto_perfil },
       { new: true }
     );
 
@@ -337,15 +324,6 @@ app.put("/usuarios/perfil/cambiarFoto/:id", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarTapete/:id", async (req, res) => {
@@ -383,15 +361,6 @@ app.put("/usuarios/perfil/cambiarTapete/:id", async (req, res) => {
  * - 202 Accepted: Devuelve el correo y el nombre del usuario
  * - 404 Not found: Devuelve error, no se ha podido encontrar el usuario.
  * - 400 Bad Request: Devuelve error, no se ha podido cambiar el nombre del usuario.
- * 
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *       "_id": "67f40268b679013fe7fa6548",
- *       "correo": "pruebaRegistro@gmail.com",
- *       "nombre": "pruebaRegistro"
- *   }
- * ]
  *
  */
 app.put("/usuarios/perfil/cambiarCartas/:id", async (req, res) => {
@@ -515,8 +484,7 @@ app.get("/usuarios/perfil/:id", async (req, res) => {
 
 // ! //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE Documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * GET /rankings
  *
@@ -535,8 +503,8 @@ app.get("/usuarios/perfil/:id", async (req, res) => {
  *   {
  *     "_id": "607d1b2f531123456789abcd",
  *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
+ *     "nVictorias": 10,
+ *     "foto_perfil": "default.png"
  *   },
  *   ...
  * ]
@@ -551,8 +519,7 @@ app.get("/rankings", async (req, res) => {
   }
 });
 
-// * DONE Prueba de funcionalidad básica
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /amigos/enviarSolicitud
  *
@@ -566,18 +533,6 @@ app.get("/rankings", async (req, res) => {
  * Respuesta:
  * - 201 Created: Se ha creado bien la solicitud o se ha añadido un nuevo amigo si tenías una petición de dicho usuario.
  * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- *
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *     "_id": "607d1b2f531123456789abcd",
- *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
- *   },
- *   ...
- * ]
  *
  */
 app.post("/amigos/enviarSolicitud", async (req, res) => {
@@ -588,13 +543,13 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
       return res.status(400).json({ message: "No puedes enviarte una solicitud a ti mismo" });
     }
 
-    const amigos = await Usuario.findOne(
+    const amigo = await Usuario.findOne(
       { correo: idSolicitante }, { amigos: 1 }
     )
 
-    if (amigos) {
+    if (amigo) {
       // Si el usuario ya tiene una solicitud pendiente de amistad se hacen amigos
-      if (amigos.amigos.find(amigo => amigo.idUsuario === idSolicitado && amigo.pendiente)) {
+      if (amigo.amigos.find(amigo => amigo.idUsuario === idSolicitado && amigo.pendiente)) {
         await Usuario.findOneAndUpdate(
           { correo: idSolicitado },
           { $push: { amigos: {idUsuario: idSolicitante, pendiente: false} } }
@@ -610,7 +565,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
       }
 
       // Si ya son amigos se manda error
-      if (amigos.amigos.find(amigo => amigo.idUsuario === idSolicitado && !amigo.pendiente)) {
+      if (amigo.amigos.find(amigo => amigo.idUsuario === idSolicitado && !amigo.pendiente)) {
         return res.status(400).json({ message: "Este usuario ya es amigo tuyo" });
       }
     }
@@ -627,8 +582,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
 });
 
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /amigos/aceptarSolicitud
  *
@@ -641,18 +595,7 @@ app.post("/amigos/enviarSolicitud", async (req, res) => {
  * 
  * Respuesta:
  * - 202 OK: Devuelve un arreglo con los .
- * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- *
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *     "_id": "607d1b2f531123456789abcd",
- *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
- *   },
- *   ...
- * ]
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
  *
  */
 app.post("/amigos/aceptarSolicitud", async (req, res) => {
@@ -681,8 +624,7 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
 });
 
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
  * POST /amigos/rechazarSolicitud
  *
@@ -696,17 +638,6 @@ app.post("/amigos/aceptarSolicitud", async (req, res) => {
  * Respuesta:
  * - 202 OK: Devuelve un arreglo con los .
  * - 500 Internal Server Error: Devuelve un objeto con un mensaje de error y el detalle del mismo.
- *
- * Ejemplo de respuesta exitosa:
- * [
- *   {
- *     "_id": "607d1b2f531123456789abcd",
- *     "nombre": "Juan Pérez",
- *     "correo": "juan@example.com",
- *     ...
- *   },
- *   ...
- * ]
  *
  */
 app.post("/amigos/rechazarSolicitud", async (req, res) => {
@@ -723,11 +654,44 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación
+// ! NOT DONE Falta probar la nueva funcionalidad y documentar
 /**
- * POST /amigos/:idUsuario
+ * POST /amigos/eliminarAmigo
+ *
+ * Descripción:
+ * Esta ruta se encarga de eliminar un amigo de la lista de amigos del usuario.
+ *
+ * Parámetros de la solicitud:
+ * - @params {string} idEliminador - Correo electrónico del usuario que elimina al amigo.
+ * - @params {string} idEliminado - Correo electrónico del amigo a eliminar.
+ * 
+ * Respuesta:
+ * - 203 No Content: Devuelve un objeto con un mensaje de éxito.
+ * - 400 Bad Request: Devuelve un objeto con un mensaje de error y el detalle del mismo.
+ *
+ */
+app.post("/amigos/eliminarAmigo", async (req, res) => {
+  try {
+    const { idEliminador, idEliminado } = req.body;
+    await Usuario.findOneAndUpdate(
+      { correo: idEliminador },
+      { $pull: { amigos: {idUsuario: idEliminado} } }
+    );
+    await Usuario.findOneAndUpdate(
+      { correo: idEliminado },
+      { $pull: { amigos: {idUsuario: idEliminador} } }
+    );
+    res.status(203).json({ message: "Amigo eliminado con éxito"});
+  } catch (error) {
+    res.status(400).json({ message: "Error eliminando amigo", error: error.message });
+  }
+});
+
+
+// * DONE Documentación y prueba de funcionalidad actual
+/**
+ * GET /amigos/:idUsuario
  *
  * Descripción:
  * Esta ruta se encarga de obtener los datos de los amigos del usuario :idUsuario.
@@ -785,10 +749,9 @@ app.get("/amigos/:idUsuario", async (req, res) => {
 });
 
 
-// * DONE Prueba de funcionalidad actual
-// ! NOT DONE (rojo) Falta probar la nueva funcionalidad y documentar la respuesta obtenida
+// * DONE Documentación y prueba de funcionalidad actual
 /**
- * POST /solicitudes/:idUsuario
+ * GET /solicitudes/:idUsuario
  *
  * Descripción:
  * Esta ruta se encarga de obtener los datos de las solicitudes del usuario :idUsuario.
@@ -838,24 +801,9 @@ app.get("/solicitudes/:idUsuario", async (req, res) => {
 });
 
 
-// Rutas de Partida y Sala
-app.post("/salas/crear", async (req, res) => {
-  try {
-    const { idCreador, tipo, codigoAcceso } = req.body;
-    const sala = {
-      id: Date.now().toString(),
-      idCreador,
-      tipo,
-      codigoAcceso,
-      jugadores: [idCreador],
-      estado: 'esperando'
-    };
-    salasEspera.set(sala.id, sala);
-    res.status(201).json(sala);
-  } catch (error) {
-    res.status(400).json({ message: "Error creando sala", error: error.message });
-  }
-});
+// Rutas de Salas
+app.use("/salas", salasRoutes);
+
 
 app.get("/partidas/historial/:userId", async (req, res) => {
   try {
@@ -909,9 +857,6 @@ app.get("/partidas/historial/:userId", async (req, res) => {
   }
 });
 
-// Rutas de Salas
-app.use("/salas", salasRoutes);
-
 // Configuración de Socket.IO para tiempo real
 io.on('connection', (socket) => {
   console.log('Usuario conectado:', socket.id);
@@ -934,8 +879,20 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('join-lobby', ({ lobbyId, playerId }) => {
+    socket.emit('hello', '¡Hola desde el servidor!');
+    socket.join(lobbyId);
+    socket.to(lobbyId).emit('player-joined', playerId);
+    console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
+    let lobby = findLobby(lobbyId);
+    console.log(lobby);
+    if (lobby.jugadores.length === lobby.maxPlayers) {
+      iniciarPartida(lobby);
+    }
+  });
+
   // Unirse a una sala
-  socket.on('unirSala', async ({ salaId, userId, codigoAcceso }) => {
+  socket.on('unirSalaPrivada', async ({ salaId, userId, codigoAcceso }) => {
     const sala = salasEspera.get(salaId);
     if (sala && sala.codigoAcceso === codigoAcceso && !sala.jugadores.includes(userId)) {
       sala.jugadores.push(userId);
@@ -1003,7 +960,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);
     
-    if (socket.userId) {
+    /*if (socket.userId) {
       const partidaActiva = Array.from(partidasActivas.values())
         .find(p => p.jugadores.includes(socket.userId));
       
@@ -1019,6 +976,6 @@ io.on('connection', (socket) => {
           partidasActivas.delete(partidaActiva.id);
         }, 30000)); // 30 segundos de timeout
       }
-    }
+    }*/
   });
 });

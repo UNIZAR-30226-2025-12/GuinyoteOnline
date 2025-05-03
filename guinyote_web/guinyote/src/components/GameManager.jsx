@@ -31,12 +31,12 @@ class GameManager {
         this.state.finJuego = false;
 
         this.state.baraja = new BarajaClass();
-        this.state.baraja.barajar();
-
-        this.InitJugadores();
+        //this.state.baraja.barajar();
 
         this.state.triunfo = this.state.baraja.darCarta();
         this.state.baraja.anyadirAlFinal(this.state.triunfo);
+
+        this.InitJugadores();
 
         this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
         this.state.turnManager.reset();
@@ -223,6 +223,10 @@ class GameManager {
         {
             this.state.orden[i] = i;
         }
+    }
+
+    setTriunfo(newTriunfo) {
+        this.state.triunfo = newTriunfo;
     }
 }
 
