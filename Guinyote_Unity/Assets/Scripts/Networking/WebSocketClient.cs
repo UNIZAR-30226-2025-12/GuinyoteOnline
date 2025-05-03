@@ -8,12 +8,16 @@ namespace WebSocketClient {
     public class wsClient
     {
         private SocketIOUnity ws;
+        private TaskCompletionSource<bool> connectionTCS;
         public event Action<string> OnPlayerJoined;
         public event Action<string> OnGameStarted;
         public event Action<string> OnInputReceived;
 
-        public void Connect(string url)
+        public async Task Connect(string url)
         {
+            connectionTCS = new TaskCompletionSource<bool>();
+
+            Debug.Log("conectando...");
             ws = new SocketIOUnity(url, new SocketIOOptions
             {
                 Query = new Dictionary<string, string>
@@ -37,21 +41,25 @@ namespace WebSocketClient {
             {
                 Debug.Log("Conectado al servidor");
                 await ws.EmitAsync("hello", "¡Hola desde Unity!");
+                connectionTCS.TrySetResult(true);
             };
 
             ws.OnError += (sender, e) =>
             {
                 Console.WriteLine("Error en la conexión: " + e);
+                connectionTCS.TrySetResult(false);
             };
             ws.OnDisconnected += (sender, e) =>
             {
                 Console.WriteLine("Conexión cerrada.");
             };
             ws.Connect();
+            await connectionTCS.Task;
         }
 
         public async Task JoinRoom(string lobbyId, string playerId)
         {
+            Debug.Log(ws.Connected);
             if (ws != null && ws.Connected)
             {
                 var data = new Dictionary<string, object>

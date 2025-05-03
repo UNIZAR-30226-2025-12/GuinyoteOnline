@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const { iniciarPartida, procesarJugada, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
+const { findLobby } = require('./lobbies');
 require("dotenv").config();
 
 const saltRounds = 10; // Nivel de complejidad de las contraseñas
@@ -883,6 +884,11 @@ io.on('connection', (socket) => {
     socket.join(lobbyId);
     socket.to(lobbyId).emit('player-joined', playerId);
     console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
+    let lobby = findLobby(lobbyId);
+    console.log(lobby);
+    if (lobby.jugadores.length === lobby.maxPlayers) {
+      iniciarPartida(lobby);
+    }
   });
 
   // Unirse a una sala
@@ -954,7 +960,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);
     
-    if (socket.userId) {
+    /*if (socket.userId) {
       const partidaActiva = Array.from(partidasActivas.values())
         .find(p => p.jugadores.includes(socket.userId));
       
@@ -970,6 +976,6 @@ io.on('connection', (socket) => {
           partidasActivas.delete(partidaActiva.id);
         }, 30000)); // 30 segundos de timeout
       }
-    }
+    }*/
   });
 });

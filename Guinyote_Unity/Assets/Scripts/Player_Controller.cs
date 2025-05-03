@@ -1,10 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using WebSocketClient;
 
 public class Player_Controller : Player
 {
+    private wsClient ws;
     public Player_Controller() : base()
     {
+    }
+    void Start()
+    {
+        if (GameManager.esOnline) ws = UIManager.Instance.webSocketClient;
+        base.Start();
     }
 
     public void Update()
@@ -33,7 +40,10 @@ public class Player_Controller : Player
         }
 
 
-        turno();
+        if (turno() && GameManager.esOnline)
+        {
+            //SI LOS INPUTS SON CORRECTOS ENVIAR INPUTS AL SERVIDOR
+        }
     }
 
     public void ActualizarColliders()
