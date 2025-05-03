@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
         jugadores[0].puntos = puntosJugadores[0];
         if(numJugadores == 2)
         {
-            if (esOnline) Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            if (esOnline) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             else if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             else jugadores[1] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             for (int j = 0; j < 6; j++)
