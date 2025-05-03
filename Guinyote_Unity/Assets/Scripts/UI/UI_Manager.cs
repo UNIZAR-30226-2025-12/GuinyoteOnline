@@ -936,7 +936,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Button Clicked");
 
         // Cerrar conexión WebSocket si se cambia a una escena no relacionada con partidas online
-        if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2"))
+        if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2" && sceneName != "Juego"))
         {
             Instance.webSocketClient.Close();
         }
