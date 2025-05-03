@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d4c2af6668834ec49952217f1561dc4d
+guid: 31d7da6a7b59bf849a8f5913d1a568ed
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6226676760592937394
-    second: Tapete_marron_0
+      213: 559631843559397421
+    second: Login_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tapete_marron_0
+      name: Login_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2150
-        height: 2150
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2b1725ef589996650800000000000000
-      internalID: 6226676760592937394
+      spriteID: d28da58523634c700800000000000000
+      internalID: 559631843559397421
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Tapete_marron_0: 6226676760592937394
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
