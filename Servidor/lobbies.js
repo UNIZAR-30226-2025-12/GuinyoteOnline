@@ -1,6 +1,4 @@
 const { v4: uuidv4 } = require('uuid');
-const { iniciarPartida } = require("./gameManager");
-
 
 const lobbies = [];
 
@@ -19,6 +17,12 @@ function createLobby(maxPlayers, idCreador, tipo, codigoAcceso) {
   return lobby;
 }
 
+function findLobby(lobbyId) {
+  return lobbies.find(
+    (lobby) => lobby.id === lobbyId
+  );
+}
+
 function findAvailableLobby(maxPlayers) {
   return lobbies.find(
     (lobby) => lobby.maxPlayers === maxPlayers && lobby.jugadores.length < maxPlayers
@@ -35,18 +39,12 @@ function joinLobby(lobbyId, playerId) {
   const lobby = lobbies.find((l) => l.id === lobbyId);
   if (!lobby || lobby.jugadores.length >= lobby.maxPlayers) return null;
   lobby.jugadores.push(playerId);
-  if (lobby.jugadores.length === lobby.maxPlayers) {
-    iniciarPartida(lobby);
-  }
 }
 
 function joinPrivateLobby(lobbyId, playerId, codigoAcceso) {
   const lobby = lobbies.find((l) => l.id === lobbyId);
   if (!lobby || lobby.jugadores.length >= lobby.maxPlayers || lobby.codigoAcceso != codigoAcceso) return null;
   lobby.jugadores.push(playerId);
-  if (lobby.jugadores.length === lobby.maxPlayers) {
-    iniciarPartida(lobby);
-  }
 }
 
 function autoJoinOrCreate(playerId, maxPlayers) {
@@ -60,6 +58,7 @@ function autoJoinOrCreate(playerId, maxPlayers) {
 }
 
 module.exports = {
+  findLobby,
   createLobby,
   joinLobby,
   joinPrivateLobby,

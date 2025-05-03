@@ -112,6 +112,11 @@ public class UIManager : MonoBehaviour
         Consultas.OnRankingConsultado += UpdateRanking;
         Consultas.OnCambiarInfoUsuario += updateInfoUsuario;
         Consultas.OnPartidaEncontrada += JoinRoom;
+
+        if (webSocketClient == null)
+        {
+            webSocketClient = new wsClient();
+        }
         
         tapete_picture = "default";
         carta_picture = "default";
@@ -857,7 +862,8 @@ public class UIManager : MonoBehaviour
 
     async void JoinRoom(Lobby lobby, string idUsuario)
     {
-        Debug.Log(webSocketClient);
+        // Configurar WebSocket para partidas online
+        await webSocketClient.Connect("ws://localhost:10000");//"wss://guinyoteonline-hkio.onrender.com");
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
     }
@@ -881,13 +887,6 @@ public class UIManager : MonoBehaviour
         {
             GameManager.numJugadores = (tipo == "Partida_Online_1vs1") ? 2 : 4;
             GameManager.esOnline = true;
-
-            // Configurar WebSocket para partidas online
-            if (webSocketClient == null)
-            {
-                webSocketClient = new wsClient();
-                webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
-            }
 
             string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
             StartCoroutine(Consultas.BuscarPartidaPublica(id, roomType));
@@ -917,7 +916,6 @@ public class UIManager : MonoBehaviour
         if (Instance.webSocketClient != null)
         {
             Instance.webSocketClient.Close();
-            Instance.webSocketClient = null;
         }
 
         SceneManager.LoadScene(lastScene.Pop());
@@ -935,7 +933,6 @@ public class UIManager : MonoBehaviour
         if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2"))
         {
             Instance.webSocketClient.Close();
-            Instance.webSocketClient = null;
         }
 
         lastScene.Push(SceneManager.GetActiveScene().name);
