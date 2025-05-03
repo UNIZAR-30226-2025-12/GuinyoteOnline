@@ -14,6 +14,7 @@
     vertical-align: middle;
     width: 50px;
     height: 50px;
+    border-radius: 50%;
 }
 
 .login-button:hover {
@@ -24,16 +25,16 @@
 /* Estilo para modo oscuro */
 @media (prefers-color-scheme: dark) {
     .login-button {
-        background-color: #242424; /* Fondo oscuro */
-        color: white; /* Texto claro */
+        background-color: #242424;
+        color: white;
     }
 
     .login-button-icon {
-        filter: invert(1); /* Ajusta los íconos para que se vean mejor en modo oscuro */
+        filter: none; /* <-- No tocar la imagen */
     }
 
     .login-button:hover .login-button-icon {
-        filter: invert(0); /* Invierte el color del ícono cuando ocurre el hover */
+        filter: none; /* o puedes poner un efecto suave, como brillo */
     }
 }
 
