@@ -72,6 +72,7 @@ public class UIManager : MonoBehaviour
     private Button boton_cambiar_tapete;
     private Button boton_cambiar_cartas;
     private Button boton_online;
+    private VisualElement VisualProfilePicture;
 
     /// <summary>
     /// Singleton pattern para asegurar que solo haya una instancia de UIManager en la escena.
@@ -446,6 +447,10 @@ public class UIManager : MonoBehaviour
             cartas_tab.style.display = DisplayStyle.Flex;
         });
 
+        VisualProfilePicture = root.rootVisualElement.Q<VisualElement>("Profile_picture");
+        VisualProfilePicture.style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+
+
         boton_historial = root.rootVisualElement.Q<Button>("History_Button");
         boton_historial.RegisterCallback<ClickEvent>(ev => MostrarHistorial());
         imagenes_perfil_scroll= root.rootVisualElement.Q<ScrollView>("Foto_Scroll");
@@ -518,6 +523,7 @@ public class UIManager : MonoBehaviour
             imagen_boton.RegisterCallback<ClickEvent>(ev => { 
                 Debug.Log("Cambiar foto pulsado"); 
                 temp_profile_picture= fotoName;
+                VisualProfilePicture.style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + fotoName);
                 imagenes_perfil_tab.style.display = DisplayStyle.None;
             });
             imagenes_perfil_scroll.Add(fotoElement);
