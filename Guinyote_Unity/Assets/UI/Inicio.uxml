@@ -2,13 +2,13 @@
     <engine:VisualElement style="flex-grow: 1; position: absolute; height: 253px; width: 291px; top: 25%; left: 40%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: 50%; bottom: 50%;" />
     <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 10%; position: absolute; width: 20%; top: 30%; left: 5%; right: -216px;" />
     <engine:Button name="Login_Button" style="position: absolute; height: 72px; width: 144px; opacity: 1; top: -3px; left: -5px; background-color: rgba(188, 188, 188, 0.61);">
-        <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 26px; width: 56px; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;);" />
+        <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 63px; width: 56px; background-image: resource(&apos;Sprites/Profile_pictures/default&apos;);" />
         <engine:Label text="Iniciar &#10;sesión" name="Login_Label" style="height: 24px; width: 64px; position: absolute; top: 22px; left: 72px; white-space: normal;" />
     </engine:Button>
     <engine:Button text="Partida IA" name="IA_Button" style="position: absolute; top: 50%; left: 5%; width: 20%; bottom: auto; right: auto; height: 10%;" />
     <engine:Button name="Friends_Button" style="position: absolute; top: 5%; left: 80%; height: 83px; width: 58px; background-color: rgba(70, 70, 70, 0); -unity-background-image-tint-color: rgb(255, 255, 255); border-left-color: rgba(55, 55, 55, 0); border-right-color: rgba(55, 55, 55, 0); border-top-color: rgba(55, 55, 55, 0); border-bottom-color: rgba(55, 55, 55, 0);">
-        <engine:Label text="Amigos" style="position: absolute; top: 50%; left: 1%;" />
-        <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/amigos&apos;); background-size: 100% 100%; width: 36px; height: 41px; position: absolute;" />
+        <engine:Label text="Amigos" style="position: absolute; top: 49px; left: 2px;" />
+        <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/amigos&apos;); background-size: 100% 100%; width: 49px; height: 49px; position: absolute; top: 6px; left: 6px;" />
     </engine:Button>
     <engine:Button text="Reglas" name="reglas_Button" style="left: 85%; width: 76px; top: 90%;" />
     <engine:Button name="Ranking_Button" style="position: absolute; top: 5%; left: 90%; height: 80px; width: 58px; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); color: rgb(27, 27, 27); background-color: rgba(188, 188, 188, 0);">
