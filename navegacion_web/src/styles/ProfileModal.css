@@ -1,131 +1,280 @@
+/* Default light mode styles */
 .profile-modal {
     width: 100%;
     height: 100%;
-    background-color: rgba(30, 30, 30, 0.9);
+    background-color: #f5f5f5; /* Softer light gray background */
     padding: 40px;
-    color: #ffffff;
+    color: #000000; /* Black text */
     display: flex;
     flex-direction: column;
     border-radius: 12px;
     gap: 20px;
     box-sizing: border-box;
-  }
-  
-  .profile-modal h2 {
-    font-size: 28px;
+}
+
+.profile-modal h2 {
+    font-size: 1.75rem;
     margin-bottom: 10px;
-  }
-  
-  /* Nueva sección superior con info del usuario */
-  .user-info-section {
+    font-weight: bold;
+    text-align: center;
+}
+
+.user-info-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 30px;
-  }
-  
-  /* Foto de perfil */
-  .profile-pic-section {
+}
+
+.profile-pic-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-  }
-  
-  .profile-pic {
+}
+
+.profile-pic {
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    background-color: #666;
+    background-color: #cccccc; /* Light gray background */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-  }
-  
-  .change-pic-button {
-    padding: 6px 10px;
-    font-size: 18px;
-    background-color: #3a3a3a;
+    cursor: pointer; /* Allow clicking to change the picture */
+}
+
+.pic-change-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f5f5f5; /* Softer light gray background */
+    padding: 20px;
+    border-radius: 10px;
+    color: #000000; /* Black text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.pic-change-modal h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.pic-change-modal button {
+    padding: 8px 12px;
+    background-color: #e0e0e0; /* Light gray button */
     border: none;
     border-radius: 6px;
-    color: white;
+    color: #000000; /* Black text */
     cursor: pointer;
-  }
-  
-  .name-password-section {
+    transition: background-color 0.3s ease;
+}
+
+.pic-change-modal button:hover {
+    background-color: #d0d0d0; /* Slightly darker gray on hover */
+}
+
+.username-change-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f5f5f5; /* Softer light gray background */
+    padding: 20px;
+    border-radius: 10px;
+    color: #000000; /* Black text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.username-change-modal h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.username-change-modal input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    background-color: #f0f0f0; /* Very light gray input */
+    color: #000000; /* Black text */
+    margin-bottom: 15px;
+}
+
+.username-change-modal button {
+    padding: 8px 12px;
+    background-color: #e0e0e0; /* Light gray button */
+    border: none;
+    border-radius: 6px;
+    color: #000000; /* Black text */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.username-change-modal button:hover {
+    background-color: #d0d0d0; /* Slightly darker gray on hover */
+}
+
+.change-pic-button {
+    padding: 8px 12px;
+    font-size: 1rem;
+    background-color: #e0e0e0; /* Light gray button */
+    border: none;
+    border-radius: 6px;
+    color: #000000; /* Black text */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.change-pic-button:hover {
+    background-color: #d0d0d0; /* Slightly darker gray on hover */
+}
+
+.name-password-section {
     display: flex;
     flex-direction: column;
     gap: 15px;
     flex: 2;
-  }
-  
-  .name-field {
+}
+
+.name-field {
     display: flex;
     align-items: center;
     gap: 10px;
-  }
-  
-  .name-field input {
+}
+
+.name-field input {
     padding: 8px;
     border-radius: 6px;
     border: none;
-    background-color: #222;
-    color: #fff;
+    background-color: #f0f0f0; /* Very light gray input */
+    color: #000000; /* Black text */
     flex: 1;
-  }
-  
-  .edit-icon {
-    color: #ccc;
+}
+
+.edit-icon {
+    color: #666666; /* Dark gray */
     cursor: pointer;
-  }
-  
-  /* Botón cambiar contraseña */
-  .name-password-section button {
+    transition: color 0.3s ease;
+}
+
+.edit-icon:hover {
+    color: #000000; /* Black on hover */
+}
+
+.name-password-section button {
     padding: 8px 12px;
-    background-color: #3a3a3a;
+    background-color: #e0e0e0; /* Light gray button */
     border: none;
     border-radius: 6px;
-    color: white;
+    color: #000000; /* Black text */
     cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .name-password-section button:hover {
-    background-color: #555;
-  }
-  
-  /* Línea divisoria */
-  .divider {
-    border-top: 1px solid #555;
+    transition: background-color 0.3s ease;
+}
+
+.name-password-section button:hover {
+    background-color: #d0d0d0; /* Slightly darker gray on hover */
+}
+
+.divider {
+    border-top: 1px solid #d0d0d0; /* Light gray divider */
     margin: 20px 0;
-  }
-  
-  /* Personalización: tapete y cartas */
-  .customization-section {
+}
+
+.customization-section {
     display: flex;
     justify-content: space-around;
     gap: 20px;
-  }
-  
-  .customization-box {
+}
+
+.customization-box {
     flex: 1;
-    background-color: #222;
+    background-color: #eaeaea; /* Softer light gray for better visibility */
     padding: 20px;
     border-radius: 10px;
     text-align: center;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .customization-box:hover {
-    background-color: #333;
-  }
-  
-  .logout-button {
-    margin-top: 30px;
-    color: red;
+    transition: background-color 0.3s ease;
+}
+
+.customization-box:hover {
+    background-color: #dcdcdc; /* Slightly darker gray on hover */
+}
+
+.logout-button {
+    margin-top: 5px;
+    color: #000000; /* Black text */
+    background-color: #e60000; /* Softer red */
     text-align: center;
     cursor: pointer;
     font-weight: bold;
-  }
-  
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.logout-button:hover {
+    background-color: #e60000; /* Slightly darker red */
+}
+
+.logout-button img {
+    filter: none; /* Ensure no filter is applied */
+    transition: none; /* Prevent transition effects */
+}
+
+.logout-button:hover img {
+    filter: none; /* Ensure no filter is applied on hover */
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .profile-modal {
+        background-color: #242424; /* Dark gray background */
+        color: #ffffff; /* White text */
+    }
+
+    .profile-pic {
+        background-color: #444444; /* Darker gray background */
+    }
+
+    .pic-change-modal,
+    .username-change-modal {
+        background-color: #333333; /* Dark gray background */
+        color: #ffffff; /* White text */
+    }
+
+    .username-change-modal input {
+        background-color: #333333; /* Dark gray input */
+        color: #dddddd; /* Light gray text */
+    }
+
+    .change-pic-button,
+    .name-password-section button {
+        background-color: #444444; /* Darker gray button */
+        color: #ffffff; /* White text */
+    }
+
+    .change-pic-button:hover,
+    .name-password-section button:hover {
+        background-color: #555555; /* Slightly lighter gray on hover */
+    }
+
+    .edit-icon {
+        color: #aaaaaa; /* Light gray */
+    }
+
+    .edit-icon:hover {
+        color: #ffffff; /* White on hover */
+    }
+
+    .customization-box {
+        background-color: #333333; /* Dark gray */
+    }
+
+    .customization-box:hover {
+        background-color: #444444; /* Slightly lighter gray */
+    }
+}
