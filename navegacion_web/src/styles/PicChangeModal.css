@@ -1,34 +1,35 @@
+/* Default light mode styles */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: #f5f5f5; /* Softer light gray background */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 999;
-  }
-  
-  .modal-content {
-    background-color: #1e1e1e;
+}
+
+.modal-content {
+    background-color: #f5f5f5; /* Softer light gray background */
     padding: 30px;
     border-radius: 12px;
-    color: white;
+    color: #000000; /* Black text */
     width: 400px;
     max-width: 90%;
     text-align: center;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  }
-  
-  .image-options {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+}
+
+.image-options {
     display: flex;
     justify-content: space-around;
     margin: 20px 0;
-  }
-  
-  .image-options img {
+}
+
+.image-options img {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -36,20 +37,41 @@
     transition: transform 0.2s ease;
     object-fit: cover;
     border: 2px solid transparent;
-  }
-  
-  .image-options img:hover {
+}
+
+.image-options img:hover {
     transform: scale(1.1);
-    border-color: #ffffff;
-  }
-  
-  .close-modal-button {
+    border-color: #000000; /* Black border on hover */
+}
+
+.close-modal-button {
     padding: 10px 16px;
-    background-color: #3a3a3a;
+    background-color: #e0e0e0; /* Light gray button */
     border: none;
     border-radius: 6px;
-    color: white;
+    color: #000000; /* Black text */
     cursor: pointer;
     font-weight: bold;
-  }
-  
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.6); /* Darker overlay for dark mode */
+    }
+
+    .modal-content {
+        background-color: #1e1e1e; /* Dark gray background */
+        color: #ffffff; /* White text */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+    }
+
+    .image-options img:hover {
+        border-color: #ffffff; /* White border on hover */
+    }
+
+    .close-modal-button {
+        background-color: #3a3a3a; /* Dark gray button */
+        color: #ffffff; /* White text */
+    }
+}

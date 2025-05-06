@@ -1,25 +1,25 @@
 .account-management-container {
   display: flex;
   height: 100vh;
-  background-color: #121212;
-  color: #ffffff;
+  background-color: #f5f5f5; /* Softer light gray background */
+  color: #000000; /* Black text */
   font-family: 'Segoe UI', sans-serif;
 }
 
 .left-panel {
   width: 220px;
-  background-color: #1e1e1e;
+  background-color: #f0f0f0; /* Softer light gray background */
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 30px;
-  border-right: 2px solid #333;
+  border-right: 2px solid #ccc; /* Softer gray border */
 }
 
 .back-button {
   background: none;
-  color: #aaaaaa;
+  color: #666; /* Softer dark gray text */
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -32,7 +32,7 @@
 }
 
 .back-button:hover {
-  color: #ffffff;
+  color: #333; /* Darker gray on hover */
 }
 
 .options {
@@ -44,8 +44,8 @@
 }
 
 .left-panel button {
-  background-color: #2c2c2c;
-  color: #ffffff;
+  background-color: #e6e6e6; /* Softer light gray button */
+  color: #000000; /* Black text */
   border: none;
   padding: 15px 20px;
   border-radius: 12px;
@@ -55,17 +55,55 @@
 }
 
 .left-panel button:hover {
-  background-color: #3a3a3a;
+  background-color: #d6d6d6; /* Slightly darker gray on hover */
 }
 
 .left-panel button.active {
-  background-color: #4e4e4e;
+  background-color: #cccccc; /* Softer gray for active state */
   font-weight: bold;
 }
 
 .right-panel {
   flex-grow: 1;
   padding: 40px;
-  background-color: #181818;
+  background-color: #f5f5f5; /* Softer light gray background */
   overflow-y: auto;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .account-management-container {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* White text */
+  }
+
+  .left-panel {
+    background-color: #1e1e1e; /* Dark gray background */
+    border-right: 2px solid #333; /* Darker gray border */
+  }
+
+  .back-button {
+    color: #aaaaaa; /* Light gray text */
+  }
+
+  .back-button:hover {
+    color: #ffffff; /* White text on hover */
+  }
+
+  .left-panel button {
+    background-color: #2c2c2c; /* Dark gray button */
+    color: #ffffff; /* White text */
+  }
+
+  .left-panel button:hover {
+    background-color: #3a3a3a; /* Slightly lighter gray on hover */
+  }
+
+  .left-panel button.active {
+    background-color: #4e4e4e; /* Slightly darker gray for active state */
+  }
+
+  .right-panel {
+    background-color: #181818; /* Dark background */
+  }
 }

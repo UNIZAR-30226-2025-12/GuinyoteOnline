@@ -3,6 +3,8 @@ using SocketIOClient;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Text;
+using System.Collections;
 
 namespace WebSocketClient {
     public class wsClient
@@ -12,6 +14,7 @@ namespace WebSocketClient {
         public event Action<string> OnPlayerJoined;
         public event Action<string> OnGameStarted;
         public event Action<string> OnInputReceived;
+        public event Action<string> OnBarajaRecibida;
 
         public async Task Connect(string url)
         {
@@ -32,9 +35,16 @@ namespace WebSocketClient {
                 Debug.Log("Mensaje del servidor: " + response.GetValue<string>());
             });
 
-            ws.On("iniciarPartida", (response) =>{
+            ws.On("iniciarPartida", (response) => {
                 Debug.Log("iniciando partida");
                 UIManager.ChangeScene("Juego");
+            });
+
+            ws.On("baraja", async (response) => {
+                Debug.Log("baraja recibida");
+                string baraja = response.GetValue<string>().ToString();
+                Debug.Log(baraja);
+                OnBarajaRecibida?.Invoke(baraja);
             });
 
             ws.OnConnected += async (sender, e) =>

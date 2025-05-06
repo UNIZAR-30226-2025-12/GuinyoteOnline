@@ -4,9 +4,9 @@ import signOutIcon from '/src/assets/signOutIcon.png';
 
 class SignOutButton extends Component {
     render() {
-        const { onClick } = this.props;
+        const { className, onClick } = this.props;
         return (
-            <CommonButton imagePath={signOutIcon} buttonText='Cerrar sesión' onClick={onClick} />
+            <CommonButton className={className} imagePath={signOutIcon} buttonText='Cerrar sesión' onClick={onClick} />
         );
     }
 }

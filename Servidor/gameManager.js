@@ -5,7 +5,8 @@ const {
     validarJugada,
     calcularGanadorBaza,
     calcularPuntosBaza,
-    verificarCante
+    verificarCante,
+    barajaToString
 } = require('./gameLogic');
 
 function init(ioInstance) {
@@ -17,8 +18,12 @@ const Partida = require('../Bd/models/Partida');
 async function iniciarPartida(sala) {
     console.log(`emitiendo iniciar partida a ${sala.id}`);
     io.to(sala.id).emit("iniciarPartida", 'iniciarPartida');
-    /*
+    
     const baraja = mezclarBaraja(crearBaraja());
+    let barajaString = barajaToString(baraja);
+    console.log(`emitiendo baraja a ${sala.id}`);
+    io.to(sala.id).emit("baraja", barajaString);
+    /*
     const { manos, triunfo, mazo } = repartirCartas(baraja, sala.jugadores.length);
     
     const partida = {

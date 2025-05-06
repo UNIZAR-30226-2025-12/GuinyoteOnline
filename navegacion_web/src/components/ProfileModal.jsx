@@ -84,8 +84,8 @@ function ProfileModal() {
       <div className="divider" />
 
       <div className="customization-section">
-        <div className="customization-box">Tapete <br /> Pulsar para cambiar</div>
-        <div className="customization-box">Parte trasera cartas <br /> Pulsar para cambiar</div>
+        <div className="customization-box"><b>Tapete</b><br /> Pulsar para cambiar</div>
+        <div className="customization-box"><b>Parte trasera cartas</b><br /> Pulsar para cambiar</div>
       </div>
 
       <SignOutButton className="logout-button" onClick={handleSignOut} />
