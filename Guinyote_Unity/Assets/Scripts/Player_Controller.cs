@@ -8,7 +8,7 @@ public class Player_Controller : Player
     public Player_Controller() : base()
     {
     }
-    void Start()
+    public new void Start()
     {
         if (GameManager.esOnline) ws = UIManager.Instance.webSocketClient;
         base.Start();

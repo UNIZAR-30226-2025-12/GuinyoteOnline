@@ -35,7 +35,13 @@ namespace WebSocketClient {
 
             ws.On("iniciarPartida", async (response) => {
                 Debug.Log("iniciando partida");
-                UIManager.ChangeScene("Juego");
+                await Task.Run(() =>
+                {
+                    MainThreadDispatcher.Enqueue(() =>
+                    {
+                        UIManager.ChangeScene("Juego");
+                    });
+                });
             });
 
             ws.On("baraja", async (response) => {
@@ -43,9 +49,12 @@ namespace WebSocketClient {
                 string baraja = response.GetValue<string>(0).ToString();
                 Debug.Log(baraja);
                 //SIRVE PARA QUE LA FUNCION SE EJECUTE EN EL HILO PRINCIPAL Y PUEDA CARGAR RECURSOS
-                MainThreadDispatcher.Enqueue(() =>
+                await Task.Run(() =>
                 {
-                    GameManager.Instance.iniciarBaraja(baraja);
+                    MainThreadDispatcher.Enqueue(() =>
+                    {
+                        GameManager.Instance.iniciarBaraja(baraja);
+                    });
                 });
             });
 
@@ -53,9 +62,12 @@ namespace WebSocketClient {
                 int primero = response.GetValue<int>(0);
                 int miId = response.GetValue<int>(1);
                 Debug.Log("el primero es " + primero + ", soy " + miId);
-                MainThreadDispatcher.Enqueue(() =>
+                await Task.Run(() =>
                 {
-                    GameManager.Instance.iniciarJugadores(primero, miId);
+                    MainThreadDispatcher.Enqueue(() =>
+                    {
+                        GameManager.Instance.iniciarJugadores(primero, miId);
+                    });
                 });
             });
 
@@ -82,7 +94,7 @@ namespace WebSocketClient {
         public async void enviarACK()
         {
             Debug.Log("enviando confirmacion");
-            ws.EmitAsync("ack", "Confirmacion enviada");
+            await ws.EmitAsync("ack", "Confirmacion enviada");
         }
 
         public async Task JoinRoom(string lobbyId, string playerId)

@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using WebSocketClient;
+
 public class Online_Player : Player
 {
     private wsClient ws;
+
     public Online_Player() : base()
     {
     }
 
-    void Start()
+    public new void Start()
     {
         ws = UIManager.Instance.webSocketClient;
         ws.OnInputReceived += changeInput;
@@ -24,6 +26,7 @@ public class Online_Player : Player
             resetInput();
         }
     }
+
     public void Update()
     {
     }
