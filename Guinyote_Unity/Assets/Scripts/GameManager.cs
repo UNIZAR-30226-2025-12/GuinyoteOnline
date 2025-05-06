@@ -77,13 +77,28 @@ public class GameManager : MonoBehaviour
         m_FinPartida.style.visibility = Visibility.Hidden;
 
         m_P_TeamA.text = ""; 
-        m_P_TeamB.text = ""; 
+        m_P_TeamB.text = "";
 
+        if (esOnline)
+        {
+            webSocketClient = UIManager.Instance.webSocketClient;
+            webSocketClient.OnBarajaRecibida += iniciarPartida;
+        }
+
+        if (!esOnline) iniciarPartida();
+    }
+
+    public void iniciarPartida(string baraja = "")
+    {   
+        Debug.Log("iniciando partida");
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
         int[] puntosJugadores = {0, 0, 0, 0};
-        if (test_state == "") Baraja.Barajar();
-        else puntosJugadores = loadTest(ref Baraja);
+        
+        if (esOnline) Baraja.Barajar(baraja); //ONLINE
+        else if (test_state == "") Baraja.Barajar(); //OFFLINE
+        else puntosJugadores = loadTest(ref Baraja); //TEST
+        
 
         InitJugadores(puntosJugadores);
 
@@ -106,16 +121,6 @@ public class GameManager : MonoBehaviour
         }
 
         TurnManager.Tick();
-
-        if (esOnline)
-        {
-            webSocketClient = UIManager.Instance.webSocketClient;
-
-            webSocketClient.OnGameStarted += HandleGameStarted;
-        }
-
-        
-        
     }
 
     /// <summary>
@@ -613,18 +618,6 @@ public class GameManager : MonoBehaviour
         // Enviar el estado actual del juego al servidor y recibir actualizaciones.
         Debug.Log("Sincronizando estado del juego...");
         // Implementar lógica de sincronización aquí.
-    }
-
-    public async Task SearchMatch(string matchType)
-    {
-        Debug.Log("Buscando partida: " + matchType);
-        await webSocketClient.JoinRoom(matchType, UIManager.Instance.id);
-    }
-
-    private void HandleGameStarted(string message)
-    {
-        Debug.Log("Partida iniciada: " + message);
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Juego");
     }
 
     private void OnDestroy()

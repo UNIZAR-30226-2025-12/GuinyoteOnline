@@ -17,9 +17,9 @@ const PUNTOS = {
 // Crear baraja
 function crearBaraja() {
     const baraja = [];
-    for (const palo of PALOS) {
-        for (const valor of VALORES) {
-            baraja.push({ palo, valor });
+    for (let iPalo = 0; iPalo < PALOS.length; iPalo++) {
+        for (let iValor = 0; iValor < VALORES.length; iValor++) {
+            baraja.push({ palo: iPalo, valor: iValor });
         }
     }
     return baraja;
@@ -32,6 +32,11 @@ function mezclarBaraja(baraja) {
         [baraja[i], baraja[j]] = [baraja[j], baraja[i]];
     }
     return baraja;
+}
+
+function barajaToString(baraja) {
+    let barajaString = baraja.map(carta => `${carta.valor},${carta.palo}`).join(";");
+    return barajaString;
 }
 
 // Repartir cartas iniciales
@@ -109,6 +114,7 @@ function verificarCante(mano, triunfo) {
 module.exports = {
     crearBaraja,
     mezclarBaraja,
+    barajaToString,
     repartirCartas,
     validarJugada,
     calcularGanadorBaza,
