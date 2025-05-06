@@ -15,14 +15,75 @@ function init(ioInstance) {
 let io = null;
 const Partida = require('../Bd/models/Partida');
 
+async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
+    const socketsEnSala = await io.in(sala).fetchSockets();
+    const totalClientes = socketsEnSala.length;
+  
+    return new Promise((resolve, reject) => {
+      const respuestas = new Map(); // Guardamos las respuestas por socket.id
+  
+      const manejadores = [];
+  
+      socketsEnSala.forEach((socket) => {
+        const handler = (data) => {
+          if (!respuestas.has(socket.id)) {
+            respuestas.set(socket.id, data);
+          }
+  
+          // Si ya tenemos todas las respuestas
+          if (respuestas.size === totalClientes) {
+            // Quitamos todos los listeners
+            manejadores.forEach(({ socket, evento, fn }) => {
+              socket.off(evento, fn);
+            });
+  
+            resolve(respuestas); // Resolvemos con todas las respuestas
+          }
+        };
+  
+        socket.on(eventoEsperado, handler);
+        manejadores.push({ socket, evento: eventoEsperado, fn: handler });
+      });
+  
+      // Timeout por seguridad
+      setTimeout(() => {
+        manejadores.forEach(({ socket, evento, fn }) => {
+          socket.off(evento, fn);
+        });
+        reject(new Error("Timeout: no todos los clientes respondieron a tiempo"));
+      }, 15000); // 15 segundos
+    });
+  }
+
 async function iniciarPartida(sala) {
     console.log(`emitiendo iniciar partida a ${sala.id}`);
     io.to(sala.id).emit("iniciarPartida", 'iniciarPartida');
     
     const baraja = mezclarBaraja(crearBaraja());
     let barajaString = barajaToString(baraja);
-    console.log(`emitiendo baraja a ${sala.id}`);
-    io.to(sala.id).emit("baraja", barajaString);
+    console.log("esperando confirmaciones");
+    esperarMensajesDeTodos(io, sala.id, "ack")
+    .then((respuestas) => {
+        console.log('Todos respondieron:', respuestas);
+        console.log(`emitiendo baraja a ${sala.id}`);
+        io.to(sala.id).emit("baraja", barajaString);
+      })
+      .catch((err) => {
+        console.error('Error esperando respuestas:', err);
+      });
+
+    esperarMensajesDeTodos(io, sala.id, "ack")
+    .then(async (respuestas) => {
+        console.log('Todos respondieron', respuestas);
+        const primero = Math.floor(Math.random() * sala.jugadores.length);
+        const sockets = await io.in(sala.id).fetchSockets();
+        console.log(`empieza el jugador ${primero}`);
+        sockets.forEach((socket, index) => {
+            socket.emit("primero", primero, index);
+        })
+    })
+
+    
     /*
     const { manos, triunfo, mazo } = repartirCartas(baraja, sala.jugadores.length);
     
