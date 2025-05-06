@@ -74,7 +74,7 @@ function ProfileModal() {
           <div className="name-field"> 
             {username} 
             <button onClick={handleUsernameChangeModallOpen}>Cambiar nombre</button>
-            <UsernameChangeModal  show={showUsernameChangeModal} handleClose={handleUsernameChangeModalClose} />
+            <UsernameChangeModal  show={showUsernameChangeModal} handleClose={handleUsernameChangeModalClose} mail={mail}/>
           </div>
           
           <button>Cambiar contraseña</button>

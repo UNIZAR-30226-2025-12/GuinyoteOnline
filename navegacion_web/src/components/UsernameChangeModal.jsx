@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import '../styles/UsernameChangeModal.css'; // puedes crear un css separado o reusarlo
+import usePut from '../customHooks/usePut';
 
-function UsernameChangeModal({ show, handleClose }) {
-  const { username, setUsername } = useUser();
+function UsernameChangeModal({ show,  handleClose }) {
+  const { username, setUsername, mail} = useUser();
   const [newUsername, setNewUsername] = useState(username);
 
-  const handleSubmit = () => {
+  const { putData } = usePut('https://guinyoteonline-hkio.onrender.com');
+
+  const handleSubmit = async () => {
     if (newUsername.trim() !== '' && newUsername !== username) {
-      // Aquí podrías añadir llamada a backend si hace falta
-      setUsername(newUsername);
+      const encodedMail = encodeURIComponent(mail);
+      const response = await putData({ nombre: newUsername }, `/usuarios/perfil/cambiarUsername/${encodedMail}`);
+    
+      if (response.error) {
+        // Maneja el error 
+        console.error('Error:', response.error);
+      } else {
+        // Si todo sale bien, actualiza el nombre de usuario
+        setUsername(newUsername);
+      }
     }
     handleClose();
   };
