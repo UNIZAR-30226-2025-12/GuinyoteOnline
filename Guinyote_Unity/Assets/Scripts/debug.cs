@@ -4,10 +4,16 @@ public class ConsoleToGUI : MonoBehaviour
 {
     string myLog = "*begin log";
     string filename = "";
-    bool doShow = true;
+    bool doShow = false;
     int kChars = 700;
-    void OnEnable() { Application.logMessageReceived += Log; }
-    void OnDisable() { Application.logMessageReceived -= Log; }
+    void OnEnable()
+    {
+        Application.logMessageReceivedThreaded += Log;
+    }
+    void OnDisable()
+    {
+        Application.logMessageReceivedThreaded -= Log;
+    }
     void Update() { if (Input.GetKeyDown(KeyCode.Space)) { doShow = !doShow; } }
     public void Log(string logString, string stackTrace, LogType type)
     {

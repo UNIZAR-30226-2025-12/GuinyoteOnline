@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
         {
             if (mano[i] == null)
             {
-                if(this is Player_Controller){
+                if (this is Player_Controller){
                    carta.enMano = true; 
                 }
                 mano[i] = carta;

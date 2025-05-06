@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public IA_Player iAPrefab;
     public Player[] jugadores;
     public int[] orden;
+    private int[] puntosJugadores = new int[4];
     public static int numJugadores = 4;
     public static bool esOnline = false; 
     public Baraja Baraja;
@@ -34,7 +35,6 @@ public class GameManager : MonoBehaviour
     private int indexGanador;
     public int ganador;
     public bool mostrandoCantar;
-
     public string test_state = "";
 
     public wsClient webSocketClient;
@@ -82,24 +82,44 @@ public class GameManager : MonoBehaviour
         if (esOnline)
         {
             webSocketClient = UIManager.Instance.webSocketClient;
-            webSocketClient.OnBarajaRecibida += iniciarPartida;
+            webSocketClient.enviarACK();
         }
-
-        if (!esOnline) iniciarPartida();
+        else
+        {
+            iniciarBaraja();
+            iniciarJugadores();
+        }
     }
 
-    public void iniciarPartida(string baraja = "")
+    public void iniciarBaraja(string baraja = "")
     {   
-        Debug.Log("iniciando partida");
+        Debug.Log("iniciando baraja");
         Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
         Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
-        int[] puntosJugadores = {0, 0, 0, 0};
+        for(int i = 0; i < 4; i++) puntosJugadores[i] = 0;
         
         if (esOnline) Baraja.Barajar(baraja); //ONLINE
         else if (test_state == "") Baraja.Barajar(); //OFFLINE
         else puntosJugadores = loadTest(ref Baraja); //TEST
         
+        Debug.Log("Baraja iniciada");
 
+        if (esOnline) webSocketClient.enviarACK();
+    }
+
+    public void iniciarJugadores(int primero = 0, int miId = 0)
+    {
+        jugadores = new Player[numJugadores];
+        orden = new int[jugadores.Length];
+        Debug.Log("asignando orden");
+        Debug.Log("el primero es " + primero + ", soy " + miId);
+        for (int i = 0; i < jugadores.Length; i++)
+        {
+            orden[i] = (primero + i + miId) % jugadores.Length;
+            Debug.Log(orden[i]);
+        }
+
+        Debug.Log("Iniciando Jugadores");
         InitJugadores(puntosJugadores);
 
         if (test_state != "") ActualizarMarcadores();
@@ -107,20 +127,16 @@ public class GameManager : MonoBehaviour
         if (triunfo != null) Baraja.AnyadirAlFinal(triunfo);
         triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
         triunfo.transform.rotation = Quaternion.Euler(0,0,90);
-        
+
         TurnManager = new TurnManager(jugadores.Length);
         TurnManager.TurnChange += TurnChange;
         TurnManager.Evaluation += Evaluar;
         TurnManager.FinRonda += TerminarRonda;
         TurnManager.Reset();
 
-        orden = new int[jugadores.Length];
-        for (int i = 0; i < jugadores.Length; i++)
-        {
-            orden[i] = i;
-        }
-
         TurnManager.Tick();
+        Debug.Log("Fin");
+        if (esOnline) webSocketClient.enviarACK();
     }
 
     /// <summary>
@@ -241,22 +257,13 @@ public class GameManager : MonoBehaviour
     /// <param name="puntosJugadores">Array de puntos de los jugadores para la inicialización.</param>
     private void InitJugadores(int[] puntosJugadores)
     {
-        jugadores = new Player[numJugadores];
         jugadores[0] = Instantiate(playerPrefab, new Vector3(0, -12, 0),Quaternion.Euler(0, 0, 0));
-        for (int j = 0; j < 6; j++)
-        {
-            jugadores[0].AnyadirCarta(Baraja.DarCarta());
-        }
         jugadores[0].puntos = puntosJugadores[0];
         if(numJugadores == 2)
         {
             if (esOnline) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             else if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             else jugadores[1] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
-            for (int j = 0; j < 6; j++)
-            {
-                jugadores[1].AnyadirCarta(Baraja.DarCarta());
-            }
             jugadores[1].puntos = puntosJugadores[1];
         }
         else if(numJugadores == 4)
@@ -264,29 +271,27 @@ public class GameManager : MonoBehaviour
             if (esOnline) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
             else if (test_state == "" || test_state == "testIA") jugadores[1] = Instantiate(iAPrefab, new Vector3(12, 0, 0), Quaternion.Euler(0, 0, 90));
             else jugadores[1] = Instantiate(playerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
-            for (int j = 0; j < 6; j++)
-            {
-                jugadores[1].AnyadirCarta(Baraja.DarCarta());
-            }
             jugadores[1].puntos = puntosJugadores[1];
+
             if (esOnline) jugadores[2] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
             else if (test_state == "" || test_state == "testIA") jugadores[2] = Instantiate(iAPrefab, new Vector3(0, 12, 0), Quaternion.Euler(0, 0, 180));
             else jugadores[2] = Instantiate(playerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
-            for (int j = 0; j < 6; j++)
-            {
-                jugadores[2].AnyadirCarta(Baraja.DarCarta());
-            }
             jugadores[2].puntos = puntosJugadores[2];
+
             if (esOnline) jugadores[3] = Instantiate(onlinePlayerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
             else if (test_state == "" || test_state == "testIA") jugadores[3] = Instantiate(iAPrefab, new Vector3(-12, 0, 0), Quaternion.Euler(0, 0, -90));
             else jugadores[3] = Instantiate(playerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
-            for (int j = 0; j < 6; j++)
-            {
-                jugadores[3].AnyadirCarta(Baraja.DarCarta());
-            }
             jugadores[3].puntos = puntosJugadores[3];
         }
         else Debug.Log("Error número de jugadores es incorrecto");
+
+        for (int i = 0; i < numJugadores; i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                jugadores[orden[i]].AnyadirCarta(Baraja.DarCarta());
+            }
+        }
 
         cartasJugadas = new Carta[jugadores.Length];
         cartasMoviendo = false;

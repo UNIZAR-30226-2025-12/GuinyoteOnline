@@ -14,8 +14,6 @@ namespace WebSocketClient {
         public event Action<string> OnPlayerJoined;
         public event Action<string> OnGameStarted;
         public event Action<string> OnInputReceived;
-        public event Action<string> OnBarajaRecibida;
-
         public async Task Connect(string url)
         {
             connectionTCS = new TaskCompletionSource<bool>();
@@ -35,16 +33,30 @@ namespace WebSocketClient {
                 Debug.Log("Mensaje del servidor: " + response.GetValue<string>());
             });
 
-            ws.On("iniciarPartida", (response) => {
+            ws.On("iniciarPartida", async (response) => {
                 Debug.Log("iniciando partida");
                 UIManager.ChangeScene("Juego");
             });
 
             ws.On("baraja", async (response) => {
                 Debug.Log("baraja recibida");
-                string baraja = response.GetValue<string>().ToString();
+                string baraja = response.GetValue<string>(0).ToString();
                 Debug.Log(baraja);
-                OnBarajaRecibida?.Invoke(baraja);
+                //SIRVE PARA QUE LA FUNCION SE EJECUTE EN EL HILO PRINCIPAL Y PUEDA CARGAR RECURSOS
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    GameManager.Instance.iniciarBaraja(baraja);
+                });
+            });
+
+            ws.On("primero", async (response) => {
+                int primero = response.GetValue<int>(0);
+                int miId = response.GetValue<int>(1);
+                Debug.Log("el primero es " + primero + ", soy " + miId);
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    GameManager.Instance.iniciarJugadores(primero, miId);
+                });
             });
 
             ws.OnConnected += async (sender, e) =>
@@ -65,6 +77,12 @@ namespace WebSocketClient {
             };
             ws.Connect();
             await connectionTCS.Task;
+        }
+
+        public async void enviarACK()
+        {
+            Debug.Log("enviando confirmacion");
+            ws.EmitAsync("ack", "Confirmacion enviada");
         }
 
         public async Task JoinRoom(string lobbyId, string playerId)
