@@ -1,0 +1,113 @@
+.tapete-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .tapete-modal-content {
+    background-color: #f5f5f5;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: #000;
+  }
+  
+  .tapete-modal-content h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .tapete-options {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+  }
+  
+  .tapete-option {
+    flex: 1;
+    background-color: #e0e0e0;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+  }
+  
+  .tapete-option:hover {
+    background-color: #d0d0d0;
+  }
+  
+  .tapete-modal-loading {
+    text-align: center;
+    color: #333;
+    font-size: 0.95rem;
+  }
+  
+  .tapete-modal-error {
+    text-align: center;
+    color: red;
+    font-size: 0.95rem;
+  }
+  
+  .tapete-modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .tapete-modal-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #e0e0e0;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .tapete-modal-buttons button:hover {
+    background-color: #d0d0d0;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .tapete-modal-content {
+      background-color: #2c2c2c;
+      color: #fff;
+    }
+  
+    .tapete-option {
+      background-color: #3a3a3a;
+      color: #fff;
+    }
+  
+    .tapete-option:hover {
+      background-color: #4a4a4a;
+    }
+  
+    .tapete-modal-buttons button {
+      background-color: #444;
+      color: #fff;
+    }
+  
+    .tapete-modal-buttons button:hover {
+      background-color: #555;
+    }
+  }
+  

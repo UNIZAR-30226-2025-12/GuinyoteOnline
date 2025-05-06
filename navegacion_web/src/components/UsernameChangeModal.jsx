@@ -1,28 +1,36 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
-import '../styles/UsernameChangeModal.css'; // puedes crear un css separado o reusarlo
+import '../styles/UsernameChangeModal.css'; 
 import usePut from '../customHooks/usePut';
 
 function UsernameChangeModal({ show,  handleClose }) {
   const { username, setUsername, mail} = useUser();
   const [newUsername, setNewUsername] = useState(username);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const { putData } = usePut('https://guinyoteonline-hkio.onrender.com');
 
   const handleSubmit = async () => {
     if (newUsername.trim() !== '' && newUsername !== username) {
+      setLoading(true);
+      setErrorMsg('');
       const encodedMail = encodeURIComponent(mail);
       const response = await putData({ nombre: newUsername }, `/usuarios/perfil/cambiarUsername/${encodedMail}`);
     
+      setLoading(false);
+      
       if (response.error) {
-        // Maneja el error 
         console.error('Error:', response.error);
-      } else {
-        // Si todo sale bien, actualiza el nombre de usuario
-        setUsername(newUsername);
+        setErrorMsg('Error al actualizar el nombre. Inténtalo de nuevo.');
+        return; // No cerrar modal si hay error
       }
+
+      setUsername(newUsername);
+      handleClose();
+    } else {
+      handleClose(); // Cerrar aunque no se haya modificado nada
     }
-    handleClose();
   };
 
   if (!show) return null;
@@ -37,9 +45,15 @@ function UsernameChangeModal({ show,  handleClose }) {
           onChange={(e) => setNewUsername(e.target.value)}
           placeholder="Nuevo nombre de usuario"
         />
+        {loading && <p className="modal-loading">Guardando...</p>}
+        {errorMsg && <p className="modal-error">{errorMsg}</p>}
         <div className="modal-buttons">
-          <button onClick={handleSubmit}>Guardar</button>
-          <button onClick={handleClose}>Cancelar</button>
+          <button onClick={handleSubmit} disabled={loading}>
+            Guardar
+          </button>
+          <button onClick={handleClose} disabled={loading}>
+            Cancelar
+          </button>
         </div>
       </div>
     </div>

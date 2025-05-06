@@ -1,14 +1,21 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import CommonButton from './base_buttons/CommonButton';
 import signOutIcon from '/src/assets/signOutIcon.png';
+import ConfirmLogoutModal from '../ConfirmLogoutModal';
 
-class SignOutButton extends Component {
-    render() {
-        const { className, onClick } = this.props;
-        return (
-            <CommonButton className={className} imagePath={signOutIcon} buttonText='Cerrar sesión' onClick={onClick} />
-        );
-    }
+function SignOutButton({ className, onClick}) {
+  
+  return (
+    <>
+      <CommonButton
+        className={className}
+        imagePath={signOutIcon}
+        buttonText="Cerrar sesión"
+        onClick={onClick} 
+      />
+      
+    </>
+  );
 }
 
 export default SignOutButton;

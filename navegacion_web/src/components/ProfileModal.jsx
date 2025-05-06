@@ -6,12 +6,17 @@ import PicChangeModal from './PicChangeModal';
 import { useUser } from '../context/UserContext';
 import UsernameChangeModal from './UsernameChangeModal';
 import SignOutButton from './buttons/SignOutButton'
+import ConfirmLogoutModal from './ConfirmLogoutModal';
+import TapeteChangeModal from './TapeteChangeModal';
+
 const avataresUrl = '/src/assets/avatares/';
 
 function ProfileModal() {
 
   const [showPicChangeModal,setShowPicChangeModal] = useState(false);
   const [showUsernameChangeModal,setShowUsernameChangeModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showTapeteChangeModal, setShowTapeteChangeModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,21 +49,40 @@ function ProfileModal() {
     setShowUsernameChangeModal(false);
   }
 
+  const handleConfirmLogoutModalOpen = () => {
+    setShowLogoutModal(true);
+  }
+
+  const handleConfirmLogoutModalClose = () => {
+    setShowLogoutModal(false);
+  }
+  
+
   const handleSignOut = () => {
     console.log("Cerrar sesión");
   
     // Limpiar estado
     setUsername('');
     setMail('');
+    setProfilePic('');
     setIsUserRegistered(false);
   
     // Limpiar localStorage
     localStorage.removeItem('username');
     localStorage.removeItem('mail');
+    localStorage.removeItem('profilePic')
     localStorage.removeItem('isUserRegistered');
   
     // Redirigir
     navigate('/');
+  };
+
+  const handleTapeteChangeModalOpen = () => {
+    setShowTapeteChangeModal(true); 
+  };
+
+  const handleTapeteChangeModalClose = () => {
+    setShowTapeteChangeModal(false); 
   };
       
   return (
@@ -84,11 +108,13 @@ function ProfileModal() {
       <div className="divider" />
 
       <div className="customization-section">
-        <div className="customization-box"><b>Tapete</b><br /> Pulsar para cambiar</div>
+        <div className="customization-box" onClick={handleTapeteChangeModalOpen}><b>Tapete</b><br /> Pulsar para cambiar</div>
         <div className="customization-box"><b>Parte trasera cartas</b><br /> Pulsar para cambiar</div>
       </div>
 
-      <SignOutButton className="logout-button" onClick={handleSignOut} />
+      <SignOutButton className="logout-button" onClick={handleConfirmLogoutModalOpen} />
+      <ConfirmLogoutModal show={showLogoutModal} onConfirm={handleSignOut} onCancel={handleConfirmLogoutModalClose}/>
+      <TapeteChangeModal show={showTapeteChangeModal} handleClose={handleTapeteChangeModalClose} />
     </div>
   );
 }

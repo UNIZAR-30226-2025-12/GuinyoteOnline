@@ -53,6 +53,18 @@
     background-color: #d0d0d0; /* Slightly darker gray on hover */
 }
 
+.modal-loading {
+    color: #f8f8f8;
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .modal-error {
+    color: red;
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
     .modal-overlay {
