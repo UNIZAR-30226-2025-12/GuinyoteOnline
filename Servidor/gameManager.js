@@ -16,7 +16,7 @@ let io = null;
 const Partida = require('../Bd/models/Partida');
 
 async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
-    const socketsEnSala = await io.in(sala).fetchSockets();
+    const socketsEnSala = await io.in(sala.id).fetchSockets();
     const totalClientes = sala.jugadores.length
     console.log(`${totalClientes} jugadores`);
   
@@ -63,7 +63,7 @@ async function iniciarPartida(sala) {
     const baraja = mezclarBaraja(crearBaraja());
     let barajaString = barajaToString(baraja);
     console.log("esperando confirmaciones");
-    esperarMensajesDeTodos(io, sala.id, "ack")
+    esperarMensajesDeTodos(io, sala, "ack")
     .then((respuestas) => {
         console.log('Todos respondieron:', respuestas);
         console.log(`emitiendo baraja a ${sala.id}`);
@@ -73,7 +73,7 @@ async function iniciarPartida(sala) {
         console.error('Error esperando respuestas:', err);
       });
 
-    esperarMensajesDeTodos(io, sala.id, "ack")
+    esperarMensajesDeTodos(io, sala, "ack")
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
         const primero = Math.floor(Math.random() * sala.jugadores.length);
