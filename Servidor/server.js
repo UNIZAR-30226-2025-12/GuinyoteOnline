@@ -879,6 +879,7 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Unirse a sala pública
   socket.on('join-lobby', ({ lobbyId, playerId }) => {
     socket.emit('hello', '¡Hola desde el servidor!');
     socket.join(lobbyId);
@@ -889,6 +890,32 @@ io.on('connection', (socket) => {
     if (lobby.jugadores.length === lobby.maxPlayers) {
       iniciarPartida(lobby);
     }
+  });
+
+  // Manejar jugadas
+  socket.on('realizarJugada', (raw) => {
+    let data;
+    try {
+        data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    } catch (err) {
+        console.error("No se pudo parsear el JSON recibido:", raw);
+        return;
+    }
+    if (!data || !data.input || !data.lobby) {
+      console.error("Faltan datos en el mensaje recibido:", data);
+      return;
+    }
+    let parsedInput;
+      try {
+          parsedInput = JSON.parse(data.input);
+      } catch (err) {
+          console.error("Error al parsear 'input':", err);
+          return;
+      }
+    console.log("enviando jugada al resto de jugadores");
+    console.log(data);
+    console.log(parsedInput);
+    io.to(data.lobby).emit('jugada', parsedInput);
   });
 
   // Unirse a una sala
@@ -906,16 +933,6 @@ io.on('connection', (socket) => {
         io.to(salaId).emit('inicioPartida', nuevaPartida);
         salasEspera.delete(salaId);
       }
-    }
-  });
-
-  // Manejar jugadas
-  socket.on('realizarJugada', ({ partidaId, jugada }) => {
-    const partida = partidasActivas.get(partidaId);
-    if (partida && partida.turnoActual === socket.userId) {
-      const estadoActualizado = procesarJugada(partida, { ...jugada, jugadorId: socket.userId });
-      partidasActivas.set(partidaId, estadoActualizado);
-      io.to(partidaId).emit('actualizacionPartida', estadoActualizado);
     }
   });
 

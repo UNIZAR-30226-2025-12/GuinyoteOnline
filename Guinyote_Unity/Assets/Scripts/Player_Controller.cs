@@ -37,12 +37,14 @@ public class Player_Controller : Player
             if (Keyboard.current.digit2Key.wasPressedThisFrame) input.cantar = 1;
             if (Keyboard.current.digit3Key.wasPressedThisFrame) input.cantar = 2;
             if (Keyboard.current.digit4Key.wasPressedThisFrame) input.cantar = 3;
-        }
 
-
-        if (turno() && GameManager.esOnline)
-        {
-            //SI LOS INPUTS SON CORRECTOS ENVIAR INPUTS AL SERVIDOR
+            if (turno() && GameManager.esOnline)
+            {
+                Debug.Log(input.carta);
+                Debug.Log(input.cantar);
+                Debug.Log(input.cambiarSiete);
+                ws.enviarJugada(input);
+            }
         }
     }
 

@@ -111,6 +111,7 @@ async function iniciarPartida(sala) {
     await nuevaPartida.save();
 }
 
+
 function procesarJugada(partida, jugada) {
     const { carta, jugadorId, cante } = jugada;
     const indiceJugador = partida.jugadores.indexOf(jugadorId);

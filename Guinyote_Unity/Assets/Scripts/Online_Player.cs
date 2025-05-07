@@ -19,6 +19,7 @@ public class Online_Player : Player
 
     public void changeInput(string message)
     {
+        Debug.Log("changeInputRecibido");
         if (m_esMiTurno)
         {
             input = JsonUtility.FromJson<input>(message);

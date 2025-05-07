@@ -7,6 +7,13 @@ using System.Text;
 using System.Collections;
 
 namespace WebSocketClient {
+
+    [System.Serializable]
+    public class JugadaWrapper
+    {
+        public string input;
+        public string lobby;
+    }
     public class wsClient
     {
         private SocketIOUnity ws;
@@ -14,6 +21,8 @@ namespace WebSocketClient {
         public event Action<string> OnPlayerJoined;
         public event Action<string> OnGameStarted;
         public event Action<string> OnInputReceived;
+        private string miLobby;
+        
         public async Task Connect(string url)
         {
             connectionTCS = new TaskCompletionSource<bool>();
@@ -59,6 +68,17 @@ namespace WebSocketClient {
                 });
             });
 
+            ws.On("jugada", (response) => {
+                Debug.Log("aqui");
+                //PETA EN EL GETVALUE
+                string jugada = response.GetValue<string>();
+                Debug.Log(jugada);
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    OnInputReceived?.Invoke(jugada);
+                }); 
+            });
+
             ws.OnConnected += async (sender, e) =>
             {
                 Debug.Log("Conectado al servidor");
@@ -97,6 +117,18 @@ namespace WebSocketClient {
                 };
                 await ws.EmitAsync("join-lobby", data);
             }
+            miLobby = lobbyId;
+        }
+
+        public async void enviarJugada(input jugada)
+        {
+            string inputJson = JsonUtility.ToJson(jugada);
+            JugadaWrapper wrapper = new JugadaWrapper();
+            wrapper.input = inputJson;
+            wrapper.lobby = miLobby;
+
+            string wrapperJson = JsonUtility.ToJson(wrapper);
+            await ws.EmitAsync("realizarJugada", wrapperJson);
         }
 
         private void HandleServerMessage(string message)

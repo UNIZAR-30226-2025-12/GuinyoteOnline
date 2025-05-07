@@ -1,11 +1,11 @@
 using UnityEngine;
 
 public struct input
-    {
-        public int carta,
-                     cantar;
-        public bool cambiarSiete;
-    }
+{
+    public int carta,
+                    cantar;
+    public bool cambiarSiete;
+}
 public class Player : MonoBehaviour
 {
     public Vector3 m_MoveTarget;
@@ -223,6 +223,7 @@ public class Player : MonoBehaviour
                 m_CartaDesplazandose = false;
                 GameManager.Instance.TurnManager.Tick();
             }
+            return false;
         }
         else if (m_esMiTurno)
         {
@@ -244,7 +245,11 @@ public class Player : MonoBehaviour
             }
             else if (input.cambiarSiete)
             {
-                if(ganador && !GameManager.Instance.arrastre) cambiarSieteTriunfo();
+                if(ganador && !GameManager.Instance.arrastre) 
+                {
+                    cambiarSieteTriunfo();
+                    return true;
+                }
             }
             else if (input.cantar > -1 && input.cantar < 4)
             {
@@ -265,6 +270,7 @@ public class Player : MonoBehaviour
                         palosCantados[input.cantar] = true;
                         cantadoEsteTurno = true;
                         GameManager.Instance.ActualizarMarcadores();
+                        return true;
                     }
                 }
             }
@@ -277,10 +283,11 @@ public class Player : MonoBehaviour
                     //Debug.Log("carta usada");
                     cartaSeleccionada = false;
                     m_CartaDesplazandose = true;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
     public void reset()
