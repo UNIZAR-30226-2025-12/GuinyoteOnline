@@ -25,7 +25,7 @@ function findLobby(lobbyId) {
 
 function findAvailableLobby(maxPlayers) {
   return lobbies.find(
-    (lobby) => lobby.maxPlayers === maxPlayers && lobby.jugadores.length < maxPlayers
+    (lobby) => lobby.maxPlayers === maxPlayers && lobby.jugadores.length < maxPlayers && lobby.codigoAcceso === '0'
   );
 }
 

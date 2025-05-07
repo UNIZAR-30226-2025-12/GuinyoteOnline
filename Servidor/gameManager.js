@@ -14,6 +14,7 @@ function init(ioInstance) {
 }
 let io = null;
 const Partida = require('../Bd/models/Partida');
+const Usuario = require('../Bd/models/Usuario');
 
 async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
     const socketsEnSala = await io.in(sala.id).fetchSockets();
@@ -73,6 +74,7 @@ async function iniciarPartida(sala) {
         console.error('Error esperando respuestas:', err);
     });
 
+    let indexJugadores = []
     esperarMensajesDeTodos(io, sala, "ack")
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
@@ -80,45 +82,33 @@ async function iniciarPartida(sala) {
         const sockets = await io.in(sala.id).fetchSockets();
         console.log(`empieza el jugador ${primero}`);
         sockets.forEach((socket, index) => {
+            const correoJugador = sala.jugadores[index];
+            indexJugadores.push({
+                correo: correoJugador,
+                index: index
+            });
             socket.emit("primero", primero, index);
         })
+        sala.jugadores = indexJugadores; //PARA GESTIONAR ORDEN DE JUGADORES EN RECONEXIONES (NO SE SI ES NECESARIO)
     })
     .catch((err) => {
         console.error('Error esperando respuestas:', err);
     });
 
-    
-    /*
-    const { manos, triunfo, mazo } = repartirCartas(baraja, sala.jugadores.length);
-    
-    const partida = {
-        id: `${sala.id}-partida`,
-        jugadores: sala.jugadores,
-        tipo: sala.tipo,
-        estado: 'en_curso',
-        turnoActual: sala.jugadores[0],
-        ronda: 1,
-        manos,
-        triunfo,
-        mazo,
-        mesa: [],
-        puntos: sala.jugadores.map(j => ({ jugador: j, puntos: 0 })),
-        ultimaActividad: Date.now(),
-        cantes: [],
-        bazas: []
-    };
-
+    const jugadoresPartida = sala.jugadores.map((nombre, index) => ({
+        idUsuario: nombre,
+        equipo: index % 2 === 0 ? 1 : 2,
+        timestamp_ult_act: 0,
+    }));
+    sala.estado = 'en curso';
     // Guardar en BD
     const nuevaPartida = new Partida({
-        idPartida: partida.id,
-        tipo: partida.tipo,
-        jugadores: partida.jugadores,
-        estado: partida.estado,
-        fecha: new Date()
+        idPartida: sala.id,
+        jugadores: jugadoresPartida,
+        estado: sala.estado,
+        fecha_inicio: new Date()
     });
     await nuevaPartida.save();
-
-    return partida;*/
 }
 
 function procesarJugada(partida, jugada) {
