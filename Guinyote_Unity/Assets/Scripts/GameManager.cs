@@ -91,6 +91,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Inicia la baraja y ordena las cartas barajando aleatoriamente,
+    /// a partir de un string o a partir de un documento de test.
+    /// </summary>
+    /// <param name="baraja">
+    /// String que define el orden de la baraja. Debe tener el formato
+    /// numero,valor;numero,valor;...numero,valor. Si es vacío (valor por 
+    /// defecto) el orden de las cartas se definirá de otra forma.
+    /// </param>
     public void iniciarBaraja(string baraja = "")
     {   
         Debug.Log("iniciando baraja");
@@ -107,6 +116,11 @@ public class GameManager : MonoBehaviour
         if (esOnline) webSocketClient.enviarACK();
     }
 
+    /// <summary>
+    /// Inicia los jugadores de la partida con un orden específico.
+    /// </summary>
+    /// <param name="primero">Jugador que comienza la partida.</param>
+    /// <param name="miId">Para el online, id que asigna el servidor a este cliente</param>
     public void iniciarJugadores(int primero = 0, int miId = 0)
     {
         jugadores = new Player[numJugadores];
@@ -115,7 +129,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("el primero es " + primero + ", soy " + miId);
         for (int i = 0; i < jugadores.Length; i++)
         {
-            orden[i] = (primero + i + miId) % jugadores.Length;
+            orden[i] = (primero + i - miId + jugadores.Length) % jugadores.Length;
             Debug.Log(orden[i]);
         }
 

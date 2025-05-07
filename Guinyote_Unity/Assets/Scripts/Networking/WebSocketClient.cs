@@ -33,41 +33,29 @@ namespace WebSocketClient {
                 Debug.Log("Mensaje del servidor: " + response.GetValue<string>());
             });
 
-            ws.On("iniciarPartida", async (response) => {
+            ws.On("iniciarPartida", (response) => {
                 Debug.Log("iniciando partida");
-                await Task.Run(() =>
-                {
-                    MainThreadDispatcher.Enqueue(() =>
-                    {
-                        UIManager.ChangeScene("Juego");
-                    });
-                });
+                UIManager.ChangeScene("Juego");
             });
 
-            ws.On("baraja", async (response) => {
+            ws.On("baraja", (response) => {
                 Debug.Log("baraja recibida");
                 string baraja = response.GetValue<string>(0).ToString();
                 Debug.Log(baraja);
                 //SIRVE PARA QUE LA FUNCION SE EJECUTE EN EL HILO PRINCIPAL Y PUEDA CARGAR RECURSOS
-                await Task.Run(() =>
+                MainThreadDispatcher.Enqueue(() =>
                 {
-                    MainThreadDispatcher.Enqueue(() =>
-                    {
-                        GameManager.Instance.iniciarBaraja(baraja);
-                    });
+                    GameManager.Instance.iniciarBaraja(baraja);
                 });
             });
 
-            ws.On("primero", async (response) => {
+            ws.On("primero", (response) => {
                 int primero = response.GetValue<int>(0);
                 int miId = response.GetValue<int>(1);
                 Debug.Log("el primero es " + primero + ", soy " + miId);
-                await Task.Run(() =>
+                MainThreadDispatcher.Enqueue(() =>
                 {
-                    MainThreadDispatcher.Enqueue(() =>
-                    {
-                        GameManager.Instance.iniciarJugadores(primero, miId);
-                    });
+                    GameManager.Instance.iniciarJugadores(primero, miId);
                 });
             });
 

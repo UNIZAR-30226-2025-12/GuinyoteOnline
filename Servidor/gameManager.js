@@ -17,7 +17,8 @@ const Partida = require('../Bd/models/Partida');
 
 async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
     const socketsEnSala = await io.in(sala).fetchSockets();
-    const totalClientes = socketsEnSala.length;
+    const totalClientes = sala.jugadores.length
+    console.log(`${totalClientes} jugadores`);
   
     return new Promise((resolve, reject) => {
       const respuestas = new Map(); // Guardamos las respuestas por socket.id
@@ -51,7 +52,7 @@ async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
           socket.off(evento, fn);
         });
         reject(new Error("Timeout: no todos los clientes respondieron a tiempo"));
-      }, 15000); // 15 segundos
+      }, 30000); // 30 segundos
     });
   }
 
@@ -81,6 +82,9 @@ async function iniciarPartida(sala) {
         sockets.forEach((socket, index) => {
             socket.emit("primero", primero, index);
         })
+        .catch((err) => {
+            console.error('Error esperando respuestas:', err);
+        });
     })
 
     
