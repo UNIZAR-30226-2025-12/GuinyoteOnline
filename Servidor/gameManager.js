@@ -68,10 +68,10 @@ async function iniciarPartida(sala) {
         console.log('Todos respondieron:', respuestas);
         console.log(`emitiendo baraja a ${sala.id}`);
         io.to(sala.id).emit("baraja", barajaString);
-      })
-      .catch((err) => {
+    })
+    .catch((err) => {
         console.error('Error esperando respuestas:', err);
-      });
+    });
 
     esperarMensajesDeTodos(io, sala, "ack")
     .then(async (respuestas) => {
@@ -82,10 +82,10 @@ async function iniciarPartida(sala) {
         sockets.forEach((socket, index) => {
             socket.emit("primero", primero, index);
         })
-        .catch((err) => {
-            console.error('Error esperando respuestas:', err);
-        });
     })
+    .catch((err) => {
+        console.error('Error esperando respuestas:', err);
+    });
 
     
     /*
