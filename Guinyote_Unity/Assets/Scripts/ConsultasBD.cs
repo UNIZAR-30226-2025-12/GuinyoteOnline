@@ -80,7 +80,7 @@ namespace ConsultasBD
     public static class Consultas
     {
         // URL base para las solicitudes API.
-        private static string address = "http://localhost:10000";//"https://guinyoteonline-hkio.onrender.com";
+        private static string address = "https://guinyoteonline-hkio.onrender.com";
 
         /// <summary>
         /// Evento que se activa al consultar el historial de partidas.

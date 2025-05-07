@@ -869,7 +869,7 @@ public class UIManager : MonoBehaviour
     async void JoinRoom(Lobby lobby, string idUsuario)
     {
         // Configurar WebSocket para partidas online
-        await webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
+        await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
     }

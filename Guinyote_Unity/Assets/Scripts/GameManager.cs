@@ -386,6 +386,7 @@ public class GameManager : MonoBehaviour
         if(turno > 0){
             cartasJugadas[orden[turno-1]] = jugadores[orden[turno-1]].jugada;
         }
+        Debug.Log($"turno de {orden[turno]}");
         jugadores[orden[turno]].meToca();
     }
 

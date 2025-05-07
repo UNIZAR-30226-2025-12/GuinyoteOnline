@@ -3,7 +3,7 @@ using UnityEngine;
 public struct input
 {
     public int carta,
-                    cantar;
+               cantar;
     public bool cambiarSiete;
 }
 public class Player : MonoBehaviour
@@ -32,6 +32,21 @@ public class Player : MonoBehaviour
         m_MoveTarget = transform.position + transform.up * 6.35f;
     }
 
+    protected void Update()
+    {
+        if (m_CartaDesplazandose)
+        {
+            Debug.Log("moviendo carta");
+            jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 15f * Time.deltaTime);
+
+            if (jugada.transform.position == m_MoveTarget)
+            {
+                m_esMiTurno = false;
+                m_CartaDesplazandose = false;
+                GameManager.Instance.TurnManager.Tick();
+            }
+        }
+    }
     public void AnyadirCarta(Carta carta)
     {
         if (carta == null)
@@ -56,6 +71,8 @@ public class Player : MonoBehaviour
 
     public bool UsarCarta(int index)
     {
+        Debug.Log("Usar carta");
+        Debug.Log(index);
         if (mano[index] != null)
         {
             Carta carta = mano[index];
@@ -213,29 +230,21 @@ public class Player : MonoBehaviour
     protected bool turno()
     {
         if (GameManager.Instance.mostrandoCantar) return false;
-        else if (m_CartaDesplazandose)
-        {
-            jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 15f * Time.deltaTime);
-
-            if (jugada.transform.position == m_MoveTarget)
-            {
-                m_esMiTurno = false;
-                m_CartaDesplazandose = false;
-                GameManager.Instance.TurnManager.Tick();
-            }
-            return false;
-        }
         else if (m_esMiTurno)
         {
+            if (this is Online_Player) Debug.Log("mi turno");
+            if (this is Online_Player) Debug.Log(input.carta);
             int index = 0;
             bool cartaSeleccionada = false;
             if (input.carta > -1 && input.carta < 6 && !GameManager.Instance.arrastre)
             {
                 index = input.carta;
                 cartaSeleccionada = true;
+                Debug.Log(index);
             }
             else if (input.carta > -1 && input.carta < 6 && GameManager.Instance.arrastre)
             {   
+                Debug.Log("aqui esta mal");
                 if (cartaValidaEnArrastre())
                 {
                     index = input.carta;
@@ -245,6 +254,7 @@ public class Player : MonoBehaviour
             }
             else if (input.cambiarSiete)
             {
+                Debug.Log("cambiar siete");
                 if(ganador && !GameManager.Instance.arrastre) 
                 {
                     cambiarSieteTriunfo();
@@ -253,6 +263,7 @@ public class Player : MonoBehaviour
             }
             else if (input.cantar > -1 && input.cantar < 4)
             {
+                Debug.Log("cantar");
                 if (ganador && !cantadoEsteTurno && !palosCantados[input.cantar])
                 {
                     bool hayRey = false;
@@ -278,9 +289,10 @@ public class Player : MonoBehaviour
             if (cartaSeleccionada)
             {
                 //Debug.Log("carta elegida");
+                Debug.Log(index);
                 if (UsarCarta(index))
                 {
-                    //Debug.Log("carta usada");
+                    Debug.Log("carta usada");
                     cartaSeleccionada = false;
                     m_CartaDesplazandose = true;
                     return true;

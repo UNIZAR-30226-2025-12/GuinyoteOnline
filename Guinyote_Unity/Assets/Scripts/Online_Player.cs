@@ -17,12 +17,13 @@ public class Online_Player : Player
         base.Start();
     }
 
-    public void changeInput(string message)
+    public void changeInput(input message)
     {
         Debug.Log("changeInputRecibido");
         if (m_esMiTurno)
         {
-            input = JsonUtility.FromJson<input>(message);
+            input = message;
+            Debug.Log("antes de turno");
             turno();
             resetInput();
         }
@@ -30,5 +31,6 @@ public class Online_Player : Player
 
     public void Update()
     {
+        base.Update();
     }
 }

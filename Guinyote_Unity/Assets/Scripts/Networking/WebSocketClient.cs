@@ -20,7 +20,7 @@ namespace WebSocketClient {
         private TaskCompletionSource<bool> connectionTCS;
         public event Action<string> OnPlayerJoined;
         public event Action<string> OnGameStarted;
-        public event Action<string> OnInputReceived;
+        public event Action<input> OnInputReceived;
         private string miLobby;
         
         public async Task Connect(string url)
@@ -69,10 +69,14 @@ namespace WebSocketClient {
             });
 
             ws.On("jugada", (response) => {
-                Debug.Log("aqui");
-                //PETA EN EL GETVALUE
-                string jugada = response.GetValue<string>();
-                Debug.Log(jugada);
+                Debug.Log("Raw data: " + response.ToString());
+                input jugada;
+                jugada.carta = response.GetValue<int>(0);
+                jugada.cantar = response.GetValue<int>(1);
+                jugada.cambiarSiete = response.GetValue<bool>(2);
+                Debug.Log(jugada.carta);
+                Debug.Log(jugada.cambiarSiete);
+                Debug.Log(jugada.cantar);
                 MainThreadDispatcher.Enqueue(() =>
                 {
                     OnInputReceived?.Invoke(jugada);
@@ -142,10 +146,10 @@ namespace WebSocketClient {
             {
                 OnGameStarted?.Invoke(message);
             }
-            else if (message.Contains("input"))
+            /*else if (message.Contains("input"))
             {
                 OnInputReceived?.Invoke(message);
-            }
+            }*/
         }
 
         public async void SendMessage(string message)

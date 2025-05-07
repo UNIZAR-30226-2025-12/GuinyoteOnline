@@ -40,12 +40,10 @@ public class Player_Controller : Player
 
             if (turno() && GameManager.esOnline)
             {
-                Debug.Log(input.carta);
-                Debug.Log(input.cantar);
-                Debug.Log(input.cambiarSiete);
                 ws.enviarJugada(input);
             }
         }
+        base.Update();
     }
 
     public void ActualizarColliders()

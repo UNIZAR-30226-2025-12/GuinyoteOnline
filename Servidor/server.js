@@ -912,10 +912,11 @@ io.on('connection', (socket) => {
           console.error("Error al parsear 'input':", err);
           return;
       }
-    console.log("enviando jugada al resto de jugadores");
+    console.log(`enviando jugada a ${data.lobby}`);
     console.log(data);
     console.log(parsedInput);
-    io.to(data.lobby).emit('jugada', parsedInput);
+    const { carta, cantar, cambiarSiete } = parsedInput;
+    io.to(data.lobby).emit("jugada", carta, cantar, cambiarSiete);
   });
 
   // Unirse a una sala
