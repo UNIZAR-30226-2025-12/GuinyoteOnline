@@ -124,7 +124,7 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
         sala = findLobby(lobby);
         console.log(lobby);
         console.log(sala);
-        const partida = await Partida.findOne({ lobby });
+        const partida = await Partida.findOne({ idPartida: lobby });
 
         if (!partida) {
             throw new Error('Partida no encontrada');
