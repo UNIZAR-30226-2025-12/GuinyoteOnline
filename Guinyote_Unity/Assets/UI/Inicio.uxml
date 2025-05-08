@@ -1,5 +1,6 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=1efd3f0303d309148a46561e2194c95c&amp;type=3#Style" />
+    <Style src="project://database/Assets/UI/TabbedMenu.uss?fileID=7433441132597879392&amp;guid=1efd3f0303d309148a46561e2194c95c&amp;type=3#TabbedMenu" />
+    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=0398abbafa8c9f942bb8076f4efac0a8&amp;type=3#Style" />
     <engine:VisualElement style="flex-grow: 1; position: absolute; height: 253px; width: 291px; top: 25%; left: 40%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: 50%; bottom: 50%;" />
     <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 10%; position: absolute; width: 20%; top: 30%; left: 5%; right: -216px; background-color: rgb(255, 255, 255);" />
     <engine:Button name="Login_Button" style="position: absolute; height: 72px; width: 144px; opacity: 1; top: -3px; left: -5px; background-color: rgb(255, 255, 255);">

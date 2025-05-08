@@ -21,7 +21,8 @@ namespace WebSocketClient {
         public event Action<string> OnPlayerJoined;
         public event Action<string> OnGameStarted;
         public event Action<input> OnInputReceived;
-        private string miLobby;
+        public string miLobby;
+        public int miId;
         
         public async Task Connect(string url)
         {
@@ -58,9 +59,19 @@ namespace WebSocketClient {
                 });
             });
 
+            ws.On("barajaSegundaRonda", (response) => {
+                Debug.Log("baraja recibida");
+                string baraja = response.GetValue<string>(0).ToString();
+                Debug.Log(baraja);
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    GameManager.Instance.BarajarYRepartir(baraja);
+                });
+            });
+
             ws.On("primero", (response) => {
                 int primero = response.GetValue<int>(0);
-                int miId = response.GetValue<int>(1);
+                miId = response.GetValue<int>(1);
                 Debug.Log("el primero es " + primero + ", soy " + miId);
                 MainThreadDispatcher.Enqueue(() =>
                 {
@@ -103,10 +114,27 @@ namespace WebSocketClient {
             await connectionTCS.Task;
         }
 
-        public async void enviarACK()
+        public async void enviarACK(string msg = "Confirmacion enviada")
         {
             Debug.Log("enviando confirmacion");
-            await ws.EmitAsync("ack", "Confirmacion enviada");
+            await ws.EmitAsync("ack", msg);
+        }
+
+        public async void enviarFinRonda()
+        {
+            if (miId != 0) return;
+            Debug.Log("enviando fin ronda");
+            var data = new Dictionary<string, object>
+            {
+                { "lobby", miLobby }
+            };
+            await ws.EmitAsync("fin-ronda", data);
+        }
+
+        public async void enviarFinPartida(List<Dictionary<string, object>> msg)
+        {
+            Debug.Log("enviando fin partida");
+            await ws.EmitAsync("fin-partida", msg);
         }
 
         public async Task JoinRoom(string lobbyId, string playerId)

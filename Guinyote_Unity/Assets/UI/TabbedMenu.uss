@@ -1,0 +1,5 @@
+
+/* Ocultar el tab header */
+.unity-tab__header {
+    display: none;
+}
