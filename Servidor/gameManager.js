@@ -130,12 +130,16 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
             throw new Error('Partida no encontrada');
         }
         
+        console.log(partida);
         let puntos = [puntos0, puntos1, puntos2, puntos3];
         let puntuacionesPorUsuario = {};
 
         sala.jugadores.forEach(j => {
+            console.log(`puntuacion de ${j.correo} -> ${puntos[j.index]}`)
             puntuacionesPorUsuario[j.correo] = puntos[j.index];
         });
+
+        console.log(puntuacionesPorUsuario);
 
         // Recorremos los jugadores y actualizamos su puntuación si están en el objeto recibido
         partida.jugadores.forEach(jugador => {
@@ -143,8 +147,12 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
                 jugador.puntuacion = puntuacionesPorUsuario[jugador.idUsuario];
             }
         });
+        partida.estado = "terminada";
+
+        console.log(partida);
 
         await partida.save();
+        console.log("partida guardada");
     } catch (error) {
         console.error('Error guardando estado de partida:', error);
     }
