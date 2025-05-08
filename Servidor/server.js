@@ -919,9 +919,9 @@ io.on('connection', (socket) => {
     io.to(data.lobby).emit("jugada", carta, cantar, cambiarSiete);
   });
 
-  socket.on('fin-partida', (data) => {
-    console.log(data);
-    //guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
+  socket.on('fin-partida', ([data]) => {
+    const { puntos0, puntos1, puntos2, puntos3, lobby } = data;
+    guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
   });
 
   socket.on('fin-ronda', ({lobby}) => {
