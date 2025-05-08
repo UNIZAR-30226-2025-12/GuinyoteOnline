@@ -23,7 +23,6 @@ public class Online_Player : Player
         if (m_esMiTurno)
         {
             input = message;
-            Debug.Log("antes de turno");
             turno();
             resetInput();
         }

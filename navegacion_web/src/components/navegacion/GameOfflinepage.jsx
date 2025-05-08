@@ -9,7 +9,7 @@ import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal';
 import RankingModal from './RankingModal';
 import FriendsModal from './FriendsModal';
-import '/src/styles/Gamepage.css'
+//import '/src/styles/Gamepage.css'
 import usePost from '../../customHooks/usePost';
 
 function GameOfflinepage({handleMiCuentaClick, handle2v2MatchClick, handle1v1MatchClick}) {

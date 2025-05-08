@@ -654,8 +654,7 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-// * DONE Documentación
-// ! NOT DONE Falta probar la nueva funcionalidad y documentar
+// * DONE Documentación y funcionalidad actual
 /**
  * POST /amigos/eliminarAmigo
  *
@@ -916,10 +915,11 @@ io.on('connection', (socket) => {
     console.log(data);
     console.log(parsedInput);
     const { carta, cantar, cambiarSiete } = parsedInput;
-    io.to(data.lobby).emit("jugada", carta, cantar, cambiarSiete);
+    enviarInput(carta, cantar, cambiarSiete);
   });
 
-  socket.on('fin-partida', ({ puntos0, puntos1, puntos2, puntos3, lobby }) => {
+  socket.on('fin-partida', ([data]) => {
+    const { puntos0, puntos1, puntos2, puntos3, lobby } = data;
     guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
   });
 

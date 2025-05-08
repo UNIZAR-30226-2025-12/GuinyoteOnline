@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Carta from "./Carta";
-import '../styles/Game.css';
+import '/src/styles/Game.css';
 
 const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCambiarSiete }) => {
   const spriteSrc = `/assets/Mano.png`;

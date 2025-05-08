@@ -36,7 +36,6 @@ public class Player : MonoBehaviour
     {
         if (m_CartaDesplazandose)
         {
-            Debug.Log("moviendo carta");
             jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 15f * Time.deltaTime);
 
             if (jugada.transform.position == m_MoveTarget)
@@ -71,14 +70,14 @@ public class Player : MonoBehaviour
 
     public bool UsarCarta(int index)
     {
-        Debug.Log("Usar carta");
         Debug.Log(index);
         if (mano[index] != null)
         {
             Carta carta = mano[index];
             mano[index] = null;
-            if(this is Player_Controller){
-                   carta.enMano = false; 
+            if (this is Player_Controller)
+            {
+                carta.enMano = false; 
             }
             jugada = carta;
             return true;
@@ -102,10 +101,18 @@ public class Player : MonoBehaviour
                 //CAMBIO POSICION 7
                 GameManager.Instance.triunfo.transform.rotation = mano[i].transform.rotation;
                 GameManager.Instance.triunfo.transform.position = mano[i].transform.position;
+                if (this is Player_Controller)
+                {
+                   GameManager.Instance.triunfo.enMano = false; 
+                }
 
                 //CAMBIO POSICION TRIUNFO
                 mano[i].transform.rotation = this.transform.rotation;
                 mano[i].transform.position = this.transform.position + this.transform.right * posiciones[i];
+                if (this is Player_Controller)
+                {
+                   mano[i].enMano = true; 
+                }
 
                 //CAMBIAR VALOR ULTIMA CARTA BARAJA
                 GameManager.Instance.Baraja.EliminarUltima();
@@ -233,7 +240,6 @@ public class Player : MonoBehaviour
         else if (m_esMiTurno)
         {
             if (this is Online_Player) Debug.Log("mi turno");
-            if (this is Online_Player) Debug.Log(input.carta);
             int index = 0;
             bool cartaSeleccionada = false;
             if (input.carta > -1 && input.carta < 6 && !GameManager.Instance.arrastre)
@@ -244,7 +250,6 @@ public class Player : MonoBehaviour
             }
             else if (input.carta > -1 && input.carta < 6 && GameManager.Instance.arrastre)
             {   
-                Debug.Log("aqui esta mal");
                 if (cartaValidaEnArrastre())
                 {
                     index = input.carta;
@@ -254,7 +259,6 @@ public class Player : MonoBehaviour
             }
             else if (input.cambiarSiete)
             {
-                Debug.Log("cambiar siete");
                 if(ganador && !GameManager.Instance.arrastre) 
                 {
                     cambiarSieteTriunfo();
@@ -263,7 +267,6 @@ public class Player : MonoBehaviour
             }
             else if (input.cantar > -1 && input.cantar < 4)
             {
-                Debug.Log("cantar");
                 if (ganador && !cantadoEsteTurno && !palosCantados[input.cantar])
                 {
                     bool hayRey = false;

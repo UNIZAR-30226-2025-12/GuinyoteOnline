@@ -17,7 +17,7 @@ const Partida = require('../Bd/models/Partida');
 const Usuario = require('../Bd/models/Usuario');
 const { findLobby } = require('./lobbies');
 
-async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
+async function esperarMensajesDeTodos(io, sala, eventoEsperado, timeout) {
     const socketsEnSala = await io.in(sala.id).fetchSockets();
     const totalClientes = sala.jugadores.length
     console.log(`${totalClientes} jugadores`);
@@ -54,7 +54,7 @@ async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
           socket.off(evento, fn);
         });
         reject(new Error("Timeout: no todos los clientes respondieron a tiempo"));
-      }, 30000); // 30 segundos
+      }, timeout);
     });
   }
 
@@ -65,7 +65,7 @@ async function iniciarPartida(sala) {
     const baraja = mezclarBaraja(crearBaraja());
     let barajaString = barajaToString(baraja);
     console.log("esperando confirmaciones");
-    esperarMensajesDeTodos(io, sala, "ack")
+    esperarMensajesDeTodos(io, sala, "ack", 15000)
     .then((respuestas) => {
         console.log('Todos respondieron:', respuestas);
         console.log(`emitiendo baraja a ${sala.id}`);
@@ -76,7 +76,7 @@ async function iniciarPartida(sala) {
     });
 
     let indexJugadores = []
-    esperarMensajesDeTodos(io, sala, "ack")
+    esperarMensajesDeTodos(io, sala, "ack", 15000)
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
         const primero = Math.floor(Math.random() * sala.jugadores.length);
@@ -124,18 +124,22 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
         sala = findLobby(lobby);
         console.log(lobby);
         console.log(sala);
-        const partida = await Partida.findOne({ lobby });
+        const partida = await Partida.findOne({ idPartida: lobby });
 
         if (!partida) {
             throw new Error('Partida no encontrada');
         }
         
+        console.log(partida);
         let puntos = [puntos0, puntos1, puntos2, puntos3];
         let puntuacionesPorUsuario = {};
 
         sala.jugadores.forEach(j => {
+            console.log(`puntuacion de ${j.correo} -> ${puntos[j.index]}`)
             puntuacionesPorUsuario[j.correo] = puntos[j.index];
         });
+
+        console.log(puntuacionesPorUsuario);
 
         // Recorremos los jugadores y actualizamos su puntuación si están en el objeto recibido
         partida.jugadores.forEach(jugador => {
@@ -143,16 +147,74 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
                 jugador.puntuacion = puntuacionesPorUsuario[jugador.idUsuario];
             }
         });
+        partida.estado = "terminada";
 
-        await partida.save();
+        console.log(partida);
+
+        partida.save()
+        .then(doc => {
+            console.log('Guardado OK:', doc);
+        })
+        .catch(err => {
+            console.error('Error al guardar:', err);
+        });
     } catch (error) {
         console.error('Error guardando estado de partida:', error);
     }
+}
+
+async function enviarJugada(io, sala, timeout, carta, cantar, cambiarSiete) {
+    const socketsEnSala = await io.in(sala.id).fetchSockets();
+    const socketIds = socketsEnSala.map(s => s.id);
+    const totalClientes = sala.jugadores.length
+    console.log(`${totalClientes} jugadores`);
+  
+    const acks = new Set();
+
+    let pending = new Set(socketIds);
+
+    const sendToSockets = (targetSocketIds) => {
+        targetSocketIds.forEach(id => {
+            io.to(id).emit('jugada', carta, cantar, cambiarSiete);
+        });
+    };
+
+    sendToSockets(Array.from(pending));
+
+    socketsEnSala.forEach(socket => {
+        const ackHandler = () => {
+            if (pending.has(socket.id)) {
+                acks.add(socket.id);
+                pending.delete(socket.id);
+                if (pending.size === 0) {
+                    socketsEnSala.forEach(s => s.off('ack', ackHandler));
+                    console.log('todos confirmados');
+                    io.to(sala.id).emit('inputsConfirmados');
+                }
+            }
+        };
+        socket.on('ack', ackHandler);
+    });
+
+    const retry = () => {
+        if (pending.size > 0) {
+            sendToSockets(Array.from(pending));
+            setTimeout(retry, timeout);
+        }
+    };
+
+    setTimeout(retry, timeout);
+    sendToSockets(Array.from(pending));
+}
+
+async function enviarInput(carta, cantar, cambiarSiete) {
+    enviarJugada(io, sala, 500, carta, cantar, cambiarSiete);
 }
 
 module.exports = {
     init,
     iniciarPartida,
     iniciarSegundaRonda,
+    enviarInput,
     guardarEstadoPartida
 }; 

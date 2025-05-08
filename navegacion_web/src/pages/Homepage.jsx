@@ -13,6 +13,7 @@ import usePost from '../customHooks/usePost';
 import { useUser } from '../context/UserContext';
 import ProfilePic from '../components/navegacion/ProfilePic';
 
+
 function Homepage() {
 
   const url = 'https://guinyoteonline-hkio.onrender.com';
@@ -25,13 +26,8 @@ function Homepage() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
-  //const [isUserRegistered, setIsUserRegistered] = useState(false);
   const [showRanking, setShowRanking] = useState(false);
-  const [showFriends, setShowFriends] = useState(false); 
-
-  // Almacenamos los datos del usuario para la correcta ejecución de la aplicación
-  /*const [username, setUsername] = useState('');
-  const [mail, setMail] = useState('');*/
+  const [showFriends, setShowFriends] = useState(false);
 
   const {
     username,
@@ -84,17 +80,12 @@ function Homepage() {
     if (!isUserRegistered) {
       setShowLoginModal(true);
     } else {
-      // Lógica para usuarios registrados
       handleAccountManagementClick();
     }
   };
 
   const redirigirReglas = () => {
     window.location.href = 'https://es.wikipedia.org/wiki/Gui%C3%B1ote';
-  }
-
-  const tryButtons = () => {
-    alert('Funcionalidad no disponible');
   }
 
   const handleRegisterSubmit = async (event) => {
@@ -144,7 +135,7 @@ function Homepage() {
 
   const handlePartidaOnlineClick = () => {
     if (isUserRegistered) {
-      navigate('/online_match');  // Necesitamos pasar el contexto
+      navigate('/lobby'); // Cambiar a la ruta de la sala de espera
     } else {
       setShowLoginModal(true);
     }
@@ -162,17 +153,15 @@ function Homepage() {
 
   return (
     <div className='background-container'>
-      <div className='background-layer'>
-
-      </div>
-      <LoginButton className='login-button-position' isLoggedIn={isUserRegistered} loginButtonText={username != '' ? username : 'Iniciar sesión'} loginButtonIcon={profilePic} onClick={handleLoginClick}/>
-      <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
-      <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handlePartidaOnlineClick}/>
-      <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
-      <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
-      <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
-      <RankingModal show={showRanking} handleClose={handleRankingModalClose} />
-      <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
+      <div className='background-layer'/>
+        <GameButtons className='gab-container-position' onClickSoloPlay={handlePartidaOfflineClick} onClickOnlinePlay={handlePartidaOnlineClick}/> 
+        <LoginButton className='login-button-position' isLoggedIn={isUserRegistered} loginButtonText={username != '' ? username : 'Iniciar sesión'} loginButtonIcon={profilePic} onClick={handleLoginClick}/>
+        <GroupButtons className='gb-container-position' onClickFriends={handleFriendsModalOpen} onClickRanking={handleRankingModalOpen}/>
+        <RulesButton className='rules-button-position' onClick={redirigirReglas}/>
+        <LoginModal show={showLoginModal} handleClose={handleLoginModalClose} handleLoginSubmit={handleLoginSubmit} handleRegister={handleRegisterModal} />
+        <RegisterModal show={showRegisterModal} handleClose={handleRegisterModalClose} handleRegisterSubmit={handleRegisterSubmit} handleLogin={handleLoginModal}/>
+        <RankingModal show={showRanking} handleClose={handleRankingModalClose} />
+        <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
     </div>
   )
 }

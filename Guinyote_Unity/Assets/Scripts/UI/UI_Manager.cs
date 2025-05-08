@@ -511,8 +511,9 @@ public class UIManager : MonoBehaviour
     void updateProfilePictures()
     {
         VisualTreeAsset fotoAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String foto in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Profile_pictures", "*.png"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Profile_pictures"))
         {
+            String foto=foto_textura.name;
             Debug.Log("Foto: " + foto);
             String fotoName = System.IO.Path.GetFileNameWithoutExtension(foto);
             VisualElement fotoElement = fotoAsset.CloneTree();
@@ -537,8 +538,9 @@ public class UIManager : MonoBehaviour
     void updateTapetes()
     {
         VisualTreeAsset tapeteAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String tapete in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Tapetes", "*.png"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Tapetes"))
         {
+            String tapete=foto_textura.name;
             Debug.Log("Tapete: " + tapete);
             String tapeteName = System.IO.Path.GetFileNameWithoutExtension(tapete);
             VisualElement tapeteElement = tapeteAsset.CloneTree();
@@ -562,8 +564,9 @@ public class UIManager : MonoBehaviour
     void updateCartas()
     {
         VisualTreeAsset cartaAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String carta in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Dorso_Carta", "*.png"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Dorso_Carta"))
         {
+            String carta=foto_textura.name;
             Debug.Log("Carta: " + carta);
             String cartaName = System.IO.Path.GetFileNameWithoutExtension(carta);
             VisualElement cartaElement = cartaAsset.CloneTree();

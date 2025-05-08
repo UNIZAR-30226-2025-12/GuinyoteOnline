@@ -28,8 +28,8 @@ const SolicitudesRow = ({ foto_perfil, nombre, mail, myMail }) => {
             <td>
                 {!isAccepted && !isDeclined && (
                     <div className="solicitud-buttons">
-                        <button className="btn-accept" onClick={handleOnClickAccept}>Accept</button>
-                        <button className="btn-decline" onClick={handleOnClickDecline}>Decline</button>
+                        <button className="btn-accept" onClick={handleOnClickAccept}>Aceptar</button>
+                        <button className="btn-decline" onClick={handleOnClickDecline}>Rechazar</button>
                     </div>
                 )}
                 {isAccepted && <p className="solicitud-response">Solicitud aceptada</p>}

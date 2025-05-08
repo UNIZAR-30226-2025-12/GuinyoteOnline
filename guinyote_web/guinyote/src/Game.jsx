@@ -1,11 +1,11 @@
 import { useState } from "react";
 import React from 'react';
-import Player from "./components/Player_Controller";
-import IA_Player from "./components/IA_Player";
-import Tapete from "./components/Tapete";
-import Baraja from "./components/Baraja";
-import Triunfo from "./components/Triunfo";
-import GameManager from "./components/GameManager";
+import Player from "../components/game/Player_Controller";
+import IA_Player from "../components/game/IA_Player";
+import Tapete from "../components/game/Tapete";
+import Baraja from "../components/game/Baraja";
+import Triunfo from "../components/game/Triunfo";
+import GameManager from "../components/game/GameManager";
 
 function Game() {
     const numJugadores = 4; // Número de jugadores
