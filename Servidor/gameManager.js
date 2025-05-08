@@ -170,6 +170,7 @@ async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiar
     const acks = new Set();
 
     let pending = new Set(socketIds);
+    console.log(socketsEnSala);
     pending.delete(idJugador);
     console.log(socketIds);
     console.log(pending);
