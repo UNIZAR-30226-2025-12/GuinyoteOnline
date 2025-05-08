@@ -164,7 +164,7 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
 }
 
 async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiarSiete) {
-    const socketsEnSala = await io.in(sala.id).fetchSockets();
+    const socketsEnSala = await io.in(sala).fetchSockets();
     const socketIds = socketsEnSala.map(s => s.id);
   
     const acks = new Set();
@@ -191,7 +191,7 @@ async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiar
                 if (pending.size === 0) {
                     socketsEnSala.forEach(s => s.off('ack', ackHandler));
                     console.log('todos confirmados');
-                    io.to(sala.id).emit('inputsConfirmados');
+                    io.to(sala).emit('inputsConfirmados');
                 }
             }
         };
