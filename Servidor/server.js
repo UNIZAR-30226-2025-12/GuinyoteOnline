@@ -923,7 +923,8 @@ io.on('connection', (socket) => {
     guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
   });
 
-  socket.on('fin-ronda', ({lobby}) => {
+  socket.on('fin-ronda', (lobby) => {
+    console.log(lobby);
     gameManager.iniciarSegundaRonda(lobby);
   });
 
