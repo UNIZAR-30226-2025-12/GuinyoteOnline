@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginButton from '../components/buttons/LoginButton'
-import GroupButtons from '../components/buttons/GroupButtons'
-import GameButtons from '../components/buttons/GameButtons'
-import RulesButton from '../components/buttons/RulesButton'
-import LoginModal from '../components/LoginModal'
-import RegisterModal from '../components/RegisterModal';
-import RankingModal from '../components/RankingModal';
-import FriendsModal from '../components/FriendsModal';
+import LoginButton from '../components/navegacion/buttons/LoginButton'
+import GroupButtons from '../components/navegacion/buttons/GroupButtons'
+import GameButtons from '../components/navegacion/buttons/GameButtons'
+import RulesButton from '../components/navegacion/buttons/RulesButton'
+import LoginModal from '../components/navegacion/LoginModal'
+import RegisterModal from '../components/navegacion/RegisterModal';
+import RankingModal from '../components/navegacion/RankingModal';
+import FriendsModal from '../components/navegacion/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
 import { useUser } from '../context/UserContext';
-import ProfilePic from '../components/ProfilePic';
+import ProfilePic from '../components/navegacion/ProfilePic';
 
 function Homepage() {
 

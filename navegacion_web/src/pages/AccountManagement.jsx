@@ -1,9 +1,9 @@
 import React, { useState } from 'react';  
 import { useNavigate } from 'react-router-dom';
-import ProfileButton from '../components/buttons/ProfileButton';
-import HistorialPartidasButton from '../components/buttons/HistorialPartidasButton';
+import ProfileButton from '../components/navegacion/buttons/ProfileButton';
+import HistorialPartidasButton from '../components/navegacion/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
-import ProfileModal from '../components/ProfileModal';
+import ProfileModal from '../components/navegacion/ProfileModal';
 
 function AccountManagement() {
   const navigate = useNavigate();
