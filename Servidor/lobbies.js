@@ -6,6 +6,7 @@ function createLobby(maxPlayers, idCreador, tipo, codigoAcceso) {
   const id = uuidv4();
   const lobby = {
     id,
+    iniciado: false,
     maxPlayers: (maxPlayers === "1v1") ? 2 : 4,
     idCreador,
     tipo,

@@ -887,7 +887,8 @@ io.on('connection', (socket) => {
     console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
     let lobby = findLobby(lobbyId);
     console.log(lobby);
-    if (lobby.jugadores.length === lobby.maxPlayers) {
+    if (lobby.jugadores.length === lobby.maxPlayers && !lobby.iniciando) {
+      lobby.iniciado = true;
       iniciarPartida(lobby);
     }
   });
