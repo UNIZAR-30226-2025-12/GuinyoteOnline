@@ -1,5 +1,5 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/TabbedMenu.uss?fileID=7433441132597879392&amp;guid=1efd3f0303d309148a46561e2194c95c&amp;type=3#TabbedMenu" />
+    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=1efd3f0303d309148a46561e2194c95c&amp;type=3#Style" />
     <engine:VisualElement style="flex-grow: 1; position: absolute; height: 253px; width: 291px; top: 25%; left: 40%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: 50%; bottom: 50%;" />
     <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 10%; position: absolute; width: 20%; top: 30%; left: 5%; right: -216px; background-color: rgb(255, 255, 255);" />
     <engine:Button name="Login_Button" style="position: absolute; height: 72px; width: 144px; opacity: 1; top: -3px; left: -5px; background-color: rgb(255, 255, 255);">
@@ -17,7 +17,7 @@
         <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/ranking&apos;); height: 45px; position: absolute; width: 40px; top: 10px; left: 8px;" />
     </engine:Button>
     <engine:Tab focusable="false" closeable="false" name="Login_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
-        <engine:VisualElement style="flex-grow: 1; height: 379px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
+        <engine:VisualElement class="ventana" style="flex-grow: 1; height: 379px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
             <engine:Button text="x" name="exit_Button" style="position: absolute; top: 7px; left: 345px; width: 63px; background-color: rgb(255, 255, 255);" />
             <engine:Button text="Registrarse" name="register_Button" style="position: absolute; top: 310px; left: 41px; background-color: rgb(255, 255, 255);" />
             <engine:Button text="Aceptar" name="accept_Button" style="position: absolute; top: 308px; left: 290px; background-color: rgb(255, 255, 255);" />
@@ -30,7 +30,7 @@
         </engine:VisualElement>
     </engine:Tab>
     <engine:Tab focusable="false" closeable="false" name="Register_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
-        <engine:VisualElement style="flex-grow: 1; height: 433px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
+        <engine:VisualElement class="ventana" style="flex-grow: 1; height: 433px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
             <engine:Button text="Cancelar" name="exit_Button" style="position: absolute; top: 373px; left: 53px; width: 63px; background-color: rgb(255, 255, 255);" />
             <engine:Button text="Aceptar" name="accept_Button" style="position: absolute; top: 370px; left: 292px; background-color: rgb(255, 255, 255);" />
             <engine:Label text="Registrarse" style="position: absolute; top: 3px; left: 170px; -unity-font-style: bold;" />
@@ -45,27 +45,27 @@
             <engine:Label name="error_Label" style="position: absolute; top: 342px; left: 75px;" />
         </engine:VisualElement>
     </engine:Tab>
-    <engine:TabView tabindex="0" name="Friends_tabview" style="height: 448px; position: absolute; top: 0; left: 394px; width: 282px; display: none;">
-        <engine:Tab name="Friends_tab" closeable="false" enabled="true" style="position: absolute; top: auto; left: auto; height: 448px; width: 264px; display: none;">
-            <engine:VisualElement style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(173, 216, 230);">
+    <engine:TabView tabindex="0" name="Friends_tabview" class="ventana_derecha" style="height: 100%; position: absolute; top: 0; left: auto; width: 416px; display: none; bottom: 0;">
+        <engine:Tab name="Friends_tab" closeable="false" enabled="true" class="ventana_derecha" style="position: absolute; top: 0; left: auto; height: 448px; width: 281px; display: none; right: 0; bottom: 0;">
+            <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 281px; height: 449px; background-color: rgb(173, 216, 230); right: 0; bottom: 0; top: 0;">
                 <engine:Label text="Amigos" style="right: auto; left: auto; width: 72px; height: 40px;" />
-                <engine:Button text="X" name="close_Button" style="width: 52px; left: 202px; top: 1px; position: absolute; background-color: rgb(255, 255, 255);" />
+                <engine:Button text="X" name="close_Button" style="width: 52px; left: auto; top: 1px; position: absolute; background-color: rgb(255, 255, 255); right: 0;" />
                 <engine:Button text="Lista de amigos" name="Friends_List_Button" style="background-color: rgb(255, 255, 255);" />
                 <engine:Button text="Solicitud de amistad" name="Solicitudes_Button" style="background-color: rgb(255, 255, 255);" />
             </engine:VisualElement>
         </engine:Tab>
-        <engine:Tab name="Friends_list_tab" tabindex="1" style="position: absolute; display: none; width: 265px;">
-            <engine:VisualElement name="VisualElement" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(173, 216, 230);">
+        <engine:Tab name="Friends_list_tab" tabindex="1" style="position: relative; display: none; width: 100%; height: 100%; top: -1px; left: 0; bottom: auto;">
+            <engine:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgb(173, 216, 230); width: 100%; height: 100%; bottom: auto;">
                 <engine:Label text="Lista de amigos" style="right: auto; left: auto; width: 72px; height: 40px;" />
-                <engine:Button text="X" name="atras_Button" style="width: 52px; left: 198px; top: 0; position: absolute; background-color: rgb(255, 255, 255);" />
-                <engine:VisualElement style="flex-grow: 1; height: 69px; width: 266px; padding-bottom: 10px;">
+                <engine:Button text="X" name="atras_Button" style="width: 52px; left: auto; top: 0; position: absolute; background-color: rgb(255, 255, 255); right: 0;" />
+                <engine:VisualElement style="flex-grow: 1; height: 60px; width: 266px; padding-bottom: 0; bottom: auto; left: 10px; right: 0;">
                     <engine:TextField placeholder-text="Correo" name="friend_Field" style="width: 95px;" />
+                    <engine:Button text="Solicitar amistad" name="addFriend_Button" style="position: absolute; top: auto; left: 121px; background-color: rgb(255, 255, 255);" />
                 </engine:VisualElement>
-                <engine:Button text="Solicitar amistad" name="addFriend_Button" style="position: absolute; top: 47px; left: 114px; background-color: rgb(255, 255, 255);" />
-                <engine:ScrollView name="Friends_Scroll" style="position: absolute; top: 136px; left: 10px; width: 245px; height: 284px;" />
+                <engine:ScrollView name="Friends_Scroll" style="position: relative; top: auto; left: 10px; width: 245px; height: 330px;" />
             </engine:VisualElement>
         </engine:Tab>
-        <engine:Tab name="Solicitudes_list_tab" tabindex="1" style="position: absolute; display: none; width: 417px; left: -152px;">
+        <engine:Tab name="Solicitudes_list_tab" tabindex="1" style="position: absolute; display: none; width: 417px; left: auto; right: 0; bottom: auto; top: 0;">
             <engine:VisualElement name="VisualElement" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(173, 216, 230);">
                 <engine:Label text="Solicitudes de amistad" name="Label" style="right: auto; left: auto; width: 72px; height: 40px;" />
                 <engine:Button text="X" name="atras_Button" style="width: 52px; left: 80%; top: 0; position: absolute; background-color: rgb(255, 255, 255);" />
