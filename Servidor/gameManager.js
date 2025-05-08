@@ -151,12 +151,13 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
 
         console.log(partida);
 
-        try {
-            await partida.save();
-            console.log('Partida guardada correctamente.');
-          } catch (error) {
-            console.error('Error al guardar la partida:', error.message);
-          }
+        partida.save()
+        .then(doc => {
+            console.log('Guardado OK:', doc);
+        })
+        .catch(err => {
+            console.error('Error al guardar:', err);
+        });
     } catch (error) {
         console.error('Error guardando estado de partida:', error);
     }
