@@ -3,7 +3,7 @@ const cors = require("cors");
 const http = require('http');
 const socketIo = require('socket.io');
 const bcrypt = require('bcrypt');
-const { iniciarPartida, procesarJugada, guardarEstadoPartida } = require('./gameManager');
+const { iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
 const { findLobby } = require('./lobbies');
@@ -654,8 +654,7 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-// * DONE Documentación
-// ! NOT DONE Falta probar la nueva funcionalidad y documentar
+// * DONE Documentación y funcionalidad actual
 /**
  * POST /amigos/eliminarAmigo
  *
@@ -916,7 +915,7 @@ io.on('connection', (socket) => {
     console.log(data);
     console.log(parsedInput);
     const { carta, cantar, cambiarSiete } = parsedInput;
-    io.to(data.lobby).emit("jugada", carta, cantar, cambiarSiete);
+    enviarInput(data.lobby, carta, cantar, cambiarSiete);
   });
 
   socket.on('fin-partida', ([data]) => {

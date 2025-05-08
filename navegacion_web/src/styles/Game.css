@@ -1,0 +1,295 @@
+/*=========================Variables globales=========================*/
+:root {
+    --escala: 0.12;
+    --offsetY: 1500px;
+    --offsetX: 2350px;
+    --offsetBaraja: 2400px;
+}
+
+/*=========================General=========================*/
+.botonInit{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.GanadorLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    scale: var(--escala) * 30;
+}
+
+.MTeam_1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 10%;
+    left: 5%;
+    scale: var(--escala) * 30;
+}
+
+.MTeam_2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 20%;
+    left: 5%;
+    scale: var(--escala) * 30;
+}
+
+
+/*=========================Jugador=========================*/
+
+.boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 5%;
+    height: 10%;
+    width: 6%;
+}
+
+.boton.cantarbastos{
+    right: 30%;
+}
+
+.boton.cantarcopas{
+    right: 23%;
+}
+
+.boton.cantarespadas{
+    right: 16%;
+}
+
+.boton.cantaroros{
+    right: 9%;
+}
+
+.boton.siete{
+    right: 2%;
+}
+
+.boton.activo {
+    background-color: hsla(0, 0%, 50%, 1);
+    border-color: hsla(0, 0%, 50%, 0);
+}
+  
+.boton.hover {
+    background-color:  hsl(0, 0%, 75%);
+    border-color:  hsla(0, 0%, 75%);
+}
+  
+.boton.inactivo {
+    background-color: hsla(0, 0%, 50%, 0.15);
+    border-color: hsla(0, 0%, 50%, 0);
+    color: hsla(0, 0%, 100%, 0.15);
+    cursor: not-allowed;
+}
+
+.cartaJugada {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(50% - 85px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    scale: var(--escala);
+}
+
+.mano {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: calc(50% - var(--escala) * var(--offsetY));
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cartas {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.mano img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_1=========================*/
+.cartaJugadaIA_1 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - 90px);
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    scale: var(--escala);
+}
+
+.manoIA_1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - var(--escala) * var(--offsetX));
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+}
+
+.cartasIA_1 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_1 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_2=========================*/
+.cartaJugadaIA_2 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: calc(50% - 90px);
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(180deg);
+    scale: var(--escala);
+}
+
+.manoIA_2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: calc(50% - var(--escala) * var(--offsetY));
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+}
+
+.cartasIA_2 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_2 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================IA_3=========================*/
+.cartaJugadaIA_3 {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: calc(50% - 90px);
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    scale: var(--escala);
+}
+
+.manoIA_3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    left: calc(50% - var(--escala) * var(--offsetX));
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.cartasIA_3 {
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    gap: calc(var(--escala) * 5 * 69px);
+}
+
+.manoIA_3 img {
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}
+
+/*=========================Tapete=========================*/
+.tapete {
+    position: fixed;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.tapete img {
+    scale: var(--escala);
+}
+
+/*=========================Baraja=========================*/
+.baraja {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - var(--escala) * var(--offsetBaraja));
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.baraja img{
+    position: absolute;
+    z-index: 2;
+    scale: var(--escala);
+}
+
+.triunfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: calc(50% - var(--escala) * var(--offsetBaraja) + 20px);
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    z-index: 1;
+}
+
+.triunfo img{
+    position: absolute;
+    z-index: 1;
+    scale: var(--escala);
+}

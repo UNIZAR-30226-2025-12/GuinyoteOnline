@@ -59,7 +59,6 @@ public class Baraja : MonoBehaviour
             string[] numeroPalo = carta.Split(',');
             cartas.Add((int.Parse(numeroPalo[1]), int.Parse(numeroPalo[0])));
         }
-        Debug.Log(cartas[0]);
     }
 
     public Carta DarCarta()

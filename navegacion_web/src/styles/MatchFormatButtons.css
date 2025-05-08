@@ -1,0 +1,47 @@
+.buttons-container {
+    display: flex;
+    justify-content: space-between; /* Ensure horizontal spacing between buttons */
+    align-items: center; /* Align buttons vertically */
+    gap: 20px; /* Add consistent spacing between buttons */
+    margin: 20px 0; /* Add vertical margin for the container */
+}
+
+.buttons-container button {
+    flex: 1; /* Ensure buttons take equal space */
+    padding: 15px 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    background-color: #e0e0e0; /* Light gray background */
+    color: #000000; /* Black text */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.buttons-container button:hover {
+    background-color: #d0d0d0; /* Slightly darker gray on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.buttons-container button:active {
+    background-color: #c0c0c0; /* Even darker gray when active */
+    transform: scale(0.95); /* Slightly shrink on click */
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .buttons-container button {
+        background-color: #2c2c2c; /* Dark gray background */
+        color: #ffffff; /* White text */
+    }
+
+    .buttons-container button:hover {
+        background-color: #3a3a3a; /* Slightly lighter gray on hover */
+    }
+
+    .buttons-container button:active {
+        background-color: #4e4e4e; /* Even darker gray when active */
+    }
+}
+

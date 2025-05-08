@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Carta from "./Carta";
-import '../styles/Game.css';
+import '/src/styles/Game.css';
 
 const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete }) => {
   const spriteSrc = `/assets/Mano.png`;

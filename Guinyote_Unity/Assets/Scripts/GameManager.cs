@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using WebSocketClient;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 /// <summary>
 /// Clase principal que gestiona el estado del juego, los turnos y los jugadores.
@@ -316,10 +317,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
+        
         if (!cartasMoviendo) return;
         for (int i = 0; i < jugadores.Length; i++)
         {
-            if (cartasJugadas[i] != null)
+            if (cartasJugadas[i] != null && jugadores[i] != null && jugadores[i].jugada != null)
             {
                 cartasJugadas[i].transform.position = Vector3.MoveTowards(jugadores[i].jugada.transform.position, ubicacionGanador, 15f * Time.deltaTime);
                 if (cartasJugadas[i].transform.position == ubicacionGanador)
@@ -328,7 +330,10 @@ public class GameManager : MonoBehaviour
                     jugadores[i].jugada = null;
                 }
             }
+            else if (cartasJugadas[i] != null && jugadores[i] == null) Debug.Log("jugadores i null");
+            else if (cartasJugadas[i] != null && jugadores[i].jugada == null) Debug.Log("jugadores i jugada null");
         }
+        
         bool moviendo = false;
         for (int i = 0; i < jugadores.Length; i++)
         {
@@ -343,7 +348,8 @@ public class GameManager : MonoBehaviour
             cartasMoviendo = false;
             if (finRonda && segundaBaraja)
             {
-                BarajarYRepartir();
+                if(!esOnline) BarajarYRepartir();
+                else webSocketClient.enviarFinRonda();
                 finRonda = false;
             }
             if (!finRonda) TurnManager.Tick();
@@ -564,6 +570,22 @@ public class GameManager : MonoBehaviour
 
         if (!segundaBaraja) // PARTIDA TERMINADA
         {
+            if (esOnline) //ENVIAR PUNTOS
+            {
+                var puntos = new List<Dictionary<string, object>>
+                {
+                    new Dictionary<string, object>
+                    {
+                        { "puntos0", jugadores[0].puntos },
+                        { "puntos1", jugadores[1].puntos },
+                        { "puntos2", jugadores.Length == 4 ? jugadores[2].puntos : 0 },
+                        { "puntos3", jugadores.Length == 4 ? jugadores[3].puntos : 0 },
+                        { "lobby", webSocketClient.miLobby }
+                    },
+                };
+                webSocketClient.enviarFinPartida(puntos);
+            }
+
             m_FinPartida.style.visibility = Visibility.Visible;
             if (jugadores.Length == 2) m_FinPartida.text = "Ganador: Jugador " + ganador.ToString();
             else m_FinPartida.text = "Ganador: Equipo " + ganador.ToString();
@@ -576,17 +598,30 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Baraja las cartas y las reparte nuevamente a los jugadores.
     /// </summary>
-    void BarajarYRepartir()
+    /// <param name="baraja">
+    /// Baraja que se repatirá a los jugadores. Si es un string
+    /// vacío, se repartirá una baraja aleatoria.
+    /// </param>
+    public void BarajarYRepartir(string baraja = "")
     {
         arrastre = false;
         Baraja.RecogerCartas();
 
-        Baraja.Barajar();
+        if (baraja == "") Baraja.Barajar();
+        else Baraja.Barajar(baraja);
+
+        orden = new int[jugadores.Length];
+
+        for (int i = 0; i < jugadores.Length; i++)
+        {
+            orden[i] = (i + indexGanador) % jugadores.Length;
+        }
+
         for (int i = 0; i < jugadores.Length; i++)
         {
             for (int j = 0; j < 6; j++)
             {
-                jugadores[i].AnyadirCarta(Baraja.DarCarta());
+                jugadores[orden[i]].AnyadirCarta(Baraja.DarCarta());
             }
             jugadores[i].reset();
         }
@@ -595,14 +630,8 @@ public class GameManager : MonoBehaviour
         Baraja.AnyadirAlFinal(triunfo);
         triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
         triunfo.transform.rotation = Quaternion.Euler(0,0,90);
-
         TurnManager.Reset();
-
-        orden = new int[jugadores.Length];
-        for (int i = 0; i < jugadores.Length; i++)
-        {
-            orden[i] = (i + indexGanador) % jugadores.Length;
-        }
+        if (esOnline) TurnManager.Tick();
     }
 
     /// <summary>
