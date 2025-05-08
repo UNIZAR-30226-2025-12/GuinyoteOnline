@@ -166,8 +166,6 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
 async function enviarJugada(io, sala, timeout, carta, cantar, cambiarSiete) {
     const socketsEnSala = await io.in(sala.id).fetchSockets();
     const socketIds = socketsEnSala.map(s => s.id);
-    const totalClientes = sala.jugadores.length
-    console.log(`${totalClientes} jugadores`);
   
     const acks = new Set();
 
