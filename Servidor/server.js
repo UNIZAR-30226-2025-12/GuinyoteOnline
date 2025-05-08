@@ -915,7 +915,7 @@ io.on('connection', (socket) => {
     console.log(data);
     console.log(parsedInput);
     const { carta, cantar, cambiarSiete } = parsedInput;
-    io.to(data.lobby).emit("jugada", carta, cantar, cambiarSiete);
+    enviarInput(carta, cantar, cambiarSiete);
   });
 
   socket.on('fin-partida', ([data]) => {
