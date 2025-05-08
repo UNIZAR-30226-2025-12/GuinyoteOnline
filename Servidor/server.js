@@ -919,12 +919,12 @@ io.on('connection', (socket) => {
     io.to(data.lobby).emit("jugada", carta, cantar, cambiarSiete);
   });
 
-  socket.on('fin-partida', ({ puntos0, puntos1, puntos2, puntos3, lobby }) => {
-    guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
+  socket.on('fin-partida', (data) => {
+    console.log(data);
+    //guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
   });
 
-  socket.on('fin-ronda', (lobby) => {
-    console.log(lobby);
+  socket.on('fin-ronda', ({lobby}) => {
     gameManager.iniciarSegundaRonda(lobby);
   });
 
