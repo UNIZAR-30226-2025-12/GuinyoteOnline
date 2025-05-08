@@ -915,7 +915,7 @@ io.on('connection', (socket) => {
     console.log(data);
     console.log(parsedInput);
     const { carta, cantar, cambiarSiete } = parsedInput;
-    enviarInput(carta, cantar, cambiarSiete);
+    enviarInput(data.lobby, carta, cantar, cambiarSiete);
   });
 
   socket.on('fin-partida', ([data]) => {
