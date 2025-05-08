@@ -163,13 +163,16 @@ async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
     }
 }
 
-async function enviarJugada(io, sala, timeout, carta, cantar, cambiarSiete) {
+async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiarSiete) {
     const socketsEnSala = await io.in(sala.id).fetchSockets();
     const socketIds = socketsEnSala.map(s => s.id);
   
     const acks = new Set();
 
     let pending = new Set(socketIds);
+    pending.delete(idJugador);
+    console.log(socketIds);
+    console.log(pending);
 
     const sendToSockets = (targetSocketIds) => {
         targetSocketIds.forEach(id => {
@@ -191,7 +194,7 @@ async function enviarJugada(io, sala, timeout, carta, cantar, cambiarSiete) {
                 }
             }
         };
-        socket.on('ack', ackHandler);
+        if (socket.id != idJugador) socket.on('ack', ackHandler);
     });
 
     const retry = () => {
@@ -205,8 +208,8 @@ async function enviarJugada(io, sala, timeout, carta, cantar, cambiarSiete) {
     sendToSockets(Array.from(pending));
 }
 
-async function enviarInput(sala, carta, cantar, cambiarSiete) {
-    enviarJugada(io, sala, 500, carta, cantar, cambiarSiete);
+async function enviarInput(idJugador, sala, carta, cantar, cambiarSiete) {
+    enviarJugada(io, sala, idJugador, 500, carta, cantar, cambiarSiete);
 }
 
 module.exports = {

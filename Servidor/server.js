@@ -860,6 +860,7 @@ app.get("/partidas/historial/:userId", async (req, res) => {
 io.on('connection', (socket) => {
   console.log('Usuario conectado:', socket.id);
   let userId = null;
+  socket.emit('socket-id', socket.id);
 
   // Asociar usuario con socket
   socket.on('identificar', (data) => {
@@ -900,7 +901,7 @@ io.on('connection', (socket) => {
         console.error("No se pudo parsear el JSON recibido:", raw);
         return;
     }
-    if (!data || !data.input || !data.lobby) {
+    if (!data || !data.input || !data.lobby || !data.miId) {
       console.error("Faltan datos en el mensaje recibido:", data);
       return;
     }
@@ -915,7 +916,7 @@ io.on('connection', (socket) => {
     console.log(data);
     console.log(parsedInput);
     const { carta, cantar, cambiarSiete } = parsedInput;
-    enviarInput(data.lobby, carta, cantar, cambiarSiete);
+    enviarInput(data.miId, data.lobby, carta, cantar, cambiarSiete);
   });
 
   socket.on('fin-partida', ([data]) => {
