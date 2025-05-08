@@ -654,8 +654,7 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-// * DONE Documentación
-// ! NOT DONE Falta probar la nueva funcionalidad y documentar
+// * DONE Documentación y funcionalidad actual
 /**
  * POST /amigos/eliminarAmigo
  *
