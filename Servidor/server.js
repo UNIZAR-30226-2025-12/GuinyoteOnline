@@ -3,6 +3,8 @@ const cors = require("cors");
 const http = require('http');
 const socketIo = require('socket.io');
 const bcrypt = require('bcrypt');
+const { Mutex } = require('async-mutex');
+const mutex = new Mutex();
 const { iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
@@ -880,16 +882,21 @@ io.on('connection', (socket) => {
   });
 
   // Unirse a sala pública
-  socket.on('join-lobby', ({ lobbyId, playerId }) => {
+  socket.on('join-lobby', async ({ lobbyId, playerId }) => {
     socket.emit('hello', '¡Hola desde el servidor!');
     socket.join(lobbyId);
     socket.to(lobbyId).emit('player-joined', playerId);
     console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
     let lobby = findLobby(lobbyId);
-    console.log(lobby);
-    if (lobby.jugadores.length === lobby.maxPlayers && !lobby.iniciando) {
-      lobby.iniciado = true;
-      iniciarPartida(lobby);
+    console.log(lobby); 
+
+    if (lobby.jugadores.length === lobby.maxPlayers) {
+      await mutex.runExclusive(async () => {
+        if (lobby.iniciado === false) {
+          lobby.iniciado = true
+          await iniciarPartida(lobby);
+        }
+      }); 
     }
   });
 
