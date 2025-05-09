@@ -109,7 +109,12 @@ async function iniciarPartida(sala) {
         estado: sala.estado,
         fecha_inicio: new Date()
     });
-    await nuevaPartida.save();
+    try {
+        await nuevaPartida.save();
+    }
+    catch (error) {
+        console.error('Error al guardar la partida:', error);
+    }
 }
 
 async function iniciarSegundaRonda(lobby) {
