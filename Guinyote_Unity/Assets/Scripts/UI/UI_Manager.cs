@@ -382,7 +382,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicia el juego con la configuración especificada.
+    /// Actualiza las referencias de los elementos de la UI para la escena de inicio de partida.
     /// </summary>
     /// <param name="root">El UIDocument de la escena actual.</param>
     /// <param name="currentScene">La escena actual.</param>
@@ -391,6 +391,15 @@ public class UIManager : MonoBehaviour
     {
         boton_start = root.rootVisualElement.Q<Button>("Start");
         boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
+        if(currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2")
+        {
+            root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+        }
+        else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
+        {
+            root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+            //SACAR NOMBRES Y FOTOS DE PERFIL DEL RESTO DE LOS JUGADORES
+        }
     }
 
     /// <summary>

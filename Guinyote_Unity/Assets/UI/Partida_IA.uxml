@@ -1,4 +1,5 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=0398abbafa8c9f942bb8076f4efac0a8&amp;type=3#Style" />
     <engine:Label text="Partida IA" style="top: 10%; left: 40%; width: 85px; position: absolute; font-size: 30px;" />
     <engine:Button text="1 vs 1" name="1vs1" style="top: 40%; left: 25%; width: 167px; height: 86px; position: absolute; background-color: rgb(255, 255, 255);" />
     <engine:Button text="2 vs 2" name="2vs2" style="top: 40%; left: 55%; width: 167px; height: 86px; position: absolute; background-color: rgb(255, 255, 255);" />
