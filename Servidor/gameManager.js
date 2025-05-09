@@ -118,10 +118,18 @@ async function iniciarPartida(sala) {
 }
 
 async function iniciarSegundaRonda(lobby) {
-    const baraja = mezclarBaraja(crearBaraja());
-    let barajaString = barajaToString(baraja);
-    console.log(`emitiendo baraja a ${lobby}`);
-    io.to(lobby).emit("barajaSegundaRonda", barajaString);
+    io.to(lobby).emit("finRonda");
+    esperarMensajesDeTodos(io, sala, "ack", 15000)
+    .then(async (respuestas) => {
+        console.log('Todos respondieron', respuestas);
+        const baraja = mezclarBaraja(crearBaraja());
+        let barajaString = barajaToString(baraja);
+        console.log(`emitiendo baraja a ${lobby}`);
+        io.to(lobby).emit("barajaSegundaRonda", barajaString);
+    })
+    .catch((err) => {
+        console.error('Error esperando respuestas:', err);
+    });
 }
 
 async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
