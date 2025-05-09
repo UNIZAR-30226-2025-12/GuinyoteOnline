@@ -1,5 +1,5 @@
 import { useState } from "react";
-import '/src/styles/Carta.css'
+import '../styles/Carta.css'
 
 const traduccion = ["B", "C", "E", "O"];
 

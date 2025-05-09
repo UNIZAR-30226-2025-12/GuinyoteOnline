@@ -1,11 +1,13 @@
 import { useState } from "react";
 import React from 'react';
+import '/src/styles/Game.css';
 import Player from "../components/game/Player_Controller";
 import IA_Player from "../components/game/IA_Player";
 import Tapete from "../components/game/Tapete";
 import Baraja from "../components/game/Baraja";
 import Triunfo from "../components/game/Triunfo";
 import GameManager from "../components/game/GameManager";
+import { useUser } from "../context/UserContext";
 
 function Game() {
     const numJugadores = 4; // Número de jugadores
@@ -13,6 +15,8 @@ function Game() {
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
+
+    const {tapete} = useUser();
 
     const handleInit = () => {
         gameManager.Init();
@@ -66,6 +70,12 @@ function Game() {
 
     return (
         <div className="juego">
+             <div
+                className="fondo-dinamico"
+                style={{
+                backgroundImage: `url(/src/assets/tapetes/${tapete}.jpg)`,
+                }}
+            />
             {!iniciado ? (
                 <button className="botonInit" onClick={handleInit}>Init</button>
             ) : (
