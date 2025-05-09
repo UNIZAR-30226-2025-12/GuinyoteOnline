@@ -321,17 +321,16 @@ public class GameManager : MonoBehaviour
         if (!cartasMoviendo) return;
         for (int i = 0; i < jugadores.Length; i++)
         {
-            if (cartasJugadas[i] != null && jugadores[i] != null && jugadores[i].jugada != null)
+            if (cartasJugadas[i] != null && jugadores[i] != null)
             {
-                cartasJugadas[i].transform.position = Vector3.MoveTowards(jugadores[i].jugada.transform.position, ubicacionGanador, 15f * Time.deltaTime);
-                if (cartasJugadas[i].transform.position == ubicacionGanador)
+                if (jugadores[i].jugada != null) cartasJugadas[i].transform.position = Vector3.MoveTowards(jugadores[i].jugada.transform.position, ubicacionGanador, 15f * Time.deltaTime);
+                
+                if (cartasJugadas[i].transform.position == ubicacionGanador || jugadores[i].jugada == null)
                 {
                     Destroy(cartasJugadas[i].gameObject);
                     jugadores[i].jugada = null;
                 }
             }
-            else if (cartasJugadas[i] != null && jugadores[i] == null) Debug.Log("jugadores i null");
-            else if (cartasJugadas[i] != null && jugadores[i].jugada == null) Debug.Log("jugadores i jugada null");
         }
         
         bool moviendo = false;
@@ -349,7 +348,11 @@ public class GameManager : MonoBehaviour
             if (finRonda && segundaBaraja)
             {
                 if(!esOnline) BarajarYRepartir();
-                else webSocketClient.enviarFinRonda();
+                else
+                {
+                    webSocketClient.enviarFinRonda();
+                    webSocketClient.ackFinRonda = true;
+                }
                 finRonda = false;
             }
             if (!finRonda) TurnManager.Tick();
@@ -401,6 +404,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Evaluar()
     {
+
         cartasJugadas[orden.Length-1] = jugadores[orden.Length-1].jugada;
         indexGanador = orden[0];
         int maxPuntos = jugadores[orden[0]].jugada.Puntos;
@@ -408,11 +412,20 @@ public class GameManager : MonoBehaviour
         bool triunfo = (jugadores[orden[0]].jugada.Palo == this.triunfo.Palo);
         int paloJugado = jugadores[orden[0]].jugada.Palo;
 
+        int aux = 0;
+        
         for (int i = 1; i < jugadores.Length; i++)
         {
-            int aux = jugadores[orden[i]].jugada.Puntos;
-            sumaPuntos += aux;
-            cartasJugadas[orden[i]] = jugadores[orden[i]].jugada;
+            try
+            {
+                aux = jugadores[orden[i]].jugada.Puntos;
+                sumaPuntos += aux;
+                cartasJugadas[orden[i]] = jugadores[orden[i]].jugada;
+            }
+            catch (NullReferenceException ex)
+            {
+                Debug.LogError("Referencia nula detectada 2: " + ex.Message);
+            }
             if (triunfo)
             {
                 if (cartasJugadas[orden[i]].Palo == this.triunfo.Palo)
@@ -452,6 +465,7 @@ public class GameManager : MonoBehaviour
         }
 
         // FINALIZACIÓN DE TURNO
+
         ubicacionGanador = jugadores[indexGanador].transform.position;
         jugadores[indexGanador].ganador = true;
         jugadores[(indexGanador + 1) % jugadores.Length].ganador = false;
@@ -462,6 +476,7 @@ public class GameManager : MonoBehaviour
         }
         cartasMoviendo = true;
         jugadores[indexGanador].puntos += sumaPuntos;
+
         for (int i = 0; i < jugadores.Length; i++)
         {
             orden[i] = (i + indexGanador) % jugadores.Length;

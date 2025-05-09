@@ -13,6 +13,7 @@ namespace WebSocketClient {
     {
         public string input;
         public string lobby;
+        public string miId;
     }
     public class wsClient
     {
@@ -23,6 +24,8 @@ namespace WebSocketClient {
         public event Action<input> OnInputReceived;
         public string miLobby;
         public int miId;
+        public string socketId;
+        public bool ackFinRonda = false;
         
         public async Task Connect(string url)
         {
@@ -43,6 +46,12 @@ namespace WebSocketClient {
                 Debug.Log("Mensaje del servidor: " + response.GetValue<string>());
             });
 
+            ws.On("socket-id", (response) =>
+            {
+                socketId = response.GetValue<string>().ToString();
+                Debug.Log("Mi socket ID es: " + socketId);
+            });
+
             ws.On("iniciarPartida", (response) => {
                 Debug.Log("iniciando partida");
                 UIManager.ChangeScene("Juego");
@@ -57,6 +66,17 @@ namespace WebSocketClient {
                 {
                     GameManager.Instance.iniciarBaraja(baraja);
                 });
+            });
+
+            ws.On("finRonda", async (response) => {
+                Debug.Log("fin ronda recibido");
+                while (!ackFinRonda)
+                {
+                    await Task.Delay(100);
+                }
+                Debug.Log("¡La variable 'ackFinRonda' ahora es true!");
+                enviarACK();
+                ackFinRonda = false;
             });
 
             ws.On("barajaSegundaRonda", (response) => {
@@ -133,6 +153,7 @@ namespace WebSocketClient {
 
         public async void enviarFinPartida(List<Dictionary<string, object>> msg)
         {
+            if (miId != 0) return;
             Debug.Log("enviando fin partida");
             await ws.EmitAsync("fin-partida", msg);
         }
@@ -158,6 +179,7 @@ namespace WebSocketClient {
             JugadaWrapper wrapper = new JugadaWrapper();
             wrapper.input = inputJson;
             wrapper.lobby = miLobby;
+            wrapper.miId = socketId;
 
             string wrapperJson = JsonUtility.ToJson(wrapper);
             await ws.EmitAsync("realizarJugada", wrapperJson);

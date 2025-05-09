@@ -25,6 +25,7 @@ public class Online_Player : Player
             input = message;
             turno();
             resetInput();
+            ws.enviarACK();
         }
     }
 
