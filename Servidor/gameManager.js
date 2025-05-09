@@ -119,7 +119,7 @@ async function iniciarPartida(sala) {
 
 async function iniciarSegundaRonda(lobby) {
     io.to(lobby).emit("finRonda");
-    esperarMensajesDeTodos(io, sala, "ack", 15000)
+    esperarMensajesDeTodos(io, lobby, "ack", 15000)
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
         const baraja = mezclarBaraja(crearBaraja());
