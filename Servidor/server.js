@@ -890,7 +890,7 @@ io.on('connection', (socket) => {
     let lobby = findLobby(lobbyId);
     console.log(lobby); 
 
-    if (io.sockets.adapter.rooms.get(sala.id)?.size === lobby.maxPlayers) {
+    if (io.sockets.adapter.rooms.get(lobbyId)?.size === lobby.maxPlayers) {
       await mutex.runExclusive(async () => {
         if (lobby.iniciado === false) {
           lobby.iniciado = true
