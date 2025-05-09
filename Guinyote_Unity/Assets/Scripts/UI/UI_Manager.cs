@@ -104,6 +104,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnRegistroUsuario += RegistroUsuario;
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
+        Consultas.OnEliminarAmistad += () => StartCoroutine(Consultas.GetAmigosUsuario(id));
         Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
         Consultas.OnAceptarSolicitudAmistad += () => {
             StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
@@ -841,6 +842,10 @@ public class UIManager : MonoBehaviour
         {
             VisualElement amigoElement = amigoAsset.CloneTree();
             amigoElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(amigo.foto_perfil));
+            amigoElement.Q<Button>("Delete_Button").RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Eliminar amigo: " + amigo.nombre); 
+                StartCoroutine(Consultas.EliminarAmigo(id, amigo.correo));
+            });
             Label nombreAmigoLabel = amigoElement.Q<Label>("Nombre_Amigo");
             nombreAmigoLabel.text = amigo.nombre;
             friendsScroll.Add(amigoElement);
