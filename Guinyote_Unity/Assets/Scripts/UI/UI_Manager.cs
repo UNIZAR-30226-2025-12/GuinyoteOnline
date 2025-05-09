@@ -398,6 +398,11 @@ public class UIManager : MonoBehaviour
         else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+
+            Consultas.OnAmigosConsultados += UpdateInvitarAmigos;
+            Consultas.OnAmigosConsultados -= UpdateAmigos;
+            StartCoroutine(Consultas.GetAmigosUsuario(id));
+            
             //SACAR NOMBRES Y FOTOS DE PERFIL DEL RESTO DE LOS JUGADORES
         }
     }
@@ -875,6 +880,37 @@ public class UIManager : MonoBehaviour
                 StartCoroutine(Consultas.RechazarSolicitudAmistad(id, solicitud.correo));
             });
             friendsScroll.Add(solicitudElement);
+        }
+    }
+
+    void UpdateInvitarAmigos(Usuario[] solicitudes)
+    {
+
+        Consultas.OnAmigosConsultados -= UpdateInvitarAmigos;
+        Consultas.OnAmigosConsultados += UpdateAmigos;
+
+        var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+
+        // Obtener el ScrollView donde se mostrarán los amigos
+        ScrollView friendsScroll = root.rootVisualElement.Q<ScrollView>("listaAmigos");
+        friendsScroll.Clear(); // Limpiar el contenido actual del ScrollView
+
+        // Cargar el recurso visual para representar a una invitacion
+        VisualTreeAsset InvitaciónAsset = Resources.Load<VisualTreeAsset>("InvitarAmigo_elemento");
+
+        // Iterar sobre la lista de amigos y añadirlos al ScrollView
+        foreach (Usuario solicitud in solicitudes)
+        {
+
+            VisualElement InvitacionElement = InvitaciónAsset.CloneTree();
+            InvitacionElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(solicitud.foto_perfil));
+            Label nombreUsuarioLabel = InvitacionElement.Q<Label>("Nombre_usuario");
+            nombreUsuarioLabel.text = solicitud.nombre;
+            Button aceptarButton = InvitacionElement.Q<Button>("accept_Button");
+            aceptarButton.RegisterCallback<ClickEvent>(ev => { 
+                //Enviar invitación a la sala
+            });
+            friendsScroll.Add(InvitacionElement);
         }
     }
 

@@ -26,7 +26,7 @@
             <engine:Label text="Contraseña" style="position: absolute; top: 188px; left: 70px;" />
             <engine:TextField name="user_Field" style="position: absolute; top: 142px; left: 68px; width: 221px;" />
             <engine:TextField name="Password_Field" password="true" style="position: absolute; top: 230px; left: 70px; width: 221px;" />
-            <engine:Label name="error_Label" style="position: absolute; top: 281px; left: 72px; height: 17px; width: 329px; display: none;" />
+            <engine:Label name="error_Label" style="position: absolute; top: 282px; left: 70px; height: 17px; width: 329px; display: flex;" />
         </engine:VisualElement>
     </engine:Tab>
     <engine:Tab focusable="false" closeable="false" name="Register_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
