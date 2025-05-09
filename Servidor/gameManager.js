@@ -86,7 +86,8 @@ async function iniciarPartida(sala) {
             const correoJugador = sala.jugadores[index];
             indexJugadores.push({
                 correo: correoJugador,
-                index: index
+                index: index,
+                socket: socket
             });
             socket.emit("primero", primero, index);
         })

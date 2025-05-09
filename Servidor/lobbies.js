@@ -24,6 +24,18 @@ function findLobby(lobbyId) {
   );
 }
 
+function findLobbyBySocketId(socketId) {
+  return lobbies.find(
+    (lobby) => lobby.estado === 'en curso' && lobby.jugadores.some(jugador => jugador.socket === socketId)
+  );
+}
+
+function findLobbyByUserName(user) {
+  return lobbies.find(
+    (lobby) => lobby.estado === 'en curso' && lobby.jugadores.some(jugador => jugador.correo === user)
+  );
+}
+
 function findAvailableLobby(maxPlayers) {
   return lobbies.find(
     (lobby) => lobby.maxPlayers === maxPlayers && lobby.jugadores.length < maxPlayers && lobby.codigoAcceso === '0'
@@ -60,6 +72,8 @@ function autoJoinOrCreate(playerId, maxPlayers) {
 
 module.exports = {
   findLobby,
+  findLobbyBySocketId,
+  findLobbyByUserName,
   createLobby,
   joinLobby,
   joinPrivateLobby,
