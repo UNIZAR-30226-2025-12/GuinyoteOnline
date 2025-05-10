@@ -23,14 +23,18 @@ const Lobby = ({ pairs }) => {
 
     const maxPlayers = !pairs ? 2 : 4;
 
+    const handleIniciarPartida = () => {
+        console.log("Recibido 'iniciarPartida' del servidor");
+        socket.emit("ack");
+    };
+
     useEffect(() => {
         if (!socket) return;
 
-        const handleIniciarPartida = () => {
-            console.log("Recibido 'iniciarPartida' del servidor");
-            socket.emit("ack");
-        };
-
+        console.log("Borrando todos los listeners de iniciarPartida")
+        socket.off("iniciarPartida");
+        // Listen for the "iniciarPartida" event from the server
+        console.log("Escuchando 'iniciarPartida' del servidor");
         socket.on("iniciarPartida", handleIniciarPartida);
 
         return () => {
