@@ -862,7 +862,7 @@ io.on('connection', (socket) => {
   socket.emit('socket-id', socket.id);
 
   //LLAMAR AL HACER LOGIN EN EL CLIENTE
-  socket.on('buscarPartidasActivas', async ({playerId, socketId}) => {
+  socket.on('buscarPartidasActivas', async ([{playerId, socketId}]) => {
     console.log(playerId);
     const partidaActiva = findLobbyByUserName(playerId);
     if (partidaActiva) {
