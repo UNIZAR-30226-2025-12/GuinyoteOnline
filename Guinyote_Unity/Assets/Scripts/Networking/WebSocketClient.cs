@@ -24,7 +24,7 @@ namespace WebSocketClient {
         public event Action<input> OnInputReceived;
         public string miLobby;
         public int miId;
-        public string socketId;
+        public string socketId = "";
         public bool ackFinRonda = false;
         
         public async Task Connect(string url)
@@ -114,6 +114,27 @@ namespace WebSocketClient {
                 }); 
             });
 
+            ws.On("partidaAbandonada", (response) => {
+                Debug.Log("partida abandonada");
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    GameManager.Instance.FinalizarPorDesconexion();
+                });
+            });
+
+            ws.On("desconexion", (response) => {
+                Debug.Log("Esperando a que todos los jugadores se conecten");
+                //MOSTRAR MENSAJE EN PANTALLA
+            });
+
+            ws.On("datosPartida", (response) => {
+                Debug.Log("datos de partida recibidos");
+                GameManager.numJugadores = response.GetValue<int>(0);
+                GameManager.esOnline = true;
+                miId = response.GetValue<int>(1);
+                enviarACK();
+            });
+
             ws.OnConnected += async (sender, e) =>
             {
                 Debug.Log("Conectado al servidor");
@@ -183,6 +204,29 @@ namespace WebSocketClient {
 
             string wrapperJson = JsonUtility.ToJson(wrapper);
             await ws.EmitAsync("realizarJugada", wrapperJson);
+        }
+
+        public async void buscarPartidasActivas(string correo)
+        {
+            Debug.Log("buscando partidas anteriores");
+            Debug.Log(correo);
+            Debug.Log(ws);
+            Debug.Log(socketId);
+            while (socketId == "")
+            {
+                await Task.Delay(100);
+            }
+            var data = new Dictionary<string, object>
+                {
+                    { "playerId", correo },
+                    { "socketId", socketId }
+                };
+            await ws.EmitAsync("buscarPartidasActivas", data);
+        }
+
+        public bool isConnected()
+        {
+            return (ws == null) ? false : ws.Connected;
         }
 
         private void HandleServerMessage(string message)

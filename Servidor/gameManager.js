@@ -83,8 +83,16 @@ async function reestablecerEstado(playerId, sala, socket) {
         socket.join(sala.id);
         socket.to(sala.id).emit('player-joined', playerId);
         console.log(`Jugador ${playerId} se unió al lobby ${sala.id}`);
+        console.log(`emitiendo datos de partida`);
+        socket.emit(`datosPartida`, sala.maxPlayers, jugador.index);
+        try {
+            esperarAck(jugador.socket);
+        }
+        catch (err) {
+            console.log(`ack no recibido: ${err}`);
+        }
         console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
-        jugador.socket.emit("iniciarPartida", 'iniciarPartida');
+        socket.emit("iniciarPartida", 'iniciarPartida');
         try {
             esperarAck(jugador.socket);
         }

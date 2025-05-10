@@ -210,6 +210,7 @@ public class UIManager : MonoBehaviour
                 Consultas.OnInicioSesion += (id, name, profilePicture, tapete, carta) => {
                     isLogged = true;
                     tab_login.style.display = DisplayStyle.None;
+                    BuscarPartidasActivas(id);
                     ChangeScene("Partida_Online");
                 };
             }
@@ -399,11 +400,11 @@ public class UIManager : MonoBehaviour
         else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
-
+            
             Consultas.OnAmigosConsultados += UpdateInvitarAmigos;
             Consultas.OnAmigosConsultados -= UpdateAmigos;
             StartCoroutine(Consultas.GetAmigosUsuario(id));
-            
+
             //SACAR NOMBRES Y FOTOS DE PERFIL DEL RESTO DE LOS JUGADORES
         }
     }
@@ -811,6 +812,22 @@ public class UIManager : MonoBehaviour
 
 
         tab_login.style.display = DisplayStyle.None;
+
+        BuscarPartidasActivas(id);
+    }
+
+    async Task BuscarPartidasActivas(String id)
+    {
+        Debug.Log(id);
+        if (webSocketClient == null)
+        {
+            webSocketClient = new wsClient();
+        }
+        if (!webSocketClient.isConnected())
+        {
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
+        webSocketClient.buscarPartidasActivas(id);
     }
 
     /// <summary>
@@ -919,10 +936,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
+
     async void JoinRoom(Lobby lobby, string idUsuario)
     {
         // Configurar WebSocket para partidas online
-        await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        if (!webSocketClient.isConnected())
+        {
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
     }
