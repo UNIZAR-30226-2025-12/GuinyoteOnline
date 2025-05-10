@@ -26,7 +26,7 @@ function findLobby(lobbyId) {
 
 function findLobbyBySocketId(socket) {
   return lobbies.find(
-    (lobby) => lobby.estado === 'en curso' && lobby.jugadores.some(jugador => jugador.socket.id === socketId)
+    (lobby) => lobby.estado === 'en curso' && lobby.jugadores.some(jugador => jugador.socket.id === socket.id)
   );
 }
 
