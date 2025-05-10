@@ -75,12 +75,13 @@ function esperarAck(socket, timeoutMs = 10000) {
   });
 }
 
-async function reestablecerEstado(playerId, sala) {
+async function reestablecerEstado(playerId, sala, socket) {
     const jugador = sala.jugadores.find(j => j.correo === playerId);
     if (jugador) {
-        jugador.socket.emit('hello', '¡Hola desde el servidor!');
-        jugador.socket.join(sala.id);
-        jugador.socket.to(sala.id).emit('player-joined', playerId);
+        jugador.socket = socket;
+        socket.emit('hello', '¡Hola desde el servidor!');
+        socket.join(sala.id);
+        socket.to(sala.id).emit('player-joined', playerId);
         console.log(`Jugador ${playerId} se unió al lobby ${sala.id}`);
         console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
         jugador.socket.emit("iniciarPartida", 'iniciarPartida');
