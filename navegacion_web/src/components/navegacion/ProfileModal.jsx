@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '/src/styles/ProfileModal.css';
-import ProfilePic from './ProfilePic';
 import PicChangeModal from './PicChangeModal';
 import { useUser } from '../../context/UserContext';
 import UsernameChangeModal from './UsernameChangeModal';
