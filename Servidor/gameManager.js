@@ -81,7 +81,7 @@ async function reestablecerEstado(playerId, sala) {
         jugador.socket.emit('hello', '¡Hola desde el servidor!');
         jugador.socket.join(sala.id);
         jugador.socket.to(sala.id).emit('player-joined', playerId);
-        console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
+        console.log(`Jugador ${playerId} se unió al lobby ${sala.id}`);
         console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
         jugador.socket.emit("iniciarPartida", 'iniciarPartida');
         try {
