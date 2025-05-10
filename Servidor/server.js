@@ -865,12 +865,17 @@ io.on('connection', (socket) => {
   socket.on('buscarPartidasActivas', async ({playerId}) => {
     const partidaActiva = findLobbyBySocketId(playerId);
     if (partidaActiva) {
+      console.log(`partida ${partidaActiva.id} encontrada`);
       const timeout = timeoutsReconexion.get(playerId);
       if (timeout) {
         clearTimeout(timeout);
         timeoutsReconexion.delete(playerId);
+        console.log(`timeout eliminado`);
       }
       joinLobby(partidaActiva.id, playerId);
+    }
+    else {
+      console.log(`el jugador ${playerId} no tenía partidas activas`);
     }
   })
 
