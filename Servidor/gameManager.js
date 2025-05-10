@@ -66,6 +66,7 @@ function esperarAck(socket, timeoutMs = 10000) {
     }, timeoutMs);
 
     function onAck(data) {
+      console.log("ack recibido");
       clearTimeout(timeout);
       resolve(data);
     }
@@ -79,8 +80,7 @@ async function reestablecerEstado(playerId, sala) {
     if (jugador) {
         io.to(jugador.socket.id).emit("iniciarPartida", 'iniciarPartida');
         try {
-            esperarAck(jugador.socket.id);
-            console.log("ack recibido");
+            esperarAck(jugador.socket);
         }
         catch (err) {
             console.log(`ack no recibido: ${err}`);
