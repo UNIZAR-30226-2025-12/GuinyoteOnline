@@ -1,8 +1,38 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LobbySlots from './LobbySlots';
 import { useUser } from '../../context/UserContext';
+import usePost from '../../customHooks/usePost';
+import { io } from 'socket.io-client';
 
 const Lobby = ({ pairs }) => {
+
+    const { postData } = usePost('https://guinyoteonline-hkio.onrender.com') ;
+    
+    const socket = io('wss://guinyoteonline-hkio.onrender.com');
+
+    /*useEffect(() => {
+        // Mensaje de bienvenida
+        socket.on('hello', (mensaje) => {
+          console.log('Servidor dice:', mensaje);
+        });
+    
+        // Otro jugador se unió al lobby
+        socket.on('player-joined', (playerId) => {
+          console.log('Jugador se unió:', playerId);
+        });
+    
+        // La partida ha comenzado
+        socket.on('inicioPartida', (partida) => {
+          console.log('¡La partida comenzó!', partida);
+        });
+    
+        return () => {
+          socket.off('hello');
+          socket.off('player-joined');
+          socket.off('inicioPartida');
+        };
+      }, []);*/
+
     const [matchmaking, setMatchmaking] = useState(false);
     const [counter, setCounter] = useState("0:00");
     const timerRef = useRef(null); // ← store timer ID
@@ -15,8 +45,15 @@ const Lobby = ({ pairs }) => {
     ]);
 
     const maxPlayers = !pairs ? 2 : 4;
+
+    const unirseAlLobby = (lobbyId, playerId) => {
+        socket.emit('join-lobby', {
+          lobbyId,
+          playerId,
+        });
+      };
         
-    const startMatchmaking = () => {
+    const startMatchmaking = async () => {
         if (timerRef.current) return; // avoid multiple intervals
         setMatchmaking(true);
         const startTime = Date.now();
@@ -27,6 +64,10 @@ const Lobby = ({ pairs }) => {
             const seconds = elapsedTime % 60;
             setCounter(`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`);
         }, 1000);
+
+        const response  = await postData({ playerId: mail, maxPlayers: pairs ? '2v2' : '1v1' }, '/salas/matchmake');
+
+        unirseAlLobby(response.id, mail) ;
     };
 
     const stopMatchmaking = () => {
