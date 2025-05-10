@@ -862,7 +862,8 @@ io.on('connection', (socket) => {
   socket.emit('socket-id', socket.id);
 
   //LLAMAR AL HACER LOGIN EN EL CLIENTE
-  socket.on('buscarPartidasActivas', async ({playerId}) => {
+  socket.on('buscarPartidasActivas', async (playerId) => {
+    console.log(playerId);
     const partidaActiva = findLobbyBySocketId(playerId);
     if (partidaActiva) {
       console.log(`partida ${partidaActiva.id} encontrada`);
