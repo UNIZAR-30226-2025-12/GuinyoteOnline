@@ -58,20 +58,20 @@ async function esperarMensajesDeTodos(io, sala, eventoEsperado, timeout) {
     });
   }
 
-function esperarAck(socket, timeoutMs = 10000) {
+function esperarEvento(evento, socket, timeoutMs = 10000) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
-      socket.removeListener('ack', onAck);
-      reject(new Error('Timeout esperando ack'));
+      socket.removeListener(evento, onEvent);
+      reject(new Error('Timeout esperando evento'));
     }, timeoutMs);
 
-    function onAck(data) {
-      console.log("ack recibido");
+    function onEvent(data) {
+      console.log("evento recibido");
       clearTimeout(timeout);
       resolve(data);
     }
 
-    socket.once('ack', onAck);
+    socket.once(evento, onEvento);
   });
 }
 
@@ -86,7 +86,7 @@ async function reestablecerEstado(playerId, sala, socket) {
         console.log(`emitiendo datos de partida`);
         socket.emit(`datosPartida`, sala.maxPlayers, jugador.index);
         try {
-            esperarAck(jugador.socket);
+            esperarEvento('ack', jugador.socket);
         }
         catch (err) {
             console.log(`ack no recibido: ${err}`);
@@ -94,12 +94,39 @@ async function reestablecerEstado(playerId, sala, socket) {
         console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
         socket.emit("iniciarPartida", 'iniciarPartida');
         try {
-            esperarAck(jugador.socket);
+            esperarEvento('ack', jugador.socket);
         }
         catch (err) {
             console.log(`ack no recibido: ${err}`);
         }
         //RECUPERAR Y ENVIARLE AL CLIENTE LOS DATOS DE LA PARTIDA
+        let socket2 = null;
+        const otrosJugadores = sala.jugadores.filter(j => j.correo !== playerId);
+        for (const jugador of otrosJugadores) {
+            const posibleSocket = io.sockets.sockets.get(jugador.socket.id);
+            if (posibleSocket && posibleSocket.connected) {
+                socket2 = posibleSocket;
+                break;
+            }
+        }
+        
+        //Obtener baraja
+        socket2.emit('pedirBaraja');
+        baraja = esperarEvento('barajaReconexion', socket2);
+
+        //Obtener puntos
+        socket2.emit('pedirPuntos');
+        puntos = esperarEvento('puntosReconexion', socket2);
+
+        //Obtener manos
+        socket2.emit('pedirManos');
+        manos = esperarEvento('manosReconexion', socket2);
+
+        //Obtener cartas en la mesa
+        socket2.emit('pedirJugadas');
+        jugadas = esperarEvento('jugadasReconexion', socket2);
+
+        socket.emit("reestablecer", baraja, puntos, manos, jugadas);
     }
 }
 
@@ -136,7 +163,7 @@ async function iniciarPartida(sala) {
             });
             socket.emit("primero", primero, index);
         })
-        sala.jugadores = indexJugadores; //PARA GESTIONAR ORDEN DE JUGADORES EN RECONEXIONES (NO SE SI ES NECESARIO)
+        sala.jugadores = indexJugadores; //PARA GESTIONAR ORDEN DE JUGADORES EN RECONEXIONES
     })
     .catch((err) => {
         console.error('Error esperando respuestas:', err);
