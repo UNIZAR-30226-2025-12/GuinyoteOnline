@@ -864,7 +864,7 @@ io.on('connection', (socket) => {
   //LLAMAR AL HACER LOGIN EN EL CLIENTE
   socket.on('buscarPartidasActivas', async (playerId) => {
     console.log(playerId);
-    const partidaActiva = findLobbyBySocketId(playerId);
+    const partidaActiva = findLobbyByUserName(playerId);
     if (partidaActiva) {
       console.log(`partida ${partidaActiva.id} encontrada`);
       const timeout = timeoutsReconexion.get(playerId);
