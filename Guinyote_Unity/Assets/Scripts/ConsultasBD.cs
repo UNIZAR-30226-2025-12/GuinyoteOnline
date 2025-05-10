@@ -109,6 +109,11 @@ namespace ConsultasBD
         public static event Action OnErrorEnviarSolicitudAmistad;
 
         /// <summary>
+        /// Evento que se activa al eliminar una amistad.
+        /// </summary>
+        public static event Action OnEliminarAmistad;
+
+        /// <summary>
         /// Evento que se activa al aceptar una solicitud de amistad.
         /// </summary>
         public static event Action OnAceptarSolicitudAmistad;
@@ -531,6 +536,32 @@ namespace ConsultasBD
                 OnAceptarSolicitudAmistad?.Invoke();
             }
         }
+
+        /// <summary>
+        /// Elimina una amistad con los datos proporcionados.
+        /// </summary>
+        /// <param name="idEliminador">El ID del usuario que solicitó la eliminación.</param>
+        /// <param name="idEliminado">El ID del usuario que se elimina.</param>
+        /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
+        public static IEnumerator EliminarAmigo(string idEliminador, string idEliminado)
+        {
+            Debug.Log("Aceptando solicitud de amistad...");
+            WWWForm form = new WWWForm();
+            form.AddField("idEliminador", idEliminador);
+            form.AddField("idEliminado", idEliminado);
+            UnityWebRequest www = UnityWebRequest.Post(address + "/amigos/eliminarAmigo/", form);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("error: " + www.error);
+            }
+            else
+            {
+                OnEliminarAmistad?.Invoke();
+            }
+        }
+
 
         /// <summary>
         /// Acepta una solicitud de amistad con los datos proporcionados.

@@ -8,6 +8,7 @@ import UsernameChangeModal from './UsernameChangeModal';
 import SignOutButton from './buttons/SignOutButton'
 import ConfirmLogoutModal from './ConfirmLogoutModal';
 import TapeteChangeModal from './TapeteChangeModal';
+import CartasChangeModal from './CartasChangeModal';
 
 const avataresUrl = '/src/assets/avatares/';
 
@@ -17,6 +18,7 @@ function ProfileModal() {
   const [showUsernameChangeModal,setShowUsernameChangeModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showTapeteChangeModal, setShowTapeteChangeModal] = useState(false);
+  const [showCartasChangeModal, setShowCartasChangeModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -84,6 +86,14 @@ function ProfileModal() {
   const handleTapeteChangeModalClose = () => {
     setShowTapeteChangeModal(false); 
   };
+
+  const handleCartasChangeModalOpen = () => {
+    setShowCartasChangeModal(true); 
+  };
+
+  const handleCartasChangeModalClose = () => {
+    setShowCartasChangeModal(false); 
+  };
       
   return (
     <div className="profile-modal">
@@ -109,12 +119,13 @@ function ProfileModal() {
 
       <div className="customization-section">
         <div className="customization-box" onClick={handleTapeteChangeModalOpen}><b>Tapete</b><br /> Pulsar para cambiar</div>
-        <div className="customization-box"><b>Parte trasera cartas</b><br /> Pulsar para cambiar</div>
+        <div className="customization-box" onClick={handleCartasChangeModalOpen}><b>Parte trasera cartas</b><br /> Pulsar para cambiar</div>
       </div>
 
       <SignOutButton className="logout-button" onClick={handleConfirmLogoutModalOpen} />
       <ConfirmLogoutModal show={showLogoutModal} onConfirm={handleSignOut} onCancel={handleConfirmLogoutModalClose}/>
       <TapeteChangeModal show={showTapeteChangeModal} handleClose={handleTapeteChangeModalClose} />
+      <CartasChangeModal show={showCartasChangeModal} handleClose={handleCartasChangeModalClose} />
     </div>
   );
 }
