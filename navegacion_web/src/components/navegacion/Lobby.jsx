@@ -2,36 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import LobbySlots from './LobbySlots';
 import { useUser } from '../../context/UserContext';
 import usePost from '../../customHooks/usePost';
-import { io } from 'socket.io-client';
+import { useSocket } from '../../context/SocketContext';
 
 const Lobby = ({ pairs }) => {
 
     const { postData } = usePost('https://guinyoteonline-hkio.onrender.com') ;
     
-    const socket = io('wss://guinyoteonline-hkio.onrender.com');
-
-    /*useEffect(() => {
-        // Mensaje de bienvenida
-        socket.on('hello', (mensaje) => {
-          console.log('Servidor dice:', mensaje);
-        });
-    
-        // Otro jugador se unió al lobby
-        socket.on('player-joined', (playerId) => {
-          console.log('Jugador se unió:', playerId);
-        });
-    
-        // La partida ha comenzado
-        socket.on('inicioPartida', (partida) => {
-          console.log('¡La partida comenzó!', partida);
-        });
-    
-        return () => {
-          socket.off('hello');
-          socket.off('player-joined');
-          socket.off('inicioPartida');
-        };
-      }, []);*/
+    const socket = useSocket();
 
     const [matchmaking, setMatchmaking] = useState(false);
     const [counter, setCounter] = useState("0:00");
@@ -46,12 +23,33 @@ const Lobby = ({ pairs }) => {
 
     const maxPlayers = !pairs ? 2 : 4;
 
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleIniciarPartida = () => {
+            console.log("Recibido 'iniciarPartida' del servidor");
+            socket.emit("ack");
+        };
+
+        socket.on("iniciarPartida", handleIniciarPartida);
+
+        return () => {
+            socket.off("iniciarPartida", handleIniciarPartida);
+        };
+    }, [socket]);
+
+
     const unirseAlLobby = (lobbyId, playerId) => {
+        if (!socket) {
+            console.warn("Socket not connected");
+            return;
+        }
+
         socket.emit('join-lobby', {
-          lobbyId,
-          playerId,
+            lobbyId,
+            playerId,
         });
-      };
+    };
         
     const startMatchmaking = async () => {
         if (timerRef.current) return; // avoid multiple intervals
@@ -67,7 +65,7 @@ const Lobby = ({ pairs }) => {
 
         const response  = await postData({ playerId: mail, maxPlayers: pairs ? '2v2' : '1v1' }, '/salas/matchmake');
 
-        unirseAlLobby(response.id, mail) ;
+        unirseAlLobby(response.responseData.id, mail) ;
     };
 
     const stopMatchmaking = () => {
@@ -93,10 +91,6 @@ const Lobby = ({ pairs }) => {
         auxUsers[index] = { nombre: username, email: mail, foto_perfil: profilePic };
         // update the state
         setUsers(auxUsers);
-
-        //send change data to server
-        // postData('/api/lobby', { user: users[index] })
-
     }
 
     return (
