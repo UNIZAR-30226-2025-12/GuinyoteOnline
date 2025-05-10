@@ -78,7 +78,8 @@ function esperarAck(socket, timeoutMs = 10000) {
 async function reestablecerEstado(playerId, sala) {
     const jugador = sala.jugadores.find(j => j.correo === playerId);
     if (jugador) {
-        io.to(jugador.socket.id).emit("iniciarPartida", 'iniciarPartida');
+        console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
+        jugador.socket.emit("iniciarPartida", 'iniciarPartida');
         try {
             esperarAck(jugador.socket);
         }
