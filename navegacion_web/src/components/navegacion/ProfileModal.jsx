@@ -9,6 +9,7 @@ import SignOutButton from './buttons/SignOutButton'
 import ConfirmLogoutModal from './ConfirmLogoutModal';
 import TapeteChangeModal from './TapeteChangeModal';
 import CartasChangeModal from './CartasChangeModal';
+import PasswordChangeModal from './PasswordChangeModal';
 
 const avataresUrl = '/src/assets/avatares/';
 
@@ -19,6 +20,7 @@ function ProfileModal() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showTapeteChangeModal, setShowTapeteChangeModal] = useState(false);
   const [showCartasChangeModal, setShowCartasChangeModal] = useState(false);
+  const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -94,39 +96,57 @@ function ProfileModal() {
   const handleCartasChangeModalClose = () => {
     setShowCartasChangeModal(false); 
   };
+
+  const handlePasswordChangeModalOpen = () => {
+    setShowPasswordChangeModal(true);
+  };
+  
+  const handlePasswordChangeModalClose = () => {
+    setShowPasswordChangeModal(false);
+  };
       
   return (
     <div className="profile-modal">
-      <h2>Mi perfil</h2>
 
-      <div className="user-info-section">
-        
-
-        <ProfilePic imageUrl={avataresUrl + profilePic} onChangePic={handlePicChange} />
-        <PicChangeModal show={showPicChangeModal} handleClose={handlePicChangeModalClose}/>
-        <div className="name-password-section">
-          <div className="name-field"> 
-            {username} 
-            <button onClick={handleUsernameChangeModallOpen}>Cambiar nombre</button>
-            <UsernameChangeModal  show={showUsernameChangeModal} handleClose={handleUsernameChangeModalClose} mail={mail}/>
-          </div>
-          
-          <button>Cambiar contraseña</button>
-        </div>
+  
+    <div className="profile-top-section">
+      <div className="profile-left">
+        <div
+          className="profile-pic"
+          style={{ backgroundImage: `url(${avataresUrl + profilePic})` }}
+          onClick={handlePicChange}
+        />
+        <button className="change-pic-button" onClick={handlePicChange}>Cambiar</button>
       </div>
-
-      <div className="divider" />
-
-      <div className="customization-section">
-        <div className="customization-box" onClick={handleTapeteChangeModalOpen}><b>Tapete</b><br /> Pulsar para cambiar</div>
-        <div className="customization-box" onClick={handleCartasChangeModalOpen}><b>Parte trasera cartas</b><br /> Pulsar para cambiar</div>
+  
+      <div className="profile-center">
+        <h3 className="username">{username}</h3>
       </div>
-
-      <SignOutButton className="logout-button" onClick={handleConfirmLogoutModalOpen} />
-      <ConfirmLogoutModal show={showLogoutModal} onConfirm={handleSignOut} onCancel={handleConfirmLogoutModalClose}/>
-      <TapeteChangeModal show={showTapeteChangeModal} handleClose={handleTapeteChangeModalClose} />
-      <CartasChangeModal show={showCartasChangeModal} handleClose={handleCartasChangeModalClose} />
+  
+      <div className="profile-right">
+        <button onClick={handleUsernameChangeModallOpen}>Cambiar nombre</button>
+        <button onClick={handlePasswordChangeModalOpen}>Cambiar contraseña</button>
+      </div>
     </div>
+  
+    <div className="divider" />
+  
+    <div className="customization-section">
+      <button className="customization-button" onClick={handleTapeteChangeModalOpen}>Editar tapete</button>
+      <button className="customization-button" onClick={handleCartasChangeModalOpen}>Editar cartas</button>
+    </div>
+  
+    
+    <SignOutButton className="logout-button red" onClick={handleConfirmLogoutModalOpen} />
+    {/* Modales */}
+    <PicChangeModal show={showPicChangeModal} handleClose={handlePicChangeModalClose} />
+    <UsernameChangeModal show={showUsernameChangeModal} handleClose={handleUsernameChangeModalClose} mail={mail} />
+    <PasswordChangeModal show={showPasswordChangeModal} handleClose={handlePasswordChangeModalClose} mail={mail}/>
+    <ConfirmLogoutModal show={showLogoutModal} onConfirm={handleSignOut} onCancel={handleConfirmLogoutModalClose} />
+    <TapeteChangeModal show={showTapeteChangeModal} handleClose={handleTapeteChangeModalClose} />
+    <CartasChangeModal show={showCartasChangeModal} handleClose={handleCartasChangeModalClose} />
+  </div>
+  
   );
 }
 
