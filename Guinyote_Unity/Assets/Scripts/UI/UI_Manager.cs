@@ -104,6 +104,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnRegistroUsuario += RegistroUsuario;
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
+        Consultas.OnEliminarAmistad += () => StartCoroutine(Consultas.GetAmigosUsuario(id));
         Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
         Consultas.OnAceptarSolicitudAmistad += () => {
             StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
@@ -209,6 +210,7 @@ public class UIManager : MonoBehaviour
                 Consultas.OnInicioSesion += (id, name, profilePicture, tapete, carta) => {
                     isLogged = true;
                     tab_login.style.display = DisplayStyle.None;
+                    BuscarPartidasActivas(id);
                     ChangeScene("Partida_Online");
                 };
             }
@@ -398,6 +400,11 @@ public class UIManager : MonoBehaviour
         else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+            
+            Consultas.OnAmigosConsultados += UpdateInvitarAmigos;
+            Consultas.OnAmigosConsultados -= UpdateAmigos;
+            StartCoroutine(Consultas.GetAmigosUsuario(id));
+
             //SACAR NOMBRES Y FOTOS DE PERFIL DEL RESTO DE LOS JUGADORES
         }
     }
@@ -805,6 +812,22 @@ public class UIManager : MonoBehaviour
 
 
         tab_login.style.display = DisplayStyle.None;
+
+        BuscarPartidasActivas(id);
+    }
+
+    async Task BuscarPartidasActivas(String id)
+    {
+        Debug.Log(id);
+        if (webSocketClient == null)
+        {
+            webSocketClient = new wsClient();
+        }
+        if (!webSocketClient.isConnected())
+        {
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
+        webSocketClient.buscarPartidasActivas(id);
     }
 
     /// <summary>
@@ -836,6 +859,10 @@ public class UIManager : MonoBehaviour
         {
             VisualElement amigoElement = amigoAsset.CloneTree();
             amigoElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(amigo.foto_perfil));
+            amigoElement.Q<Button>("Delete_Button").RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Eliminar amigo: " + amigo.nombre); 
+                StartCoroutine(Consultas.EliminarAmigo(id, amigo.correo));
+            });
             Label nombreAmigoLabel = amigoElement.Q<Label>("Nombre_Amigo");
             nombreAmigoLabel.text = amigo.nombre;
             friendsScroll.Add(amigoElement);
@@ -878,10 +905,45 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    void UpdateInvitarAmigos(Usuario[] solicitudes)
+    {
+
+        Consultas.OnAmigosConsultados -= UpdateInvitarAmigos;
+        Consultas.OnAmigosConsultados += UpdateAmigos;
+
+        var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+
+        // Obtener el ScrollView donde se mostrarán los amigos
+        ScrollView friendsScroll = root.rootVisualElement.Q<ScrollView>("listaAmigos");
+        friendsScroll.Clear(); // Limpiar el contenido actual del ScrollView
+
+        // Cargar el recurso visual para representar a una invitacion
+        VisualTreeAsset InvitaciónAsset = Resources.Load<VisualTreeAsset>("InvitarAmigo_elemento");
+
+        // Iterar sobre la lista de amigos y añadirlos al ScrollView
+        foreach (Usuario solicitud in solicitudes)
+        {
+
+            VisualElement InvitacionElement = InvitaciónAsset.CloneTree();
+            InvitacionElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(solicitud.foto_perfil));
+            Label nombreUsuarioLabel = InvitacionElement.Q<Label>("Nombre_usuario");
+            nombreUsuarioLabel.text = solicitud.nombre;
+            Button aceptarButton = InvitacionElement.Q<Button>("accept_Button");
+            aceptarButton.RegisterCallback<ClickEvent>(ev => { 
+                //Enviar invitación a la sala
+            });
+            friendsScroll.Add(InvitacionElement);
+        }
+    }
+
+
     async void JoinRoom(Lobby lobby, string idUsuario)
     {
         // Configurar WebSocket para partidas online
-        await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        if (!webSocketClient.isConnected())
+        {
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
     }

@@ -649,6 +649,12 @@ public class GameManager : MonoBehaviour
         if (esOnline) TurnManager.Tick();
     }
 
+    public void FinalizarPorDesconexion()
+    {
+        //MOSTRAR MENSAJE Y BOTON PARA SALIR AL MENU
+        SceneManager.LoadScene("Inicio");
+    }
+
     /// <summary>
     /// Crea una sala privada y espera a que otros jugadores se unan.
     /// </summary>

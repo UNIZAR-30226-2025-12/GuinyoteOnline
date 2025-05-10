@@ -1,8 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LobbySlots from './LobbySlots';
 import { useUser } from '../../context/UserContext';
+import usePost from '../../customHooks/usePost';
+import { useSocket } from '../../context/SocketContext';
 
 const Lobby = ({ pairs }) => {
+
+    const { postData } = usePost('https://guinyoteonline-hkio.onrender.com') ;
+    
+    const socket = useSocket();
+
     const [matchmaking, setMatchmaking] = useState(false);
     const [counter, setCounter] = useState("0:00");
     const timerRef = useRef(null); // ← store timer ID
@@ -15,8 +22,36 @@ const Lobby = ({ pairs }) => {
     ]);
 
     const maxPlayers = !pairs ? 2 : 4;
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleIniciarPartida = () => {
+            console.log("Recibido 'iniciarPartida' del servidor");
+            socket.emit("ack");
+        };
+
+        socket.on("iniciarPartida", handleIniciarPartida);
+
+        return () => {
+            socket.off("iniciarPartida", handleIniciarPartida);
+        };
+    }, [socket]);
+
+
+    const unirseAlLobby = (lobbyId, playerId) => {
+        if (!socket) {
+            console.warn("Socket not connected");
+            return;
+        }
+
+        socket.emit('join-lobby', {
+            lobbyId,
+            playerId,
+        });
+    };
         
-    const startMatchmaking = () => {
+    const startMatchmaking = async () => {
         if (timerRef.current) return; // avoid multiple intervals
         setMatchmaking(true);
         const startTime = Date.now();
@@ -27,6 +62,10 @@ const Lobby = ({ pairs }) => {
             const seconds = elapsedTime % 60;
             setCounter(`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`);
         }, 1000);
+
+        const response  = await postData({ playerId: mail, maxPlayers: pairs ? '2v2' : '1v1' }, '/salas/matchmake');
+
+        unirseAlLobby(response.responseData.id, mail) ;
     };
 
     const stopMatchmaking = () => {
@@ -52,10 +91,6 @@ const Lobby = ({ pairs }) => {
         auxUsers[index] = { nombre: username, email: mail, foto_perfil: profilePic };
         // update the state
         setUsers(auxUsers);
-
-        //send change data to server
-        // postData('/api/lobby', { user: users[index] })
-
     }
 
     return (

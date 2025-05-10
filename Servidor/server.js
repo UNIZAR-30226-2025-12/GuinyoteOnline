@@ -5,7 +5,7 @@ const socketIo = require('socket.io');
 const bcrypt = require('bcrypt');
 const { Mutex } = require('async-mutex');
 const mutex = new Mutex();
-const { iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
+const { reestablecerEstado, iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
 const { findLobby, findLobbyBySocketId, findLobbyByUserName, joinLobby } = require('./lobbies');
@@ -862,10 +862,28 @@ io.on('connection', (socket) => {
   socket.emit('socket-id', socket.id);
 
   //LLAMAR AL HACER LOGIN EN EL CLIENTE
-  socket.on('buscarPartidasActivas', async ({playerId}) => {
-    const partidaActiva = findLobbyBySocketId(playerId);
+  socket.on('buscarPartidasActivas', async ({playerId, socketId}) => {
+    console.log(playerId);
+    console.log(socketId);
+    const partidaActiva = findLobbyByUserName(playerId);
     if (partidaActiva) {
-      joinLobby(partidaActiva.id, playerId);
+      console.log(`partida ${partidaActiva.id} encontrada`);
+      const timeout = timeoutsReconexion.get(playerId);
+      if (timeout) {
+        clearTimeout(timeout);
+        timeoutsReconexion.delete(playerId);
+        console.log(`timeout eliminado`);
+      }
+      const socket = io.sockets.sockets.get(socketId);
+      if (socket) {
+        reestablecerEstado(playerId, partidaActiva, socket);
+      }
+      else {
+        console.log("socket no encontrado");
+      }
+    }
+    else {
+      console.log(`el jugador ${playerId} no tenía partidas activas`);
     }
   })
 
@@ -881,10 +899,10 @@ io.on('connection', (socket) => {
     if (io.sockets.adapter.rooms.get(lobbyId)?.size === lobby.maxPlayers) {
       await mutex.runExclusive(async () => {
         if (lobby.iniciado === false) {
-          lobby.iniciado = true
+          lobby.iniciado = true;
           await iniciarPartida(lobby);
         }
-      }); 
+      });
     }
   });
 
@@ -946,15 +964,17 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);
     
-    const partidaActiva = findLobbyBySocketId(socket.id);
-
-    const jugador = partidaActiva.jugadores.find(j => j.socket === socket.id);
-
+    const partidaActiva = findLobbyBySocketId(socket);
     if (partidaActiva) {
+      const jugador = partidaActiva.jugadores.find(j => j.socket.id === socket.id);
+      console.log(`partida ${partidaActiva.id} en pausa`);
       io.to(partidaActiva.id).emit('desconexion');
       timeoutsReconexion.set(jugador.correo, setTimeout(async () => {
         io.to(partidaActiva.id).emit('partidaAbandonada');
       }, 30000));
+    }
+    else {
+      console.log("no habia partidas activas");
     }
   });
 });

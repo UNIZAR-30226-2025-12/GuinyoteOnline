@@ -1,7 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:VisualElement style="flex-grow: 1; height: 49px; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 10px;">
         <engine:VisualElement name="Profile_picture" style="flex-grow: 1; position: absolute; background-image: url(&quot;project://database/Assets/UI/default_profile.png?fileID=2800000&amp;guid=31a16356f0315454487d833a0e098244&amp;type=3#default_profile&quot;); height: 54px; width: 56px;" />
-        <engine:Label text="Nombre" name="Nombre_Amigo" style="width: 128px; position: absolute; top: 14px; left: 75px;" />
+        <engine:Label text="Nombre" name="Nombre_usuario" style="width: 64px; position: absolute; top: 14px; left: 75px; white-space: normal;" />
+        <engine:Button text="invitar" name="accept_Button" style="position: absolute; top: 6px; left: 156px; background-color: rgb(255, 255, 255);" />
     </engine:VisualElement>
-    <engine:Button text="Eliminar amigo" name="Delete_Button" style="position: absolute; top: 6px; left: 156px; background-color: rgb(255, 255, 255);" />
 </engine:UXML>
