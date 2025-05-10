@@ -58,6 +58,37 @@ async function esperarMensajesDeTodos(io, sala, eventoEsperado, timeout) {
     });
   }
 
+function esperarAck(socket, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      socket.removeListener('ack', onAck);
+      reject(new Error('Timeout esperando ack'));
+    }, timeoutMs);
+
+    function onAck(data) {
+      clearTimeout(timeout);
+      resolve(data);
+    }
+
+    socket.once('ack', onAck);
+  });
+}
+
+async function reestablecerEstado(playerId, sala) {
+    const jugador = sala.jugadores.find(j => j.correo === playerId);
+    if (jugador) {
+        io.to(jugador.socket.id).emit("iniciarPartida", 'iniciarPartida');
+        try {
+            esperarAck(jugador.socket.id);
+            console.log("ack recibido");
+        }
+        catch (err) {
+            console.log(`ack no recibido: ${err}`);
+        }
+        //RECUPERAR Y ENVIARLE AL CLIENTE LOS DATOS DE LA PARTIDA
+    }
+}
+
 async function iniciarPartida(sala) {
     console.log(`emitiendo iniciar partida a ${sala.id}`);
     io.to(sala.id).emit("iniciarPartida", 'iniciarPartida');
@@ -230,6 +261,7 @@ async function enviarInput(idJugador, sala, carta, cantar, cambiarSiete) {
 
 module.exports = {
     init,
+    reestablecerEstado,
     iniciarPartida,
     iniciarSegundaRonda,
     enviarInput,

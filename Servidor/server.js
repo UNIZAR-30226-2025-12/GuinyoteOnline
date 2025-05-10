@@ -5,7 +5,7 @@ const socketIo = require('socket.io');
 const bcrypt = require('bcrypt');
 const { Mutex } = require('async-mutex');
 const mutex = new Mutex();
-const { iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
+const { reestablecerEstado, iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
 const { findLobby, findLobbyBySocketId, findLobbyByUserName, joinLobby } = require('./lobbies');
@@ -873,7 +873,7 @@ io.on('connection', (socket) => {
         timeoutsReconexion.delete(playerId);
         console.log(`timeout eliminado`);
       }
-      joinLobby(partidaActiva.id, playerId);
+      reestablecerEstado(playerId, partidaActiva);
     }
     else {
       console.log(`el jugador ${playerId} no tenía partidas activas`);
@@ -895,7 +895,7 @@ io.on('connection', (socket) => {
           lobby.iniciado = true
           await iniciarPartida(lobby);
         }
-      }); 
+      });
     }
   });
 
