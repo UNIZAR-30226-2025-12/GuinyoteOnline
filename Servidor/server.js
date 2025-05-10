@@ -952,14 +952,16 @@ io.on('connection', (socket) => {
     console.log('Usuario desconectado:', socket.id);
     
     const partidaActiva = findLobbyBySocketId(socket.id);
-
-    const jugador = partidaActiva.jugadores.find(j => j.socket === socket.id);
-
     if (partidaActiva) {
+      const jugador = partidaActiva.jugadores.find(j => j.socket === socket.id);
+      console.log(`partida ${partidaActiva.id} en pausa`);
       io.to(partidaActiva.id).emit('desconexion');
       timeoutsReconexion.set(jugador.correo, setTimeout(async () => {
         io.to(partidaActiva.id).emit('partidaAbandonada');
       }, 30000));
+    }
+    else {
+      console.log("no habia partidas activas");
     }
   });
 });
