@@ -953,7 +953,7 @@ io.on('connection', (socket) => {
     
     const partidaActiva = findLobbyBySocketId(socket.id);
     if (partidaActiva) {
-      const jugador = partidaActiva.jugadores.find(j => j.socket === socket.id);
+      const jugador = partidaActiva.jugadores.find(j => j.socket.id === socket.id);
       console.log(`partida ${partidaActiva.id} en pausa`);
       io.to(partidaActiva.id).emit('desconexion');
       timeoutsReconexion.set(jugador.correo, setTimeout(async () => {
