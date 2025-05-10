@@ -2,14 +2,24 @@ import React, { useEffect } from "react";
 import Carta from "./Carta";
 import '/src/styles/Game.css';
 
-const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCambiarSiete }) => {
+const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCambiarSiete, handleCantar }) => {
   const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 
   useEffect(() => {
     if (esMiTurno) {
       let index = controller.turnoLogic();
+      if (controller.state.cantadoEsteTurno) {
+        console.log("CANTANDO IA");
+        handleCantar(controller.state.paloCantadoEsteTurno);
+      }
+      if(controller.state.sieteCambiado) {
+        console.log("SIETE CAMBIADO IA");
+        handleCambiarSiete();
+      }
       handleCartaClick(index);
+      controller.state.paloCantadoEsteTurno = -1;
+      controller.state.cantadoEsteTurno = false;
     }
   }, [esMiTurno, controller.state.gameManager.state.turnManager.state.playerTurn]);
 

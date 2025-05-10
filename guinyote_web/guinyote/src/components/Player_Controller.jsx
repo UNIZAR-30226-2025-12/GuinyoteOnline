@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Carta from "./Carta";
 import '/src/styles/Game.css';
 
-const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete }) => {
+const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete, handleCantar }) => {
   const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 
@@ -28,7 +28,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete 
         <button
           key={index}
           className={`boton cantar${palo} ${
-            controller.state.sePuedeCantar[index]
+            controller.state.sePuedeCantar[index] && !controller.state.cantadoEsteTurno
               ? isHovered[index]
                 ? "hover"
                 : "activo"
@@ -39,6 +39,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete 
           onClick={() => {
             if (controller.state.sePuedeCantar[index]) {
               controller.cantar(index);
+              handleCantar(index);
               console.log(`Cantar activado para ${palo}`);
             } else {
               console.log(`Cantar desactivado para ${palo}`);

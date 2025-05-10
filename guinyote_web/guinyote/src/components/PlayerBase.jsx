@@ -66,6 +66,7 @@ class PlayerBase {
         this.state.puntos += (palo === this.state.gameManager.state.triunfo.Palo ? 40 : 20);
         this.state.palosCantados[palo] = true;
         this.state.sePuedeCantar[palo] = false;
+        this.state.cantadoEsteTurno = true;
     }
 
     reset() {
@@ -167,6 +168,7 @@ class PlayerBase {
                 return false;
             }
         }
+        
         /*else if (this.state.input.cambiarSiete) {
             if (this.state.ganador && !this.state.gameManager.state.arrastre){
 
