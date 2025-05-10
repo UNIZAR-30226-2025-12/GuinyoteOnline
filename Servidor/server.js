@@ -892,7 +892,7 @@ io.on('connection', (socket) => {
     if (io.sockets.adapter.rooms.get(lobbyId)?.size === lobby.maxPlayers) {
       await mutex.runExclusive(async () => {
         if (lobby.iniciado === false) {
-          lobby.iniciado = true
+          lobby.iniciado = true;
           await iniciarPartida(lobby);
         }
       });
