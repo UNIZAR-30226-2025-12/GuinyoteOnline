@@ -1,6 +1,5 @@
 import '/src/styles/Game.css';
-import { useUser } from '../../context/UserContext';
-
+import { useUser } from '../../../../navegacion_web/src/context/UserContext';
 
 const Tapete = () => {
     const { tapete } = useUser(); // 'tapete' será una string tipo 'tapete1', 'tapete2', etc.

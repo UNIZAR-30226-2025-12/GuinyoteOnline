@@ -10,19 +10,13 @@ class IA_PlayerBase extends PlayerBase {
             cartasIntentadas: Array(6).fill(false),
             exito: false,
             todasIntentadas: false,
-            numIA: _numIA
+            numIA: _numIA,
         };
     }
 
     turnoLogic() {
         console.log("Turno de IA" + this.state.numIA);
-        this.reset();
         this.state.exito = false;
-        //CANTAR SI ES POSIBLE
-        this.intentarCantar();
-
-        //CAMBIAR 7 DE TRIUNFO SI ES POSIBLE Y SE OBTENDRÁ MEJOR CARTA
-        this.intentarCambiarSiete();
 
         while (this.state.exito === false) {
             if (this.state.todasIntentadas) {
@@ -171,35 +165,6 @@ class IA_PlayerBase extends PlayerBase {
             else return this.peorCartaIndex();
         }
         else return this.peorCartaIndex();
-    }
-
-    /*
-     * Si es posible cantar, devuelve true y el palo de más puntos
-     * que se puede cantar en "palo". Si no se puede cantar, devuelve
-     * false y -1 en "palo".
-     */
-    puedoCantarIA(palo) {
-        let hayRey;
-        let haySota;
-        let cantable = -1;
-        for (let i = 0; i < 4; i++) {
-            hayRey = false;
-            haySota = false;
-            for (var c of mano) {
-                if (c == null) continue;
-                if (c.numero == 10 && c.palo == i) haySota = true;
-                if (c.numero == 12 && c.palo == i) hayRey = true;
-            }
-            if (hayRey && haySota) {
-                if (i == this.state.gameManager.state.triunfo.palo) {
-                    palo = i;
-                    return true;
-                }
-                else cantable = i;
-            }
-        }
-        palo = cantable;
-        return (cantable != -1);
     }
 
     //Devuelve el indice de la carta menos valiosa en la mano de la IA
@@ -428,41 +393,14 @@ class IA_PlayerBase extends PlayerBase {
      * clase Player).
      */
     intentarCantar() {
-        if (this.state.ganador && !this.state.cantadoEsteTurno) {
-            let hayRey = false;
-            let haySota = false;
-
-            if (!this.state.palosCantados[this.state.gameManager.state.triunfo.palo]) {
-                for (let c of this.state.mano) {
-                    if (c === null) continue;
-                    if (c.numero === 10 && c.palo === this.state.gameManager.state.triunfo.palo) haySota = true;
-                    if (c.numero === 12 && c.palo === this.state.gameManager.state.triunfo.palo) hayRey = true;
-                }
-                if (hayRey && haySota) {
-                    this.state.input.cantar = this.state.gameManager.state.triunfo.palo;
-                    this.state.exito = this.turno();
-                    return true;
-                }
-            }
-
-            for (let i = 0; i < 4; i++) {
-                if (i === this.state.gameManager.state.triunfo.palo || this.state.palosCantados[i]) continue;
-
-                hayRey = false;
-                haySota = false;
-                for (let c of this.state.mano) {
-                    if (c === null) continue;
-                    if (c.numero === 10 && c.palo === i) haySota = true;
-                    if (c.numero === 12 && c.palo === i) hayRey = true;
-                }
-                if (hayRey && haySota) {
-                    this.state.input.cantar = i;
-                    this.state.exito = this.turno();
-                    return true;
-                }
+        for(let i = 0; i < 4; i++) {
+            if (this.state.sePuedeCantar[i]) {
+                console.log("IA PUEDE CANTAR");
+                this.cantar(i);
+                this.state.paloCantadoEsteTurno = i;
+                return;
             }
         }
-        return false;
     }
 
     /*
@@ -477,14 +415,12 @@ class IA_PlayerBase extends PlayerBase {
 
         for (let c of this.state.mano) {
             if (c === null) continue;
-            if (c.numero === 7 && c.palo === this.state.gameManager.state.triunfo.palo) {
-                this.state.input.cambiarSiete = true;
-                this.state.exito = this.turno();
-                return true;
+            console.log(c.numero);
+            if (c.numero === 6 && c.palo === this.state.gameManager.state.triunfo.palo) {
+                this.state.sieteCambiado = true;
+                return;
             }
         }
-
-        return false;
     }
 }
 export default IA_PlayerBase;

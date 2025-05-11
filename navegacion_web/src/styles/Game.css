@@ -6,6 +6,17 @@
     --offsetBaraja: 2400px;
 }
 
+.informador{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 /*=========================General=========================*/
 .botonInit{
     display: flex;

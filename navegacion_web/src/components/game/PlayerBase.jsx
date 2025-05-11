@@ -5,11 +5,12 @@ class PlayerBase {
             jugada: null,
             puntos: 0,
             ganador: false,
-            cantadoEsteTurno: false,
             esMiTurno: false,
             input: { carta: -1, cantar: -1, cambiarSiete: false },
             palosCantados: [false, false, false, false],
             sePuedeCantar: [false, false, false, false],
+            paloCantadoEsteTurno: -1,
+            cantadoEsteTurno: false,
             sePuedeCambiarSiete: false,
             sieteCambiado: false,
             gameManager: GManager,
@@ -66,6 +67,7 @@ class PlayerBase {
         this.state.puntos += (palo === this.state.gameManager.state.triunfo.Palo ? 40 : 20);
         this.state.palosCantados[palo] = true;
         this.state.sePuedeCantar[palo] = false;
+        this.state.cantadoEsteTurno = true;
     }
 
     reset() {
@@ -74,6 +76,8 @@ class PlayerBase {
         this.state.cantadoEsteTurno = false;
         this.state.input = { carta: -1, cantar: -1, cambiarSiete: false };
         this.state.palosCantados = [false, false, false, false];
+        this.state.paloCantadoEsteTurno = -1;
+        this.state.cantadoEsteTurno = false;
     }
 
     cartaValidaEnArrastre() {
@@ -167,29 +171,6 @@ class PlayerBase {
                 return false;
             }
         }
-        /*else if (this.state.input.cambiarSiete) {
-            if (this.state.ganador && !this.state.gameManager.state.arrastre){
-
-            }
-        }
-        else if (this.state.input.cantar > -1 && this.state.input.cantar < 4) {
-            if (this.state.ganador && !this.state.cantadoEsteTurno && !this.state.palosCantados[this.state.input.cantar]) {
-                let hayRey = false;
-                let haySota = false;
-                for (let i = 0; i < this.state.mano.length; i++) {
-                    const c = this.state.mano[i];
-                    if (c == null) continue;
-
-                    if (c.numero == 10 && c.palo == this.state.input.cantar) haySota = true;
-                    if (c.numero == 12 && c.palo == this.state.input.cantar) hayRey = true;
-                }
-                if (hayRey && haySota) {
-                    this.cantar(this.state.input.cantar);
-                    this.state.palosCantados[this.state.input.cantar] = true;
-                    this.state.cantadoEsteTurno = true;
-                }
-            }
-        }*/
         return true;
     }
 
