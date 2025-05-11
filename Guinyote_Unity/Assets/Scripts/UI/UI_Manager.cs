@@ -820,7 +820,7 @@ public class UIManager : MonoBehaviour
         Debug.Log(id);
         if (!webSocketClient.isConnected())
         {
-            await webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
         }
         webSocketClient.buscarPartidasActivas(id);
     }
@@ -937,7 +937,7 @@ public class UIManager : MonoBehaviour
         // Configurar WebSocket para partidas online
         if (!webSocketClient.isConnected())
         {
-            await webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
         }
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
