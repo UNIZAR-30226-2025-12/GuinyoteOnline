@@ -16,8 +16,6 @@ public class Player_Controller : Player
 
     public void Update()
     {
-        resetInput();
-
         ActualizarColliders();
 
         if (m_esMiTurno)
@@ -30,13 +28,6 @@ public class Player_Controller : Player
                     break;
                 }
             }
-
-            input.cambiarSiete = Keyboard.current.digit7Key.wasPressedThisFrame;
-
-            if (Keyboard.current.digit1Key.wasPressedThisFrame) input.cantar = 0;
-            if (Keyboard.current.digit2Key.wasPressedThisFrame) input.cantar = 1;
-            if (Keyboard.current.digit3Key.wasPressedThisFrame) input.cantar = 2;
-            if (Keyboard.current.digit4Key.wasPressedThisFrame) input.cantar = 3;
 
             if (turno() && GameManager.esOnline)
             {
@@ -59,6 +50,5 @@ public class Player_Controller : Player
                 }
             }
         }
-
     }
 }

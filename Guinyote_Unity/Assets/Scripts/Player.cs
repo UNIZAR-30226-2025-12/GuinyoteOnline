@@ -11,12 +11,12 @@ public class Player : MonoBehaviour
     public Vector3 m_MoveTarget;
     public Carta[] mano;
     public Carta jugada;
-    protected bool m_esMiTurno = false;
+    public bool m_esMiTurno = false;
     protected bool m_CartaDesplazandose = false;
     public int puntos;
     public bool ganador = false, cantadoEsteTurno = false;
     private float[] posiciones = { -8.65f, -5.15f, -1.75f, 1.75f, 5.15f, 8.65f };
-    protected input input;
+    public input input;
     protected bool[] palosCantados = new bool[4] {false, false, false, false};
     public Player()
     {
@@ -70,7 +70,6 @@ public class Player : MonoBehaviour
 
     public bool UsarCarta(int index)
     {
-        Debug.Log(index);
         if (mano[index] != null)
         {
             Carta carta = mano[index];
@@ -117,6 +116,7 @@ public class Player : MonoBehaviour
                 //CAMBIAR VALOR ULTIMA CARTA BARAJA
                 GameManager.Instance.Baraja.EliminarUltima();
                 GameManager.Instance.Baraja.AnyadirAlFinal(GameManager.Instance.triunfo);
+                GameManager.Instance.mostrarCambiarSiete();
                 break;
             }
         }
@@ -124,6 +124,7 @@ public class Player : MonoBehaviour
 
     public void cantar(int palo)
     {
+        Debug.Log("CANTO " + palo);
         if (palo == GameManager.Instance.triunfo.Palo) puntos += 40;
         else puntos += 20;
         GameManager.Instance.mostrarCantar(palo);
@@ -134,7 +135,7 @@ public class Player : MonoBehaviour
         cantadoEsteTurno = false;
     }
 
-    protected void resetInput()
+    public void resetInput()
     {
         input.carta = -1;
         input.cantar = -1;

@@ -33,6 +33,11 @@ public class GameManager : MonoBehaviour
     private Label m_P_TeamB;
     private Label m_FinPartida;
     private Button m_FinPartidaButton;
+    private Button m_B_Bastos;
+    private Button m_B_Copas;
+    private Button m_B_Espadas;
+    private Button m_B_Oros;
+    private Button m_B_Siete;
     private int indexGanador;
     public int ganador;
     public bool mostrandoCantar;
@@ -79,6 +84,18 @@ public class GameManager : MonoBehaviour
 
         m_P_TeamA.text = ""; 
         m_P_TeamB.text = "";
+
+        m_B_Bastos = UIDoc.rootVisualElement.Q<Button>("B_Bastos");
+        m_B_Bastos.RegisterCallback<ClickEvent>(ev => handleCantar(0));
+        m_B_Copas = UIDoc.rootVisualElement.Q<Button>("B_Copas");
+        m_B_Copas.RegisterCallback<ClickEvent>(ev => handleCantar(1));
+        m_B_Espadas = UIDoc.rootVisualElement.Q<Button>("B_Espadas");
+        m_B_Espadas.RegisterCallback<ClickEvent>(ev => handleCantar(2));
+        m_B_Oros = UIDoc.rootVisualElement.Q<Button>("B_Oros");
+        m_B_Oros.RegisterCallback<ClickEvent>(ev => handleCantar(3));
+        m_B_Siete = UIDoc.rootVisualElement.Q<Button>("B_Siete");
+        m_B_Siete.RegisterCallback<ClickEvent>(ev => handleCambiarSiete());
+        
 
         if (esOnline)
         {
@@ -359,6 +376,39 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void handleCantar(int palo)
+    {
+        if(jugadores[0].m_esMiTurno)
+        {
+            switch(palo){
+                case 0:
+                    Debug.Log("Boton Cantar Bastos");
+                    jugadores[0].input.cantar = 0;
+                    break;
+                case 1:
+                    Debug.Log("Boton Cantar Copas");
+                    jugadores[0].input.cantar = 1;
+                    break;
+                case 2:
+                    Debug.Log("Boton Cantar Espadas");
+                    jugadores[0].input.cantar = 2;
+                    break;
+                case 3:
+                    Debug.Log("Boton Cantar Oros");
+                    jugadores[0].input.cantar = 3;
+                    break;
+            }
+        }
+    }
+
+    void handleCambiarSiete()
+    {
+        if (jugadores[0].m_esMiTurno)
+        {
+            jugadores[0].input.cambiarSiete = true;
+        }
+    }
+
     /// <summary>
     /// Muestra un mensaje cuando un jugador canta (movimiento especial).
     /// </summary>
@@ -386,6 +436,19 @@ public class GameManager : MonoBehaviour
         m_FinPartida.style.visibility = Visibility.Hidden;
     }
 
+    public void mostrarCambiarSiete()
+    {
+        mostrandoCantar = true;
+        m_FinPartida.text = "Cambiado 7 de triunfo";
+        m_FinPartida.style.visibility = Visibility.Visible;
+        Invoke("finMostrarCambiarSiete", 1f);
+    }
+    public void finMostrarCambiarSiete()
+    {
+        mostrandoCantar = false;
+        m_FinPartida.style.visibility = Visibility.Hidden;
+    }
+
     /// <summary>
     /// Cambia el turno entre los jugadores.
     /// </summary>
@@ -396,6 +459,7 @@ public class GameManager : MonoBehaviour
             cartasJugadas[orden[turno-1]] = jugadores[orden[turno-1]].jugada;
         }
         Debug.Log($"turno de {orden[turno]}");
+        jugadores[orden[turno]].resetInput();
         jugadores[orden[turno]].meToca();
     }
 
