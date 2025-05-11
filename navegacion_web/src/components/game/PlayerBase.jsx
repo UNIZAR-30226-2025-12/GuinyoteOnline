@@ -23,14 +23,14 @@ class PlayerBase {
         if (index !== -1) {
             this.state.mano[index] = carta;
         }
-        this.comprobarCantar(carta);
+        this.comprobarCantarYCambiar();
     }
 
-    comprobarCantar(carta) {
+    comprobarCantarYCambiar() {
         let hayRey;
         let haySota;
         for (let i = 0; i < 4; i++) {
-            if(this.state.sePuedeCantar[i] || this.state.palosCantados[i]) {
+            if(this.state.palosCantados[i]) {
                 continue; 
             }
             hayRey = false;
@@ -39,14 +39,24 @@ class PlayerBase {
                 if (c === null) continue;
                 if (c.numero === 7 && c.palo === i) haySota = true;
                 if (c.numero === 9 && c.palo === i) hayRey = true;
+                if (c.numero === 6 && c.palo === this.state.gameManager.state.triunfo.palo) this.state.sePuedeCambiarSiete = true;
             }
             if (hayRey && haySota) {
                 this.state.sePuedeCantar[i] = true; //CANTABLE
             }
+            else{
+                this.state.sePuedeCantar[i] = false; //NO CANTABLE
+            }
         }
-
-        if(this.state.sePuedeCambiarSiete || this.state.sieteCambiado) return;
-        if (carta.numero === 6 && carta.palo === this.state.gameManager.state.triunfo.palo) this.state.sePuedeCambiarSiete = true;
+        if(this.state.sePuedeCambiarSiete || this.state.sieteCambiado || this.state.gameManager.state.arrastre) return;
+        for (var c of this.state.mano) {
+            if (c === null) continue;
+            if (c.numero === 6 && c.palo === this.state.gameManager.state.triunfo.palo){
+                this.state.sePuedeCambiarSiete = true;
+                return;
+            } 
+        }
+        this.state.sePuedeCambiarSiete = false;
     }
 
     cambiarSieteTriunfo() {

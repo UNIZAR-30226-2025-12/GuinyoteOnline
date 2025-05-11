@@ -1,4 +1,5 @@
 import { use, useState, useEffect } from "react";
+import { useUser } from '/src/context/UserContext';
 import React from 'react';
 import Player from "../components/game/Player_Controller";
 import IA_Player from "../components/game/IA_Player";
@@ -16,12 +17,14 @@ function Game() {
     const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
     const [cargando, setCargando] = useState(true); // Estado para carga inicial
 
+    const { username } = useUser();
+
     const handleInit = () => {
         gameManager.Init();
         setPlayers([...gameManager.state.players]);
         setTriunfo(gameManager.state.triunfo);
         setIniciado(true);
-        setInformadorTexto("Turno de: " + gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]);
+        setInformadorTexto("Turno de: " + `${username}`);
         setCargando(false);
     };
 
@@ -41,7 +44,7 @@ function Game() {
         player.state.esMiTurno = false;
 
         setPlayers([...gameManager.state.players]);
-        setInformadorTexto("Turno de: " + gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]);
+        setInformadorTexto("Turno de: " + `${username}`);
 
         gameManager.state.turnManager.tick();
     };

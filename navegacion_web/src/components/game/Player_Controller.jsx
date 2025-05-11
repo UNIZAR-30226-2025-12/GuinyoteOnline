@@ -10,6 +10,14 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete,
 
   const palos = [ "bastos", "copas", "espadas", "oros" ];
 
+  const jugarCarta = (index) => {
+    controller.state.input.carta = index;
+    if(controller.turno()){
+      handleCartaClick(index);
+    }
+    controller.comprobarCantarYCambiar();
+  };
+
   const handleMouseEnter = (index) => {
     const newHovered = [...isHovered]; // Copia del array
     newHovered[index] = true; 
@@ -94,7 +102,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete,
                     key={carta.palo + "_" + carta.numero}
                     palo={carta.palo}
                     numero={carta.numero}
-                    callbackClick={() => handleCartaClick(index)}
+                    callbackClick={() => jugarCarta(index)}
                     enMano={true}
                   />
                 ) : (
