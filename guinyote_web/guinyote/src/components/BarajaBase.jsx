@@ -23,17 +23,17 @@ class BarajaBase {
     constructor() {
         this.cartas = [];
         this.inicializarBaraja();
-        //this.barajar();
+        this.barajar();
     }
 
     inicializarBaraja() {
         this.cartas = [];
-        /*for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 40; i++) {
             this.cartas.push(new Carta(i % 4, Math.floor(i / 4)));
 
-        }*/
+        }
        
-       this.cartas = [
+       /*this.cartas = [
             new Carta(0, 7), new Carta(1, 7), new Carta(2, 7), new Carta(3, 7),
             new Carta(0, 9), new Carta(1, 9),new Carta(2, 9), new Carta(3, 9),
             new Carta(0, 7), new Carta(1, 7), new Carta(2, 7), new Carta(3, 7),
@@ -42,7 +42,7 @@ class BarajaBase {
             new Carta(0, 9), new Carta(1, 9),new Carta(2, 9), new Carta(3, 9),
             new Carta(0, 7), new Carta(1, 7), new Carta(2, 7), new Carta(3, 7),
             new Carta(0, 9), new Carta(1, 9),new Carta(2, 9), new Carta(3, 9)
-        ];
+        ];*/
         
        /*this.cartas = [
         new Carta(0, 7), new Carta(0, 6), new Carta(2, 6), new Carta(3 ,6),

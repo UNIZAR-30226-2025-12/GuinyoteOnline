@@ -11,19 +11,12 @@ class IA_PlayerBase extends PlayerBase {
             exito: false,
             todasIntentadas: false,
             numIA: _numIA,
-            paloCantadoEsteTurno: -1
         };
     }
 
     turnoLogic() {
         console.log("Turno de IA" + this.state.numIA);
-        this.reset();
         this.state.exito = false;
-        //CANTAR SI ES POSIBLE
-        this.intentarCantar();
-
-        //CAMBIAR 7 DE TRIUNFO SI ES POSIBLE Y SE OBTENDRÁ MEJOR CARTA
-        this.intentarCambiarSiete();
 
         while (this.state.exito === false) {
             if (this.state.todasIntentadas) {
@@ -172,35 +165,6 @@ class IA_PlayerBase extends PlayerBase {
             else return this.peorCartaIndex();
         }
         else return this.peorCartaIndex();
-    }
-
-    /*
-     * Si es posible cantar, devuelve true y el palo de más puntos
-     * que se puede cantar en "palo". Si no se puede cantar, devuelve
-     * false y -1 en "palo".
-     */
-    puedoCantarIA(palo) {
-        let hayRey;
-        let haySota;
-        let cantable = -1;
-        for (let i = 0; i < 4; i++) {
-            hayRey = false;
-            haySota = false;
-            for (var c of mano) {
-                if (c == null) continue;
-                if (c.numero == 10 && c.palo == i) haySota = true;
-                if (c.numero == 12 && c.palo == i) hayRey = true;
-            }
-            if (hayRey && haySota) {
-                if (i == this.state.gameManager.state.triunfo.palo) {
-                    palo = i;
-                    return true;
-                }
-                else cantable = i;
-            }
-        }
-        palo = cantable;
-        return (cantable != -1);
     }
 
     //Devuelve el indice de la carta menos valiosa en la mano de la IA

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState, useEffect } from "react";
 import React from 'react';
 import Player from "./components/Player_Controller";
 import IA_Player from "./components/IA_Player";
@@ -14,6 +14,7 @@ function Game() {
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
     const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
+    const [cargando, setCargando] = useState(true); // Estado para carga inicial
 
     const handleInit = () => {
         gameManager.Init();
@@ -21,9 +22,8 @@ function Game() {
         setTriunfo(gameManager.state.triunfo);
         setIniciado(true);
         setInformadorTexto("Turno de: " + gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]);
+        setCargando(false);
     };
-
-    const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Espera
 
     const handleCartaClick = async (index) => {
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
@@ -33,8 +33,6 @@ function Game() {
             return;
         }
         let carta = player.state.mano[index];
-
-        await esperar(500);
 
         const nuevasCartasJugadas = [...gameManager.state.cartasJugadas];
         nuevasCartasJugadas[playerIndex] = carta;
@@ -76,12 +74,17 @@ function Game() {
         setInformadorTexto("Cantan " + traduccion[palo]);
     }
 
+    useEffect(() => {
+        handleInit();
+    }, []);
+
+    if (cargando) {
+        return <div className="cargando">Cargando partida...</div>;
+    }
+
     return (
         <div className="juego">
-            {!iniciado ? (
-                <button className="botonInit" onClick={handleInit}>Init</button>
-            ) : (
-                !gameManager.state.finJuego ? (
+            {!gameManager.state.finJuego ? (
                     <>
                         <Tapete />
                         <Baraja controller={gameManager.state.baraja} />
@@ -156,8 +159,7 @@ function Game() {
                         <h1 className="GanadorLabel">Ganador: Equipo {gameManager.state.ganador}</h1>
                         <button className="botonInit" onClick={handleInit}>Reiniciar</button>
                     </div>
-                )
-            )}
+                )}
         </div>
     );
 }
