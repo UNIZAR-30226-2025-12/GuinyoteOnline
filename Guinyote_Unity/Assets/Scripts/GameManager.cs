@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using WebSocketClient;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 /// <summary>
 /// Clase principal que gestiona el estado del juego, los turnos y los jugadores.
@@ -38,6 +39,41 @@ public class GameManager : MonoBehaviour
     public string test_state = "";
 
     public wsClient webSocketClient;
+
+    [System.Serializable]
+    public class Orden
+    {
+        public int miId;
+        public string orden;
+        public int turno;
+    }
+
+    [System.Serializable]
+    public class Puntos
+    {
+        public int puntos0;
+        public int puntos1;
+        public int puntos2;
+        public int puntos3;
+    }
+
+    [System.Serializable]
+    public class Manos
+    {
+        public string mano0;
+        public string mano1;
+        public string mano2;
+        public string mano3;
+    }
+
+    [System.Serializable]
+    public class Jugadas
+    {
+        public string jugada0;
+        public string jugada1;
+        public string jugada2;
+        public string jugada3;
+    }
 
     /// <summary>
     /// Inicializa la instancia singleton del GameManager.
@@ -311,24 +347,117 @@ public class GameManager : MonoBehaviour
         cartasMoviendo = false;
     }
 
+    public void ReestablecerEstado(Dictionary<string, object> datos)
+    {
+        Debug.Log("cargando baraja");
+        Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
+        Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
+        
+        
+        Baraja.Barajar(datos["baraja"].ToString());
+        segundaBaraja = (datos["baraja"].ToString() == "true");
+        triunfo = Baraja.ObtenerUltima();
+        if (triunfo != null)
+        {
+            triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
+            triunfo.transform.rotation = Quaternion.Euler(0,0,90);
+        }
+        if (datos["baraja"].ToString() == "") arrastre = true;
+
+        Debug.Log("Baraja iniciada");
+
+        Debug.Log("cargando jugadores");
+        jugadores = new Player[numJugadores];
+        jugadores[0] = Instantiate(playerPrefab, new Vector3(0, -12, 0),Quaternion.Euler(0, 0, 0));
+        if (numJugadores == 2) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+        else
+        {
+            jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
+            jugadores[2] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            jugadores[3] = Instantiate(onlinePlayerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
+        }
+        orden = new int[jugadores.Length];
+        Debug.Log("asignando orden");
+        var ordenJson = datos["orden"].ToString();
+        Orden ordenDatos = JsonUtility.FromJson<Orden>(ordenJson);
+        Debug.Log(ordenDatos);
+        for (int i = 0; i < orden.Length; i++)
+        {
+            orden[i] = (ordenDatos.orden[i] + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores;
+        }
+        Debug.Log("orden asignado");
+        Debug.Log("Iniciando Jugadores");
+        var puntosJson = datos["puntos"].ToString();
+        Puntos puntos = JsonUtility.FromJson<Puntos>(puntosJson);
+        Debug.Log(puntos);
+        int[] puntosJugadores = new int[4];
+        puntosJugadores[0] = puntos.puntos0;
+        puntosJugadores[1] = puntos.puntos1;
+        puntosJugadores[2] = puntos.puntos2;
+        puntosJugadores[3] = puntos.puntos3;
+
+        var manosJson = datos["manos"].ToString();
+        Manos manos = JsonUtility.FromJson<Manos>(manosJson);
+        Debug.Log(manos);
+        string[] manosJugadores = new string[4];
+        manosJugadores[0] = manos.mano0;
+        manosJugadores[1] = manos.mano1;
+        manosJugadores[2] = manos.mano2;
+        manosJugadores[3] = manos.mano3;
+
+        var jugadasJson = datos["jugadas"].ToString();
+        Jugadas jugadas = JsonUtility.FromJson<Jugadas>(jugadasJson);
+        Debug.Log(jugadas);
+        cartasJugadas = new Carta[jugadores.Length];
+        cartasMoviendo = false;
+        string[] jugadasJugadores = new string[4];
+        jugadasJugadores[0] = jugadas.jugada0;
+        jugadasJugadores[1] = jugadas.jugada1;
+        jugadasJugadores[2] = jugadas.jugada2;
+        jugadasJugadores[3] = jugadas.jugada3;
+
+        for (int i = 0; i < jugadores.Length; i++)
+        {
+            jugadores[i].SetMano(manosJugadores[(i + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores]);
+            jugadores[i].puntos = puntosJugadores[(i + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores];
+            jugadores[i].SetJugada(jugadasJugadores[(i + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores]);
+        }
+
+        TurnManager = new TurnManager(jugadores.Length);
+        TurnManager.TurnChange += TurnChange;
+        TurnManager.Evaluation += Evaluar;
+        TurnManager.FinRonda += TerminarRonda;
+        TurnManager.Reset();
+
+        TurnManager.m_PlayerTurn = ordenDatos.turno - 1;
+        Debug.Log($"ordenDatos.turno - 1: {TurnManager.m_PlayerTurn}");
+
+        TurnManager.Tick();
+        Debug.Log("Estado reestablecido");
+    }
+
     /// <summary>
     /// Actualiza el estado del juego en cada frame.
     /// </summary>
     void Update()
     {
+        
         if (!cartasMoviendo) return;
         for (int i = 0; i < jugadores.Length; i++)
         {
-            if (cartasJugadas[i] != null)
+            if (cartasJugadas[i] != null && jugadores[i] != null)
             {
-                cartasJugadas[i].transform.position = Vector3.MoveTowards(jugadores[i].jugada.transform.position, ubicacionGanador, 15f * Time.deltaTime);
-                if (cartasJugadas[i].transform.position == ubicacionGanador)
+                if (jugadores[i].jugada != null) cartasJugadas[i].transform.position = Vector3.MoveTowards(jugadores[i].jugada.transform.position, ubicacionGanador, 15f * Time.deltaTime);
+                
+                if (cartasJugadas[i].transform.position == ubicacionGanador || jugadores[i].jugada == null)
                 {
                     Destroy(cartasJugadas[i].gameObject);
+                    cartasJugadas[i] = null;
                     jugadores[i].jugada = null;
                 }
             }
         }
+        
         bool moviendo = false;
         for (int i = 0; i < jugadores.Length; i++)
         {
@@ -343,7 +472,12 @@ public class GameManager : MonoBehaviour
             cartasMoviendo = false;
             if (finRonda && segundaBaraja)
             {
-                BarajarYRepartir();
+                if(!esOnline) BarajarYRepartir();
+                else
+                {
+                    webSocketClient.enviarFinRonda();
+                    webSocketClient.ackFinRonda = true;
+                }
                 finRonda = false;
             }
             if (!finRonda) TurnManager.Tick();
@@ -383,9 +517,11 @@ public class GameManager : MonoBehaviour
     /// <param name="turno">El índice del turno actual.</param>
     public void TurnChange(int turno)
     {
-        if(turno > 0){
+        if(turno > 0)
+        {
             cartasJugadas[orden[turno-1]] = jugadores[orden[turno-1]].jugada;
         }
+        Debug.Log($"turno de {orden[turno]}");
         jugadores[orden[turno]].meToca();
     }
 
@@ -394,6 +530,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Evaluar()
     {
+
         cartasJugadas[orden.Length-1] = jugadores[orden.Length-1].jugada;
         indexGanador = orden[0];
         int maxPuntos = jugadores[orden[0]].jugada.Puntos;
@@ -401,11 +538,20 @@ public class GameManager : MonoBehaviour
         bool triunfo = (jugadores[orden[0]].jugada.Palo == this.triunfo.Palo);
         int paloJugado = jugadores[orden[0]].jugada.Palo;
 
+        int aux = 0;
+        
         for (int i = 1; i < jugadores.Length; i++)
         {
-            int aux = jugadores[orden[i]].jugada.Puntos;
-            sumaPuntos += aux;
-            cartasJugadas[orden[i]] = jugadores[orden[i]].jugada;
+            try
+            {
+                aux = jugadores[orden[i]].jugada.Puntos;
+                sumaPuntos += aux;
+                cartasJugadas[orden[i]] = jugadores[orden[i]].jugada;
+            }
+            catch (NullReferenceException ex)
+            {
+                Debug.LogError("Referencia nula detectada 2: " + ex.Message);
+            }
             if (triunfo)
             {
                 if (cartasJugadas[orden[i]].Palo == this.triunfo.Palo)
@@ -443,8 +589,8 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
         // FINALIZACIÓN DE TURNO
+
         ubicacionGanador = jugadores[indexGanador].transform.position;
         jugadores[indexGanador].ganador = true;
         jugadores[(indexGanador + 1) % jugadores.Length].ganador = false;
@@ -464,7 +610,6 @@ public class GameManager : MonoBehaviour
         {
             jugadores[orden[i]].AnyadirCarta(Baraja.DarCarta());
         }
-
         // COMPROBAR SI HA ACABADO LA RONDA
         finRonda = true;
         foreach (var i in jugadores[0].mano)
@@ -475,11 +620,9 @@ public class GameManager : MonoBehaviour
                 break;
             }
         }
-
         if (finRonda) jugadores[orden[0]].puntos += 10; // 10 últimas
 
         ActualizarMarcadores();
-
         if (!segundaBaraja) return;
         if (jugadores.Length == 4)
         {
@@ -563,6 +706,22 @@ public class GameManager : MonoBehaviour
 
         if (!segundaBaraja) // PARTIDA TERMINADA
         {
+            if (esOnline) //ENVIAR PUNTOS
+            {
+                var puntos = new List<Dictionary<string, object>>
+                {
+                    new Dictionary<string, object>
+                    {
+                        { "puntos0", jugadores[0].puntos },
+                        { "puntos1", jugadores[1].puntos },
+                        { "puntos2", jugadores.Length == 4 ? jugadores[2].puntos : 0 },
+                        { "puntos3", jugadores.Length == 4 ? jugadores[3].puntos : 0 },
+                        { "lobby", webSocketClient.miLobby }
+                    },
+                };
+                webSocketClient.enviarFinPartida(puntos);
+            }
+
             m_FinPartida.style.visibility = Visibility.Visible;
             if (jugadores.Length == 2) m_FinPartida.text = "Ganador: Jugador " + ganador.ToString();
             else m_FinPartida.text = "Ganador: Equipo " + ganador.ToString();
@@ -575,17 +734,30 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Baraja las cartas y las reparte nuevamente a los jugadores.
     /// </summary>
-    void BarajarYRepartir()
+    /// <param name="baraja">
+    /// Baraja que se repatirá a los jugadores. Si es un string
+    /// vacío, se repartirá una baraja aleatoria.
+    /// </param>
+    public void BarajarYRepartir(string baraja = "")
     {
         arrastre = false;
         Baraja.RecogerCartas();
 
-        Baraja.Barajar();
+        if (baraja == "") Baraja.Barajar();
+        else Baraja.Barajar(baraja);
+
+        orden = new int[jugadores.Length];
+
+        for (int i = 0; i < jugadores.Length; i++)
+        {
+            orden[i] = (i + indexGanador) % jugadores.Length;
+        }
+
         for (int i = 0; i < jugadores.Length; i++)
         {
             for (int j = 0; j < 6; j++)
             {
-                jugadores[i].AnyadirCarta(Baraja.DarCarta());
+                jugadores[orden[i]].AnyadirCarta(Baraja.DarCarta());
             }
             jugadores[i].reset();
         }
@@ -594,14 +766,14 @@ public class GameManager : MonoBehaviour
         Baraja.AnyadirAlFinal(triunfo);
         triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
         triunfo.transform.rotation = Quaternion.Euler(0,0,90);
-
         TurnManager.Reset();
+        if (esOnline) TurnManager.Tick();
+    }
 
-        orden = new int[jugadores.Length];
-        for (int i = 0; i < jugadores.Length; i++)
-        {
-            orden[i] = (i + indexGanador) % jugadores.Length;
-        }
+    public void FinalizarPorDesconexion()
+    {
+        //MOSTRAR MENSAJE Y BOTON PARA SALIR AL MENU
+        SceneManager.LoadScene("Inicio");
     }
 
     /// <summary>

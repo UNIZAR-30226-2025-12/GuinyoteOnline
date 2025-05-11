@@ -9,6 +9,10 @@ public class Carta : MonoBehaviour
     public bool jugada = false;
     private bool mouseEncima = false; //Evita errores al desactivar el collider cuando no es nuestro turno
 
+    public string ToString()
+    {
+        return Numero.ToString() + "," + Palo.ToString();
+    }
     public void setCarta(int palo, int numero)
     {
         enMano = false;

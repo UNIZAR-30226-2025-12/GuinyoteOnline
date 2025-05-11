@@ -15,8 +15,9 @@ function init(ioInstance) {
 let io = null;
 const Partida = require('../Bd/models/Partida');
 const Usuario = require('../Bd/models/Usuario');
+const { findLobby } = require('./lobbies');
 
-async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
+async function esperarMensajesDeTodos(io, sala, eventoEsperado, timeout) {
     const socketsEnSala = await io.in(sala.id).fetchSockets();
     const totalClientes = sala.jugadores.length
     console.log(`${totalClientes} jugadores`);
@@ -53,9 +54,105 @@ async function esperarMensajesDeTodos(io, sala, eventoEsperado) {
           socket.off(evento, fn);
         });
         reject(new Error("Timeout: no todos los clientes respondieron a tiempo"));
-      }, 30000); // 30 segundos
+      }, timeout);
     });
   }
+
+function esperarEvento(evento, socket, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      socket.removeListener(evento, onEvent);
+      reject(new Error('Timeout esperando evento'));
+    }, timeoutMs);
+
+    function onEvent(data) {
+      console.log("evento recibido");
+      clearTimeout(timeout);
+      resolve(data);
+    }
+
+    socket.once(evento, onEvent);
+  });
+}
+
+async function pedirYEsperar(socket, eventoRespuesta, eventoPeticion, datos = null, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    console.log(`Esperando evento: ${eventoRespuesta}`);
+
+    const timeout = setTimeout(() => {
+      socket.removeListener(eventoRespuesta, onEvent);
+      reject(new Error(`Timeout esperando evento: ${eventoRespuesta}`));
+    }, timeoutMs);
+
+    function onEvent(data) {
+      clearTimeout(timeout);
+      console.log(`Evento recibido: ${eventoRespuesta}`);
+      resolve(data);
+    }
+
+    socket.once(eventoRespuesta, onEvent);
+    console.log(`Enviando petición: ${eventoPeticion}`);
+    if (datos !== null) {
+      socket.emit(eventoPeticion, datos);
+    } else {
+      socket.emit(eventoPeticion);
+    }
+  });
+}
+
+async function reestablecerEstado(playerId, sala, socket) {
+    const jugador = sala.jugadores.find(j => j.correo === playerId);
+    if (jugador) {
+        jugador.socket = socket;
+        socket.emit('hello', '¡Hola desde el servidor!');
+        socket.join(sala.id);
+        socket.to(sala.id).emit('player-joined', playerId);
+        console.log(`Jugador ${playerId} se unió al lobby ${sala.id}`);
+        console.log(`emitiendo datos de partida`);
+        socket.emit(`datosPartida`, sala.maxPlayers, jugador.index, sala.id);
+        try {
+            await esperarEvento('ack', jugador.socket);
+        }
+        catch (err) {
+            console.log(`ack no recibido: ${err}`);
+        }
+        console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
+        socket.emit("iniciarPartida", 'iniciarPartida');
+        try {
+            await esperarEvento('ack', jugador.socket);
+        }
+        catch (err) {
+            console.log(`ack no recibido: ${err}`);
+        }
+        //RECUPERAR Y ENVIARLE AL CLIENTE LOS DATOS DE LA PARTIDA
+        let socket2 = null;
+        const otrosJugadores = sala.jugadores.filter(j => j.correo !== playerId);
+        for (const jugador of otrosJugadores) {
+            const posibleSocket = io.sockets.sockets.get(jugador.socket.id);
+            if (posibleSocket && posibleSocket.connected) {
+                socket2 = posibleSocket;
+                break;
+            }
+        }
+        
+        try {
+            const baraja = await pedirYEsperar(socket2, 'barajaReconexion', 'pedirBaraja');
+            const puntos = await pedirYEsperar(socket2, 'puntosReconexion', 'pedirPuntos');
+            const manos  = await pedirYEsperar(socket2, 'manosReconexion',  'pedirManos');
+            const jugadas = await pedirYEsperar(socket2, 'jugadasReconexion', 'pedirJugadas');
+            const orden = await pedirYEsperar(socket2, 'ordenReconexion', 'pedirOrden');
+            const segundaBaraja = await pedirYEsperar(socket2, 'segundaBarajaReconexion', 'pedirSegundaBaraja');
+
+            console.log({ baraja, puntos, manos, jugadas, orden });
+
+            console.log("emitiendo reestablecer");
+            socket.emit("reestablecer", { baraja, puntos, manos, jugadas, orden, segundaBaraja });
+        }
+        catch (err) {
+            console.error('Error durante la reconexión:', err.message);
+        }
+    }
+}
 
 async function iniciarPartida(sala) {
     console.log(`emitiendo iniciar partida a ${sala.id}`);
@@ -64,7 +161,7 @@ async function iniciarPartida(sala) {
     const baraja = mezclarBaraja(crearBaraja());
     let barajaString = barajaToString(baraja);
     console.log("esperando confirmaciones");
-    esperarMensajesDeTodos(io, sala, "ack")
+    esperarMensajesDeTodos(io, sala, "ack", 15000)
     .then((respuestas) => {
         console.log('Todos respondieron:', respuestas);
         console.log(`emitiendo baraja a ${sala.id}`);
@@ -75,7 +172,7 @@ async function iniciarPartida(sala) {
     });
 
     let indexJugadores = []
-    esperarMensajesDeTodos(io, sala, "ack")
+    esperarMensajesDeTodos(io, sala, "ack", 15000)
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
         const primero = Math.floor(Math.random() * sala.jugadores.length);
@@ -85,11 +182,12 @@ async function iniciarPartida(sala) {
             const correoJugador = sala.jugadores[index];
             indexJugadores.push({
                 correo: correoJugador,
-                index: index
+                index: index,
+                socket: socket
             });
             socket.emit("primero", primero, index);
         })
-        sala.jugadores = indexJugadores; //PARA GESTIONAR ORDEN DE JUGADORES EN RECONEXIONES (NO SE SI ES NECESARIO)
+        sala.jugadores = indexJugadores; //PARA GESTIONAR ORDEN DE JUGADORES EN RECONEXIONES
     })
     .catch((err) => {
         console.error('Error esperando respuestas:', err);
@@ -108,102 +206,129 @@ async function iniciarPartida(sala) {
         estado: sala.estado,
         fecha_inicio: new Date()
     });
-    await nuevaPartida.save();
-}
-
-
-function procesarJugada(partida, jugada) {
-    const { carta, jugadorId, cante } = jugada;
-    const indiceJugador = partida.jugadores.indexOf(jugadorId);
-
-    // Validar turno y jugada
-    if (partida.turnoActual !== jugadorId || 
-        !validarJugada(carta, partida.manos[indiceJugador], partida.mesa, partida.triunfo, partida.mesa.length === 0)) {
-        return partida;
-    }
-
-    // Procesar cante si existe
-    if (cante) {
-        const cantesValidos = verificarCante(partida.manos[indiceJugador], partida.triunfo);
-        const canteValido = cantesValidos.find(c => c.palo === cante.palo);
-        if (canteValido) {
-            partida.cantes.push({ ...canteValido, jugador: jugadorId });
-            partida.puntos[indiceJugador].puntos += canteValido.puntos;
-        }
-    }
-
-    // Jugar carta
-    partida.mesa.push(carta);
-    partida.manos[indiceJugador] = partida.manos[indiceJugador]
-        .filter(c => c.palo !== carta.palo || c.valor !== carta.valor);
-
-    // Si todos han jugado, resolver baza
-    if (partida.mesa.length === partida.jugadores.length) {
-        const ganadorIndex = calcularGanadorBaza(partida.mesa, partida.triunfo);
-        const puntosBaza = calcularPuntosBaza(partida.mesa);
-        
-        partida.puntos[ganadorIndex].puntos += puntosBaza;
-        partida.bazas.push({
-            cartas: [...partida.mesa],
-            ganador: partida.jugadores[ganadorIndex],
-            puntos: puntosBaza
-        });
-        
-        // Repartir nuevas cartas si quedan en el mazo
-        if (partida.mazo.length > 0) {
-            for (let i = 0; i < partida.jugadores.length; i++) {
-                if (partida.mazo.length > 0) {
-                    partida.manos[i].push(partida.mazo.pop());
-                }
-            }
-        }
-
-        partida.mesa = [];
-        partida.turnoActual = partida.jugadores[ganadorIndex];
-
-        // Verificar fin de la partida
-        if (partida.mazo.length === 0 && partida.manos[0].length === 0) {
-            partida.estado = 'finalizada';
-            guardarEstadoPartida(partida);
-        }
-    } else {
-        // Siguiente turno
-        const siguienteIndice = (indiceJugador + 1) % partida.jugadores.length;
-        partida.turnoActual = partida.jugadores[siguienteIndice];
-    }
-
-    partida.ultimaActividad = Date.now();
-    return partida;
-}
-
-async function guardarEstadoPartida(partida) {
     try {
-        await Partida.findOneAndUpdate(
-            { idPartida: partida.id },
-            { 
-                estado: partida.estado,
-                puntuacion: partida.puntos
-            }
-        );
+        await nuevaPartida.save();
+    }
+    catch (error) {
+        console.error('Error al guardar la partida:', error);
+    }
+}
 
-        // Si la partida está finalizada, actualizar estadísticas de jugadores
-        if (partida.estado === 'finalizada') {
-            for (const jugador of partida.jugadores) {
-                await JugadorPartida.create({
-                    idJugador: jugador,
-                    idPartida: partida.id,
-                    puntuacion: partida.puntos.find(p => p.jugador === jugador).puntos
-                });
-            }
+async function iniciarSegundaRonda(lobby) {
+    io.to(lobby).emit("finRonda");
+    sala = findLobby(lobby);
+    esperarMensajesDeTodos(io, sala, "ack", 15000)
+    .then(async (respuestas) => {
+        console.log('Todos respondieron', respuestas);
+        const baraja = mezclarBaraja(crearBaraja());
+        let barajaString = barajaToString(baraja);
+        console.log(`emitiendo baraja a ${lobby}`);
+        io.to(lobby).emit("barajaSegundaRonda", barajaString);
+    })
+    .catch((err) => {
+        console.error('Error esperando respuestas:', err);
+    });
+}
+
+async function guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3) {
+    try {
+        sala = findLobby(lobby);
+        console.log(lobby);
+        console.log(sala);
+        const partida = await Partida.findOne({ idPartida: lobby });
+
+        if (!partida) {
+            throw new Error('Partida no encontrada');
         }
+        
+        console.log(partida);
+        let puntos = [puntos0, puntos1, puntos2, puntos3];
+        let puntuacionesPorUsuario = {};
+
+        sala.jugadores.forEach(j => {
+            console.log(`puntuacion de ${j.correo} -> ${puntos[j.index]}`)
+            puntuacionesPorUsuario[j.correo] = puntos[j.index];
+        });
+
+        console.log(puntuacionesPorUsuario);
+
+        // Recorremos los jugadores y actualizamos su puntuación si están en el objeto recibido
+        partida.jugadores.forEach(jugador => {
+            if (puntuacionesPorUsuario.hasOwnProperty(jugador.idUsuario)) {
+                jugador.puntuacion = puntuacionesPorUsuario[jugador.idUsuario];
+            }
+        });
+        partida.estado = "terminada";
+
+        console.log(partida);
+
+        partida.save()
+        .then(doc => {
+            console.log('Guardado OK:', doc);
+        })
+        .catch(err => {
+            console.error('Error al guardar:', err);
+        });
     } catch (error) {
         console.error('Error guardando estado de partida:', error);
     }
 }
 
+async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiarSiete) {
+    const socketsEnSala = await io.in(sala).fetchSockets();
+    const socketIds = socketsEnSala.map(s => s.id);
+  
+    const acks = new Set();
+
+    let pending = new Set(socketIds);
+    pending.delete(idJugador);
+    console.log(socketIds);
+    console.log(pending);
+
+    const sendToSockets = (targetSocketIds) => {
+        targetSocketIds.forEach(id => {
+            io.to(id).emit('jugada', carta, cantar, cambiarSiete);
+        });
+    };
+
+    sendToSockets(Array.from(pending));
+
+    socketsEnSala.forEach(socket => {
+        const ackHandler = () => {
+            if (pending.has(socket.id)) {
+                console.log(`ack de ${socket.id} recibido`);
+                acks.add(socket.id);
+                pending.delete(socket.id);
+                if (pending.size === 0) {
+                    socketsEnSala.forEach(s => s.off('ack', ackHandler));
+                    console.log('todos confirmados');
+                    io.to(sala).emit('inputsConfirmados');
+                }
+            }
+        };
+        if (socket.id != idJugador) socket.on('ack', ackHandler);
+    });
+
+    const retry = () => {
+        if (pending.size > 0) {
+            sendToSockets(Array.from(pending));
+            setTimeout(retry, timeout);
+        }
+    };
+
+    setTimeout(retry, timeout);
+    sendToSockets(Array.from(pending));
+}
+
+async function enviarInput(idJugador, sala, carta, cantar, cambiarSiete) {
+    enviarJugada(io, sala, idJugador, 500, carta, cantar, cambiarSiete);
+}
+
 module.exports = {
     init,
+    reestablecerEstado,
     iniciarPartida,
-    procesarJugada,
+    iniciarSegundaRonda,
+    enviarInput,
     guardarEstadoPartida
 }; 

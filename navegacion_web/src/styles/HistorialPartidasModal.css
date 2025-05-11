@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.historial-partidas-modal {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.partidas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.partida-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.partida-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.equipo-1, .equipo-2 {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.resultado {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20%; /* Esto asegura que el resultado ocupe un espacio entre los dos equipos */
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.jugador-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #000000;
+}
+
+.jugador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 80px; /* Puedes ajustar según el diseño */
+  text-align: center;
+}
+
+.jugador span {
+  font-size: 14px;
+  color: #000000;
+}
+
+.foto-perfil {
+  width: 70px;
+  height: 70px;
+  border-radius: 60%;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.resultado span {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #000;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 #fff, 2px 2px 0 #000;
+}
+
+.ganada {
+  background-color: #3afe65; /* Verde claro */
+  border: 1px solid #000000;
+}
+
+.perdida {
+  background-color: #f43d29; /* Rojo claro */
+  border: 1px solid #000000;
+}

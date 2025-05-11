@@ -6,6 +6,7 @@ function createLobby(maxPlayers, idCreador, tipo, codigoAcceso) {
   const id = uuidv4();
   const lobby = {
     id,
+    iniciado: false,
     maxPlayers: (maxPlayers === "1v1") ? 2 : 4,
     idCreador,
     tipo,
@@ -20,6 +21,18 @@ function createLobby(maxPlayers, idCreador, tipo, codigoAcceso) {
 function findLobby(lobbyId) {
   return lobbies.find(
     (lobby) => lobby.id === lobbyId
+  );
+}
+
+function findLobbyBySocketId(socket) {
+  return lobbies.find(
+    (lobby) => lobby.estado === 'en curso' && lobby.jugadores.some(jugador => jugador.socket.id === socket.id)
+  );
+}
+
+function findLobbyByUserName(user) {
+  return lobbies.find(
+    (lobby) => lobby.estado === 'en curso' && lobby.jugadores.some(jugador => jugador.correo === user)
   );
 }
 
@@ -59,6 +72,8 @@ function autoJoinOrCreate(playerId, maxPlayers) {
 
 module.exports = {
   findLobby,
+  findLobbyBySocketId,
+  findLobbyByUserName,
   createLobby,
   joinLobby,
   joinPrivateLobby,

@@ -17,19 +17,26 @@ public class ConsoleToGUI : MonoBehaviour
     void Update() { if (Input.GetKeyDown(KeyCode.Space)) { doShow = !doShow; } }
     public void Log(string logString, string stackTrace, LogType type)
     {
-       // for onscreen...
+        // Agrega el stackTrace si es un error o excepción
+        if (type == LogType.Error || type == LogType.Exception)
+        {
+            logString += "\n" + stackTrace;
+        }
+
+        // Para mostrar en pantalla...
         myLog = myLog + "\n" + logString;
         if (myLog.Length > kChars) { myLog = myLog.Substring(myLog.Length - kChars); }
 
-        // for the file ...
+        // Para guardar en archivo...
         if (filename == "")
         {
             string d = System.Environment.GetFolderPath(
-               System.Environment.SpecialFolder.Desktop) + "/YOUR_LOGS";
+            System.Environment.SpecialFolder.Desktop) + "/YOUR_LOGS";
             System.IO.Directory.CreateDirectory(d);
             string r = Random.Range(1000, 9999).ToString();
             filename = d + "/log-" + r + ".txt";
         }
+
         try { System.IO.File.AppendAllText(filename, logString + "\n"); }
         catch { }
     }

@@ -3,10 +3,12 @@ const cors = require("cors");
 const http = require('http');
 const socketIo = require('socket.io');
 const bcrypt = require('bcrypt');
-const { iniciarPartida, procesarJugada, guardarEstadoPartida } = require('./gameManager');
+const { Mutex } = require('async-mutex');
+const mutex = new Mutex();
+const { reestablecerEstado, iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
-const { findLobby } = require('./lobbies');
+const { findLobby, findLobbyBySocketId, findLobbyByUserName, joinLobby } = require('./lobbies');
 require("dotenv").config();
 
 const saltRounds = 10; // Nivel de complejidad de las contraseñas
@@ -33,8 +35,6 @@ const Partida = require("../Bd/models/Partida");
 const salasRoutes = require("./routes/salas");
 
 // Estado en memoria
-const partidasActivas = new Map();
-const salasEspera = new Map();
 const timeoutsReconexion = new Map();
 
 // Puerto para Render
@@ -654,8 +654,7 @@ app.post("/amigos/rechazarSolicitud", async (req, res) => {
   }
 });
 
-// * DONE Documentación
-// ! NOT DONE Falta probar la nueva funcionalidad y documentar
+// * DONE Documentación y funcionalidad actual
 /**
  * POST /amigos/eliminarAmigo
  *
@@ -834,7 +833,8 @@ app.get("/partidas/historial/:userId", async (req, res) => {
           "jugadores.nombre": "$usuario_info.nombre", // Agregar nombre desde 'usuario_info'
           "jugadores.idUsuario": 1, // Mantener el idUsuario
           "jugadores.equipo": 1, // Mantener el equipo
-          "jugadores.puntuacion": 1 // Mantener la puntuación
+          "jugadores.puntuacion": 1, // Mantener la puntuación
+          "jugadores.foto_perfil": "$usuario_info.foto_perfil" // Agregar foto de perfil desde 'usuario_info'
         }
       },
       {
@@ -843,7 +843,14 @@ app.get("/partidas/historial/:userId", async (req, res) => {
           idPartida: {$first: "$idPartida" },
           fecha_inicio: { $first: "$fecha_inicio" },
           estado: { $first: "$estado" },
-          jugadores: { $push: { nombre: "$jugadores.nombre", idUsuario: "$jugadores.idUsuario", equipo: "$jugadores.equipo", puntuacion: "$jugadores.puntuacion" } }
+          jugadores: { $push: { 
+            nombre: "$jugadores.nombre", 
+            idUsuario: "$jugadores.idUsuario", 
+            equipo: "$jugadores.equipo", 
+            puntuacion: "$jugadores.puntuacion", 
+            foto_perfil: "$jugadores.foto_perfil" 
+          } 
+          }
         }
       },
       {
@@ -860,35 +867,50 @@ app.get("/partidas/historial/:userId", async (req, res) => {
 // Configuración de Socket.IO para tiempo real
 io.on('connection', (socket) => {
   console.log('Usuario conectado:', socket.id);
-  let userId = null;
+  socket.emit('socket-id', socket.id);
 
-  // Asociar usuario con socket
-  socket.on('identificar', (data) => {
-    userId = data.userId;
-    socket.userId = userId;
-    
-    // Reconectar a partida si existe
-    const partidaActiva = Array.from(partidasActivas.values())
-      .find(p => p.jugadores.includes(userId));
-    
+  //LLAMAR AL HACER LOGIN EN EL CLIENTE
+  socket.on('buscarPartidasActivas', async ({playerId, socketId}) => {
+    console.log(playerId);
+    console.log(socketId);
+    const partidaActiva = findLobbyByUserName(playerId);
     if (partidaActiva) {
-      socket.join(partidaActiva.id);
-      clearTimeout(timeoutsReconexion.get(userId));
-      timeoutsReconexion.delete(userId);
-      io.to(partidaActiva.id).emit('jugadorReconectado', { jugadorId: userId });
+      console.log(`partida ${partidaActiva.id} encontrada`);
+      const timeout = timeoutsReconexion.get(playerId);
+      if (timeout) {
+        clearTimeout(timeout);
+        timeoutsReconexion.delete(playerId);
+        console.log(`timeout eliminado`);
+      }
+      const socket = io.sockets.sockets.get(socketId);
+      if (socket) {
+        reestablecerEstado(playerId, partidaActiva, socket);
+      }
+      else {
+        console.log("socket no encontrado");
+      }
     }
-  });
+    else {
+      console.log(`el jugador ${playerId} no tenía partidas activas`);
+    }
+  })
 
   // Unirse a sala pública
-  socket.on('join-lobby', ({ lobbyId, playerId }) => {
+  socket.on('join-lobby', async ({ lobbyId, playerId }) => {
     socket.emit('hello', '¡Hola desde el servidor!');
     socket.join(lobbyId);
     socket.to(lobbyId).emit('player-joined', playerId);
     console.log(`Jugador ${playerId} se unió al lobby ${lobbyId}`);
     let lobby = findLobby(lobbyId);
-    console.log(lobby);
-    if (lobby.jugadores.length === lobby.maxPlayers) {
-      iniciarPartida(lobby);
+    console.log(lobby); 
+
+    if (io.sockets.adapter.rooms.get(lobbyId)?.size === lobby.maxPlayers) {
+      await mutex.runExclusive(async () => {
+        if (lobby.iniciado === false) {
+          lobby.iniciado = true;
+          await iniciarPartida(lobby);
+        }
+      });
     }
   });
 
@@ -901,7 +923,7 @@ io.on('connection', (socket) => {
         console.error("No se pudo parsear el JSON recibido:", raw);
         return;
     }
-    if (!data || !data.input || !data.lobby) {
+    if (!data || !data.input || !data.lobby || !data.miId) {
       console.error("Faltan datos en el mensaje recibido:", data);
       return;
     }
@@ -912,15 +934,25 @@ io.on('connection', (socket) => {
           console.error("Error al parsear 'input':", err);
           return;
       }
-    console.log("enviando jugada al resto de jugadores");
+    console.log(`enviando jugada a ${data.lobby}`);
     console.log(data);
     console.log(parsedInput);
-    io.to(data.lobby).emit('jugada', parsedInput);
+    const { carta, cantar, cambiarSiete } = parsedInput;
+    enviarInput(data.miId, data.lobby, carta, cantar, cambiarSiete);
+  });
+
+  socket.on('fin-partida', ([data]) => {
+    const { puntos0, puntos1, puntos2, puntos3, lobby } = data;
+    guardarEstadoPartida(lobby, puntos0, puntos1, puntos2, puntos3);
+  });
+
+  socket.on('fin-ronda', ({lobby}) => {
+    gameManager.iniciarSegundaRonda(lobby);
   });
 
   // Unirse a una sala
   socket.on('unirSalaPrivada', async ({ salaId, userId, codigoAcceso }) => {
-    const sala = salasEspera.get(salaId);
+    /*const sala = salasEspera.get(salaId);
     if (sala && sala.codigoAcceso === codigoAcceso && !sala.jugadores.includes(userId)) {
       sala.jugadores.push(userId);
       socket.join(salaId);
@@ -933,66 +965,24 @@ io.on('connection', (socket) => {
         io.to(salaId).emit('inicioPartida', nuevaPartida);
         salasEspera.delete(salaId);
       }
-    }
-  });
-
-  // Pausar partida
-  socket.on('pausarPartida', async ({ partidaId }) => {
-    const partida = partidasActivas.get(partidaId);
-    if (partida && partida.jugadores.includes(socket.userId)) {
-      partida.estado = 'pausada';
-      await guardarEstadoPartida(partida);
-      io.to(partidaId).emit('partidaPausada', partida);
-    }
-  });
-
-  // Buscar partida
-  socket.on('buscarPartida', ({ tipo, userId }) => {
-    let sala = Array.from(salasEspera.values()).find(s => s.tipo === tipo && s.jugadores.length < (tipo === '1v1' ? 2 : 4));
-
-    if (!sala) {
-        sala = {
-            id: Date.now().toString(),
-            tipo,
-            jugadores: [userId],
-            estado: 'esperando'
-        };
-        salasEspera.set(sala.id, sala);
-    } else {
-        sala.jugadores.push(userId);
-    }
-
-    socket.join(sala.id);
-    io.to(sala.id).emit('actualizacionSala', sala);
-
-    if (sala.jugadores.length === (tipo === '1v1' ? 2 : 4)) {
-        const nuevaPartida = iniciarPartida(sala);
-        partidasActivas.set(nuevaPartida.id, nuevaPartida);
-        io.to(sala.id).emit('inicioPartida', nuevaPartida);
-        salasEspera.delete(sala.id);
-    }
+    }*/
   });
 
   // Desconexión
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);
     
-    /*if (socket.userId) {
-      const partidaActiva = Array.from(partidasActivas.values())
-        .find(p => p.jugadores.includes(socket.userId));
-      
-      if (partidaActiva) {
-        // Iniciar timeout de reconexión
-        timeoutsReconexion.set(socket.userId, setTimeout(async () => {
-          partidaActiva.estado = 'abandonada';
-          await guardarEstadoPartida(partidaActiva);
-          io.to(partidaActiva.id).emit('partidaAbandonada', {
-            partidaId: partidaActiva.id,
-            jugadorDesconectado: socket.userId
-          });
-          partidasActivas.delete(partidaActiva.id);
-        }, 30000)); // 30 segundos de timeout
-      }
-    }*/
+    const partidaActiva = findLobbyBySocketId(socket);
+    if (partidaActiva) {
+      const jugador = partidaActiva.jugadores.find(j => j.socket.id === socket.id);
+      console.log(`partida ${partidaActiva.id} en pausa`);
+      io.to(partidaActiva.id).emit('desconexion');
+      timeoutsReconexion.set(jugador.correo, setTimeout(async () => {
+        io.to(partidaActiva.id).emit('partidaAbandonada');
+      }, 30000));
+    }
+    else {
+      console.log("no habia partidas activas");
+    }
   });
 });

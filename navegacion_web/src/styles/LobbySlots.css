@@ -1,0 +1,126 @@
+.lobby-slots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Space between sections */
+    padding: 20px;
+    background-color: #f5f5f5; /* Light gray background */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 100%;
+    max-width: 600px; /* Limit the width of the lobby */
+    margin: 0 auto; /* Center the lobby */
+}
+
+.top-slots,
+.bottom-slots {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.top-slots {
+    margin-top: 20px; /* Add space above the top players */
+}
+
+.bottom-slots {
+    margin-bottom: 20px; /* Add space below the bottom players */
+}
+
+.vs-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #e60000; /* Red text for "VS" */
+    text-align: center;
+    margin: 0; /* Remove extra margin to keep it tight */
+}
+
+.player-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px; /* Fixed width for slots */
+    height: 150px; /* Fixed height for slots */
+    background-color: #ffffff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.player-slot:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.player-avatar {
+    width: 100%;
+    height: 70%;
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+    border-bottom: 2px solid #ddd; /* Divider between image and text */
+}
+
+.player-info {
+    padding: 10px 5px;
+    width: 100%;
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-username {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333; /* Dark gray text */
+    margin: 0;
+}
+
+.team-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    color: #333; /* Dark gray text */
+    text-transform: uppercase; /* Make text uppercase */
+    letter-spacing: 1px; /* Add spacing between letters */
+}
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .lobby-slots {
+        background-color: #2c2c2c; /* Dark gray background */
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Subtle shadow */
+    }
+
+    .team-label {
+        color: #ffffff; /* White text */
+    }
+
+    .vs-text {
+        color: #ff4d4d; /* Softer red for "VS" */
+    }
+
+    .player-slot {
+        background-color: #1e1e1e; /* Darker gray background */
+        box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1); /* Subtle shadow */
+    }
+
+    .player-slot:hover {
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Stronger shadow on hover */
+    }
+
+    .player-avatar {
+        border-bottom: 2px solid #444; /* Darker divider */
+    }
+
+    .player-username {
+        color: #ffffff; /* White text */
+    }
+
+    .team-name {
+        color: #ffffff; /* White text */
+    }
+}

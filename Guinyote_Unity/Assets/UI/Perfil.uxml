@@ -1,26 +1,27 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=0398abbafa8c9f942bb8076f4efac0a8&amp;type=3#Style" />
     <engine:Button text="Mi perfil" name="Profile_Button" enabled="false" style="position: absolute; top: 134px; left: 30px; width: 192px; background-color: rgb(255, 255, 255);" />
     <engine:Button text="Historial de partidas" name="History_Button" style="position: absolute; top: 222px; left: 30px; width: 192px; background-color: rgb(255, 255, 255);" />
     <engine:Button icon-image="project://database/Assets/Resources/Sprites/UI/atras.png?fileID=2800000&amp;guid=e1424596349e675458de8a62305ce426&amp;type=3#atras" name="atras" style="width: 93px; height: 78px; background-color: rgba(188, 188, 188, 0); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); position: absolute;" />
     <engine:ScrollView name="History_Scroll" horizontal-scroller-visibility="Auto" vertical-scroller-visibility="Auto" style="position: absolute; height: 361px; width: 526px; top: 40px; left: 305px; align-items: stretch; display: flex;" />
-    <engine:VisualElement name="Profile_Config" style="flex-grow: 1; position: absolute; height: 366px; width: 526px; top: 29px; left: 303px; color: rgb(27, 27, 27); background-color: rgb(173, 216, 230); display: flex;">
+    <engine:VisualElement name="Profile_Config" class="ventana" style="flex-grow: 1; position: absolute; height: 366px; width: 526px; top: 29px; left: 303px; color: rgb(27, 27, 27); background-color: rgb(173, 216, 230); display: flex;">
         <engine:Button text="Cerrar sesión" name="LogOut_Button" style="position: absolute; top: 310px; left: 60px; background-color: rgb(255, 255, 255);" />
         <engine:Button text="Guardar cambios" name="SaveButton" style="position: absolute; top: 311px; left: 316px; background-color: rgb(255, 255, 255);" />
-        <engine:Button text="Cambiar foto" name="Photo_Button" style="position: absolute; top: 44px; left: 53px; background-color: rgb(255, 255, 255);" />
-        <engine:TextField placeholder-text="Cambiar nombre" name="Name_Field" style="position: absolute; top: 46px; left: 307px; width: 132px;" />
+        <engine:Button text="Cambiar foto" name="Photo_Button" style="position: absolute; top: 54px; left: 57px; background-color: rgb(255, 255, 255);" />
+        <engine:TextField placeholder-text="Cambiar nombre" name="Name_Field" style="position: absolute; top: 54px; left: 306px; width: 132px;" />
         <engine:TextField placeholder-text="Cambiar contraseña" name="Password_Field" password="true" style="position: absolute; top: 132px; left: 307px; width: 132px;" />
         <engine:Button text="Cambiar tapete" name="Tapete_Button" style="position: absolute; top: 217px; left: 54px; background-color: rgb(255, 255, 255);" />
         <engine:Button text="Cambiar cartas" name="Cards_Button" style="position: absolute; top: 216px; left: 312px; background-color: rgb(255, 255, 255);" />
         <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 63px; width: 69px; background-image: resource(&apos;Sprites/Login&apos;); position: absolute; top: 119px; left: 77px;" />
-        <engine:Label text="Mi perfil" />
-        <engine:VisualElement name="Elegir_Foto" style="flex-grow: 1; position: absolute; height: 315px; width: 451px; top: 40px; left: 39px; background-color: rgb(173, 216, 230); display: none;">
+        <engine:VisualElement name="Elegir_Foto" style="flex-grow: 1; position: absolute; height: 300px; width: 451px; top: 55px; left: 39px; background-color: rgb(173, 216, 230); display: none;">
             <engine:ScrollView name="Foto_Scroll" style="position: relative; height: 313px;" />
         </engine:VisualElement>
-        <engine:VisualElement name="Elegir_Cartas" style="flex-grow: 1; position: absolute; height: 315px; width: 451px; top: 40px; left: 39px; background-color: rgb(173, 216, 230); display: none;">
+        <engine:VisualElement name="Elegir_Cartas" style="flex-grow: 1; position: absolute; height: 302px; width: 451px; top: 53px; left: 39px; background-color: rgb(173, 216, 230); display: none;">
             <engine:ScrollView name="Carta_Scroll" style="position: relative; height: 313px;" />
         </engine:VisualElement>
-        <engine:VisualElement name="Elegir_Tapete" style="flex-grow: 1; position: absolute; height: 315px; width: 451px; top: 40px; left: 39px; background-color: rgb(173, 216, 230); display: none;">
+        <engine:VisualElement name="Elegir_Tapete" style="flex-grow: 1; position: absolute; height: 303px; width: 451px; top: 52px; left: 39px; background-color: rgb(173, 216, 230); display: none;">
             <engine:ScrollView name="Tapete_Scroll" style="position: relative; height: 313px;" />
         </engine:VisualElement>
+        <engine:Label text="Mi perfil" style="-unity-font-style: bold;" />
     </engine:VisualElement>
 </engine:UXML>

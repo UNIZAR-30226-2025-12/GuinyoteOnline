@@ -76,6 +76,7 @@ public class IA_Player : Player
         }
 
         exito = turno();
+        base.Update();
     }
 
     //Devuelve el índice de la carta que se usará en una partida de 2 jugadores si la CPU va segunda

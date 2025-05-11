@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useState, useEffect } from "react";
 import React from 'react';
 import Player from "./components/Player_Controller";
 import IA_Player from "./components/IA_Player";
@@ -13,15 +13,17 @@ function Game() {
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
+    const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
+    const [cargando, setCargando] = useState(true); // Estado para carga inicial
 
     const handleInit = () => {
         gameManager.Init();
         setPlayers([...gameManager.state.players]);
         setTriunfo(gameManager.state.triunfo);
         setIniciado(true);
+        setInformadorTexto("Turno de: " + gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]);
+        setCargando(false);
     };
-
-    const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Espera
 
     const handleCartaClick = async (index) => {
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
@@ -32,8 +34,6 @@ function Game() {
         }
         let carta = player.state.mano[index];
 
-        await esperar(50);
-
         const nuevasCartasJugadas = [...gameManager.state.cartasJugadas];
         nuevasCartasJugadas[playerIndex] = carta;
         gameManager.state.cartasJugadas = nuevasCartasJugadas;
@@ -41,6 +41,7 @@ function Game() {
         player.state.esMiTurno = false;
 
         setPlayers([...gameManager.state.players]);
+        setInformadorTexto("Turno de: " + gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]);
 
         gameManager.state.turnManager.tick();
     };
@@ -61,15 +62,29 @@ function Game() {
         player.state.sePuedeCambiarSiete = false;
         player.state.sieteCambiado = true;
         setPlayers([...gameManager.state.players]);
+        setInformadorTexto("Cambian siete");
 
+    }
+
+    const handleCantar = async (palo) => {
+        let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
+        let player = gameManager.state.players[playerIndex];
+        let traduccion = ["Bastos", "Copas", "Espadas", "Oros"];
+
+        setInformadorTexto("Cantan " + traduccion[palo]);
+    }
+
+    useEffect(() => {
+        handleInit();
+    }, []);
+
+    if (cargando) {
+        return <div className="cargando">Cargando partida...</div>;
     }
 
     return (
         <div className="juego">
-            {!iniciado ? (
-                <button className="botonInit" onClick={handleInit}>Init</button>
-            ) : (
-                !gameManager.state.finJuego ? (
+            {!gameManager.state.finJuego ? (
                     <>
                         <Tapete />
                         <Baraja controller={gameManager.state.baraja} />
@@ -79,6 +94,7 @@ function Game() {
                             cartaJugada={gameManager.state.cartasJugadas[0]}
                             handleCartaClick={handleCartaClick}
                             handleCambiarSiete={handleCambiarSiete}
+                            handleCantar={handleCantar}
                         />
                         {numJugadores === 2 && (
                             <IA_Player
@@ -87,6 +103,7 @@ function Game() {
                                 handleCartaClick={handleCartaClick}
                                 cartaJugada={gameManager.state.cartasJugadas[1]}
                                 handleCambiarSiete={handleCambiarSiete}
+                                handleCantar={handleCantar}
                             />
                         )}
                         {numJugadores === 4 && (
@@ -97,21 +114,25 @@ function Game() {
                                     handleCartaClick={handleCartaClick}
                                     cartaJugada={gameManager.state.cartasJugadas[1]}
                                     handleCambiarSiete={handleCambiarSiete}
+                                    handleCantar={handleCantar}
                                 />
                                 <IA_Player
                                     controller={gameManager.state.players[2]}
                                     numIA={2} handleCartaClick={handleCartaClick}
                                     cartaJugada={gameManager.state.cartasJugadas[2]}
                                     handleCambiarSiete={handleCambiarSiete}
+                                    handleCantar={handleCantar}
                                 />
                                 <IA_Player
                                     controller={gameManager.state.players[3]}
                                     numIA={3} handleCartaClick={handleCartaClick}
                                     cartaJugada={gameManager.state.cartasJugadas[3]}
                                     handleCambiarSiete={handleCambiarSiete}
+                                    handleCantar={handleCantar}
                                 />
                             </div>
                         )}
+                        <h3 className="informador"> {informadorTexto}</h3>
                         {gameManager.state.segundaBaraja && (
                             <div>
                                 <h1 className="MTeam_1">Equipo 1: {
@@ -138,8 +159,7 @@ function Game() {
                         <h1 className="GanadorLabel">Ganador: Equipo {gameManager.state.ganador}</h1>
                         <button className="botonInit" onClick={handleInit}>Reiniciar</button>
                     </div>
-                )
-            )}
+                )}
         </div>
     );
 }

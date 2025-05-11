@@ -1,9 +1,10 @@
 import React, { useState } from 'react';  
 import { useNavigate } from 'react-router-dom';
-import ProfileButton from '../components/buttons/ProfileButton';
-import HistorialPartidasButton from '../components/buttons/HistorialPartidasButton';
+import ProfileButton from '../components/navegacion/buttons/ProfileButton';
+import HistorialPartidasButton from '../components/navegacion/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
-import ProfileModal from '../components/ProfileModal';
+import ProfileModal from '../components/navegacion/ProfileModal';
+import HistorialPartidasModal from '../components/navegacion/HistorialPartidasModal';
 
 function AccountManagement() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ function AccountManagement() {
 
       <div className="right-panel">
         {selectedOption === 'perfil' && <ProfileModal />}
-        {selectedOption === 'historial' && <p>Historial Partidas seleccionado</p>}
+        {selectedOption === 'historial' && <HistorialPartidasModal />}
       </div>
     </div>
   );

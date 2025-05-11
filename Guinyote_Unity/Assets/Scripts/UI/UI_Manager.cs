@@ -107,6 +107,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnRegistroUsuario += RegistroUsuario;
         Consultas.OnErrorRegistroUsuario += RegistroUsuarioFail;
         Consultas.OnAmigosConsultados += UpdateAmigos;
+        Consultas.OnEliminarAmistad += () => StartCoroutine(Consultas.GetAmigosUsuario(id));
         Consultas.OnSolicitudesAmigosConsultadas += UpdateSolicitudesAmigos;
         Consultas.OnAceptarSolicitudAmistad += () => {
             StartCoroutine(Consultas.GetSolicitudesAmistadUsuario(id));
@@ -394,7 +395,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicia el juego con la configuración especificada.
+    /// Actualiza las referencias de los elementos de la UI para la escena de inicio de partida.
     /// </summary>
     /// <param name="root">El UIDocument de la escena actual.</param>
     /// <param name="currentScene">La escena actual.</param>
@@ -403,6 +404,20 @@ public class UIManager : MonoBehaviour
     {
         boton_start = root.rootVisualElement.Q<Button>("Start");
         boton_start.RegisterCallback<ClickEvent>(ev => beginGame(currentScene.name));
+        if(currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2")
+        {
+            root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+        }
+        else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
+        {
+            root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
+            
+            Consultas.OnAmigosConsultados += UpdateInvitarAmigos;
+            Consultas.OnAmigosConsultados -= UpdateAmigos;
+            StartCoroutine(Consultas.GetAmigosUsuario(id));
+
+            //SACAR NOMBRES Y FOTOS DE PERFIL DEL RESTO DE LOS JUGADORES
+        }
     }
 
     /// <summary>
@@ -591,8 +606,9 @@ public class UIManager : MonoBehaviour
     void updateProfilePictures()
     {
         VisualTreeAsset fotoAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String foto in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Profile_pictures", "*.png"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Profile_pictures"))
         {
+            String foto=foto_textura.name;
             Debug.Log("Foto: " + foto);
             String fotoName = System.IO.Path.GetFileNameWithoutExtension(foto);
             VisualElement fotoElement = fotoAsset.CloneTree();
@@ -617,8 +633,9 @@ public class UIManager : MonoBehaviour
     void updateTapetes()
     {
         VisualTreeAsset tapeteAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String tapete in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Tapetes", "*.png"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Tapetes"))
         {
+            String tapete=foto_textura.name;
             Debug.Log("Tapete: " + tapete);
             String tapeteName = System.IO.Path.GetFileNameWithoutExtension(tapete);
             VisualElement tapeteElement = tapeteAsset.CloneTree();
@@ -642,8 +659,9 @@ public class UIManager : MonoBehaviour
     void updateCartas()
     {
         VisualTreeAsset cartaAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (String carta in System.IO.Directory.GetFiles("Assets/Resources/Sprites/Dorso_Carta", "*.png"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Dorso_Carta"))
         {
+            String carta=foto_textura.name;
             Debug.Log("Carta: " + carta);
             String cartaName = System.IO.Path.GetFileNameWithoutExtension(carta);
             VisualElement cartaElement = cartaAsset.CloneTree();
@@ -873,6 +891,18 @@ public class UIManager : MonoBehaviour
 
 
         tab_login.style.display = DisplayStyle.None;
+
+        BuscarPartidasActivas(id);
+    }
+
+    async Task BuscarPartidasActivas(String id)
+    {
+        Debug.Log(id);
+        if (!webSocketClient.isConnected())
+        {
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
+        webSocketClient.buscarPartidasActivas(id);
     }
 
     /// <summary>
@@ -904,6 +934,10 @@ public class UIManager : MonoBehaviour
         {
             VisualElement amigoElement = amigoAsset.CloneTree();
             amigoElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(amigo.foto_perfil));
+            amigoElement.Q<Button>("Delete_Button").RegisterCallback<ClickEvent>(ev => { 
+                Debug.Log("Eliminar amigo: " + amigo.nombre); 
+                StartCoroutine(Consultas.EliminarAmigo(id, amigo.correo));
+            });
             Label nombreAmigoLabel = amigoElement.Q<Label>("Nombre_Amigo");
             nombreAmigoLabel.text = amigo.nombre;
             friendsScroll.Add(amigoElement);
@@ -946,10 +980,45 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    void UpdateInvitarAmigos(Usuario[] solicitudes)
+    {
+
+        Consultas.OnAmigosConsultados -= UpdateInvitarAmigos;
+        Consultas.OnAmigosConsultados += UpdateAmigos;
+
+        var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+
+        // Obtener el ScrollView donde se mostrarán los amigos
+        ScrollView friendsScroll = root.rootVisualElement.Q<ScrollView>("listaAmigos");
+        friendsScroll.Clear(); // Limpiar el contenido actual del ScrollView
+
+        // Cargar el recurso visual para representar a una invitacion
+        VisualTreeAsset InvitaciónAsset = Resources.Load<VisualTreeAsset>("InvitarAmigo_elemento");
+
+        // Iterar sobre la lista de amigos y añadirlos al ScrollView
+        foreach (Usuario solicitud in solicitudes)
+        {
+
+            VisualElement InvitacionElement = InvitaciónAsset.CloneTree();
+            InvitacionElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(solicitud.foto_perfil));
+            Label nombreUsuarioLabel = InvitacionElement.Q<Label>("Nombre_usuario");
+            nombreUsuarioLabel.text = solicitud.nombre;
+            Button aceptarButton = InvitacionElement.Q<Button>("accept_Button");
+            aceptarButton.RegisterCallback<ClickEvent>(ev => { 
+                //Enviar invitación a la sala
+            });
+            friendsScroll.Add(InvitacionElement);
+        }
+    }
+
+
     async void JoinRoom(Lobby lobby, string idUsuario)
     {
         // Configurar WebSocket para partidas online
-        await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");//("ws://localhost:10000");
+        if (!webSocketClient.isConnected())
+        {
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
     }
@@ -1014,12 +1083,6 @@ public class UIManager : MonoBehaviour
     public static void ChangeScene(string sceneName)
     {
         Debug.Log("Button Clicked");
-
-        // Cerrar conexión WebSocket si se cambia a una escena no relacionada con partidas online
-        if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2" && sceneName != "Juego"))
-        {
-            Instance.webSocketClient.Close();
-        }
 
         lastScene.Push(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(sceneName);

@@ -1,0 +1,65 @@
+.lobby-title {
+    font-weight: bold;
+    font-size: 2rem; /* Larger font size for the title */
+    margin-bottom: 2rem;
+    color: #333; /* Dark gray text */
+}
+
+.lobby-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    background-color: rgba(245, 245, 245, 0.95); /* Softer light gray with slight transparency */
+    padding: 20px; /* Add padding for spacing */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    position: relative; /* Make the container a positioning context */
+}
+
+.lobby-back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    cursor: pointer;
+    background-color: rgba(245, 245, 245, 0.95);
+    border: none;
+}
+
+.lobby-back-button img {
+    width: 40px;
+    height: 40px;
+}
+
+.lobby-back-button:hover {
+    background-color: #e0e0e0; /* Light gray background on hover */
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+
+    .lobby-title {
+        color: #ffffff; /* White text */
+    }
+
+    .lobby-container {
+        background-color: rgba(30, 30, 30, 0.99); /* Dark gray with slight transparency */
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Subtle shadow */
+    }
+
+
+    .lobby-back-button {
+        background-color: rgba(30, 30, 30, 0.99);
+    }
+
+    .lobby-back-button:hover {
+        background-color: #444; /* Darker gray on hover */
+    }
+
+    .lobby-back-button img {
+        filter: brightness(0) invert(1); /* Invert colors for dark mode */
+    }
+}
+
