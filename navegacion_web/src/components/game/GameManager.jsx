@@ -1,3 +1,9 @@
+/**
+ * GameManager class
+ * - Manages the game state and logic for a IA game.
+ * 
+ */
+
 import TurnManager from "./TurnManager";
 import PlayerBase from "./PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
