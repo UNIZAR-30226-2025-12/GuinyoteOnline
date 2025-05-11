@@ -833,7 +833,8 @@ app.get("/partidas/historial/:userId", async (req, res) => {
           "jugadores.nombre": "$usuario_info.nombre", // Agregar nombre desde 'usuario_info'
           "jugadores.idUsuario": 1, // Mantener el idUsuario
           "jugadores.equipo": 1, // Mantener el equipo
-          "jugadores.puntuacion": 1 // Mantener la puntuación
+          "jugadores.puntuacion": 1, // Mantener la puntuación
+          "jugadores.foto_perfil": "$usuario_info.foto_perfil" // Agregar foto de perfil desde 'usuario_info'
         }
       },
       {
@@ -842,7 +843,14 @@ app.get("/partidas/historial/:userId", async (req, res) => {
           idPartida: {$first: "$idPartida" },
           fecha_inicio: { $first: "$fecha_inicio" },
           estado: { $first: "$estado" },
-          jugadores: { $push: { nombre: "$jugadores.nombre", idUsuario: "$jugadores.idUsuario", equipo: "$jugadores.equipo", puntuacion: "$jugadores.puntuacion" } }
+          jugadores: { $push: { 
+            nombre: "$jugadores.nombre", 
+            idUsuario: "$jugadores.idUsuario", 
+            equipo: "$jugadores.equipo", 
+            puntuacion: "$jugadores.puntuacion", 
+            foto_perfil: "$jugadores.foto_perfil" 
+          } 
+          }
         }
       },
       {
