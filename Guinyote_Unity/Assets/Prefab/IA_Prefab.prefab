@@ -100,6 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7244d1f09eefc43805e51c5d51e02d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_MoveTarget: {x: 0, y: 0, z: 0}
+  cartaPrefab: {fileID: -5075892240030708720, guid: 6e8f1a3a741871241a86799a72f84c68, type: 3}
   mano:
   - {fileID: 0}
   - {fileID: 0}
@@ -109,3 +111,5 @@ MonoBehaviour:
   - {fileID: 0}
   jugada: {fileID: 0}
   puntos: 0
+  ganador: 0
+  cantadoEsteTurno: 0

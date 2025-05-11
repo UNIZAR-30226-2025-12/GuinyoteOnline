@@ -40,6 +40,41 @@ public class GameManager : MonoBehaviour
 
     public wsClient webSocketClient;
 
+    [System.Serializable]
+    public class Orden
+    {
+        public int miId;
+        public string orden;
+        public int turno;
+    }
+
+    [System.Serializable]
+    public class Puntos
+    {
+        public int puntos0;
+        public int puntos1;
+        public int puntos2;
+        public int puntos3;
+    }
+
+    [System.Serializable]
+    public class Manos
+    {
+        public string mano0;
+        public string mano1;
+        public string mano2;
+        public string mano3;
+    }
+
+    [System.Serializable]
+    public class Jugadas
+    {
+        public string jugada0;
+        public string jugada1;
+        public string jugada2;
+        public string jugada3;
+    }
+
     /// <summary>
     /// Inicializa la instancia singleton del GameManager.
     /// </summary>
@@ -312,6 +347,95 @@ public class GameManager : MonoBehaviour
         cartasMoviendo = false;
     }
 
+    public void ReestablecerEstado(Dictionary<string, object> datos)
+    {
+        Debug.Log("cargando baraja");
+        Baraja = (Instantiate(Baraja, new Vector3(20, 0, 0), Quaternion.identity));
+        Baraja.GetComponent<SpriteRenderer>().sortingOrder = 15;
+        
+        
+        Baraja.Barajar(datos["baraja"].ToString());
+        segundaBaraja = (datos["baraja"].ToString() == "true");
+        triunfo = Baraja.ObtenerUltima();
+        if (triunfo != null)
+        {
+            triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
+            triunfo.transform.rotation = Quaternion.Euler(0,0,90);
+        }
+        if (datos["baraja"].ToString() == "") arrastre = true;
+
+        Debug.Log("Baraja iniciada");
+
+        Debug.Log("cargando jugadores");
+        jugadores = new Player[numJugadores];
+        jugadores[0] = Instantiate(playerPrefab, new Vector3(0, -12, 0),Quaternion.Euler(0, 0, 0));
+        if (numJugadores == 2) jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+        else
+        {
+            jugadores[1] = Instantiate(onlinePlayerPrefab, new Vector3(12, 0, 0),Quaternion.Euler(0, 0, 90));
+            jugadores[2] = Instantiate(onlinePlayerPrefab, new Vector3(0, 12, 0),Quaternion.Euler(0, 0, 180));
+            jugadores[3] = Instantiate(onlinePlayerPrefab, new Vector3(-12, 0, 0),Quaternion.Euler(0, 0, -90));
+        }
+        orden = new int[jugadores.Length];
+        Debug.Log("asignando orden");
+        var ordenJson = datos["orden"].ToString();
+        Orden ordenDatos = JsonUtility.FromJson<Orden>(ordenJson);
+        Debug.Log(ordenDatos);
+        for (int i = 0; i < orden.Length; i++)
+        {
+            orden[i] = (ordenDatos.orden[i] + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores;
+        }
+        Debug.Log("orden asignado");
+        Debug.Log("Iniciando Jugadores");
+        var puntosJson = datos["puntos"].ToString();
+        Puntos puntos = JsonUtility.FromJson<Puntos>(puntosJson);
+        Debug.Log(puntos);
+        int[] puntosJugadores = new int[4];
+        puntosJugadores[0] = puntos.puntos0;
+        puntosJugadores[1] = puntos.puntos1;
+        puntosJugadores[2] = puntos.puntos2;
+        puntosJugadores[3] = puntos.puntos3;
+
+        var manosJson = datos["manos"].ToString();
+        Manos manos = JsonUtility.FromJson<Manos>(manosJson);
+        Debug.Log(manos);
+        string[] manosJugadores = new string[4];
+        manosJugadores[0] = manos.mano0;
+        manosJugadores[1] = manos.mano1;
+        manosJugadores[2] = manos.mano2;
+        manosJugadores[3] = manos.mano3;
+
+        var jugadasJson = datos["jugadas"].ToString();
+        Jugadas jugadas = JsonUtility.FromJson<Jugadas>(jugadasJson);
+        Debug.Log(jugadas);
+        cartasJugadas = new Carta[jugadores.Length];
+        cartasMoviendo = false;
+        string[] jugadasJugadores = new string[4];
+        jugadasJugadores[0] = jugadas.jugada0;
+        jugadasJugadores[1] = jugadas.jugada1;
+        jugadasJugadores[2] = jugadas.jugada2;
+        jugadasJugadores[3] = jugadas.jugada3;
+
+        for (int i = 0; i < jugadores.Length; i++)
+        {
+            jugadores[i].SetMano(manosJugadores[(i + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores]);
+            jugadores[i].puntos = puntosJugadores[(i + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores];
+            jugadores[i].SetJugada(jugadasJugadores[(i + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores]);
+        }
+
+        TurnManager = new TurnManager(jugadores.Length);
+        TurnManager.TurnChange += TurnChange;
+        TurnManager.Evaluation += Evaluar;
+        TurnManager.FinRonda += TerminarRonda;
+        TurnManager.Reset();
+
+        TurnManager.m_PlayerTurn = ordenDatos.turno - 1;
+        Debug.Log($"ordenDatos.turno - 1: {TurnManager.m_PlayerTurn}");
+
+        TurnManager.Tick();
+        Debug.Log("Estado reestablecido");
+    }
+
     /// <summary>
     /// Actualiza el estado del juego en cada frame.
     /// </summary>
@@ -328,6 +452,7 @@ public class GameManager : MonoBehaviour
                 if (cartasJugadas[i].transform.position == ubicacionGanador || jugadores[i].jugada == null)
                 {
                     Destroy(cartasJugadas[i].gameObject);
+                    cartasJugadas[i] = null;
                     jugadores[i].jugada = null;
                 }
             }
@@ -392,7 +517,8 @@ public class GameManager : MonoBehaviour
     /// <param name="turno">El índice del turno actual.</param>
     public void TurnChange(int turno)
     {
-        if(turno > 0){
+        if(turno > 0)
+        {
             cartasJugadas[orden[turno-1]] = jugadores[orden[turno-1]].jugada;
         }
         Debug.Log($"turno de {orden[turno]}");
@@ -463,7 +589,6 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
         // FINALIZACIÓN DE TURNO
 
         ubicacionGanador = jugadores[indexGanador].transform.position;
@@ -476,7 +601,6 @@ public class GameManager : MonoBehaviour
         }
         cartasMoviendo = true;
         jugadores[indexGanador].puntos += sumaPuntos;
-
         for (int i = 0; i < jugadores.Length; i++)
         {
             orden[i] = (i + indexGanador) % jugadores.Length;
@@ -486,7 +610,6 @@ public class GameManager : MonoBehaviour
         {
             jugadores[orden[i]].AnyadirCarta(Baraja.DarCarta());
         }
-
         // COMPROBAR SI HA ACABADO LA RONDA
         finRonda = true;
         foreach (var i in jugadores[0].mano)
@@ -497,11 +620,9 @@ public class GameManager : MonoBehaviour
                 break;
             }
         }
-
         if (finRonda) jugadores[orden[0]].puntos += 10; // 10 últimas
 
         ActualizarMarcadores();
-
         if (!segundaBaraja) return;
         if (jugadores.Length == 4)
         {

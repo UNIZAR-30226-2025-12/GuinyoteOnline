@@ -22,6 +22,17 @@ public class Baraja : MonoBehaviour
         spriteRenderer.sortingOrder = 20;
     }
 
+    public string ObtenerBaraja()
+    {
+        string barajaTexto = "";
+        foreach (var carta in cartas)
+        {
+            barajaTexto += carta.Item2.ToString() + "," + carta.Item1.ToString() + ";";
+        }
+        barajaTexto = barajaTexto.Remove(barajaTexto.Length - 1);
+        return barajaTexto;
+    }
+
     public void RecogerCartas()
     {
         cartas.Clear();
@@ -94,5 +105,24 @@ public class Baraja : MonoBehaviour
     public void EliminarUltima()
     {
         cartas.RemoveAt(cartas.Count -1);
+    }
+
+    public Carta ObtenerUltima()
+    {
+        if (cartas.Count != 0)
+        {
+            int palo = cartas[cartas.Count - 1].Item1;
+            int num = cartas[cartas.Count - 1].Item2;
+            cartas.RemoveAt(0);
+            Carta carta = Instantiate(cartaPrefab, transform.position, Quaternion.identity);
+            carta.setCarta(palo, num);
+            
+            return carta;
+        }
+        else
+        {
+            Debug.Log("No quedan cartas en la baraja");
+            return null;
+        }
     }
 }

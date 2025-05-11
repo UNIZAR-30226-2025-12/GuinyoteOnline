@@ -9,6 +9,7 @@ public struct input
 public class Player : MonoBehaviour
 {
     public Vector3 m_MoveTarget;
+    public Carta cartaPrefab;
     public Carta[] mano;
     public Carta jugada;
     protected bool m_esMiTurno = false;
@@ -46,6 +47,61 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    public string GetMano()
+    {
+        string manoTexto = "";
+        foreach(Carta carta in mano)
+        {
+            if (carta != null) manoTexto += carta.ToString() + ";";
+            else manoTexto += "null;";
+        }
+        manoTexto = manoTexto.Remove(manoTexto.Length - 1);
+        return manoTexto;
+    }
+
+    public void SetMano(string manoStr)
+    {
+        string[] cartasTexto = manoStr.Split(';');
+        for (int i = 0; i < mano.Length; i++)
+        {
+            if (cartasTexto[i] == "null")
+            {
+                mano[i] = null;
+                continue;
+            }
+
+            string[] numeroPalo = cartasTexto[i].Split(',');
+            Carta carta = Instantiate(cartaPrefab, transform.position, Quaternion.identity);
+            int numero = int.Parse(numeroPalo[0]);
+            if (numero > 7) numero -= 3;
+            else numero -= 1;
+            carta.setCarta(int.Parse(numeroPalo[1]), numero);
+            mano[i] = carta;
+            if (this is Player_Controller)
+            {
+                carta.enMano = true; 
+            }
+            carta.transform.rotation = this.transform.rotation;
+            carta.transform.position = this.transform.position + this.transform.right * posiciones[i];
+        }
+    }
+
+    public void SetJugada(string jugadaStr)
+    {
+        if (jugadaStr == "0") return;
+
+        string[] numeroPalo = jugadaStr.Split(',');
+        Carta carta = Instantiate(cartaPrefab, transform.position, Quaternion.identity);
+        int numero = int.Parse(numeroPalo[0]);
+        if (numero > 7) numero -= 3;
+        else numero -= 1;
+        carta.setCarta(int.Parse(numeroPalo[1]), numero);
+        jugada = carta;
+        carta.transform.rotation = this.transform.rotation;
+        carta.transform.position = transform.position + transform.up * 6.35f;
+    }
+
     public void AnyadirCarta(Carta carta)
     {
         if (carta == null)
@@ -57,7 +113,8 @@ public class Player : MonoBehaviour
         {
             if (mano[i] == null)
             {
-                if (this is Player_Controller){
+                if (this is Player_Controller)
+                {
                    carta.enMano = true; 
                 }
                 mano[i] = carta;

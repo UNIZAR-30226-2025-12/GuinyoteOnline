@@ -210,7 +210,6 @@ public class UIManager : MonoBehaviour
                 Consultas.OnInicioSesion += (id, name, profilePicture, tapete, carta) => {
                     isLogged = true;
                     tab_login.style.display = DisplayStyle.None;
-                    BuscarPartidasActivas(id);
                     ChangeScene("Partida_Online");
                 };
             }
@@ -819,13 +818,9 @@ public class UIManager : MonoBehaviour
     async Task BuscarPartidasActivas(String id)
     {
         Debug.Log(id);
-        if (webSocketClient == null)
-        {
-            webSocketClient = new wsClient();
-        }
         if (!webSocketClient.isConnected())
         {
-            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+            await webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
         }
         webSocketClient.buscarPartidasActivas(id);
     }
@@ -942,7 +937,7 @@ public class UIManager : MonoBehaviour
         // Configurar WebSocket para partidas online
         if (!webSocketClient.isConnected())
         {
-            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+            await webSocketClient.Connect("ws://localhost:10000");//("wss://guinyoteonline-hkio.onrender.com");
         }
         Debug.Log(lobby.id);
         await webSocketClient.JoinRoom(lobby.id, idUsuario);
@@ -1008,12 +1003,6 @@ public class UIManager : MonoBehaviour
     public static void ChangeScene(string sceneName)
     {
         Debug.Log("Button Clicked");
-
-        // Cerrar conexión WebSocket si se cambia a una escena no relacionada con partidas online
-        if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2" && sceneName != "Juego"))
-        {
-            Instance.webSocketClient.Close();
-        }
 
         lastScene.Push(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(sceneName);

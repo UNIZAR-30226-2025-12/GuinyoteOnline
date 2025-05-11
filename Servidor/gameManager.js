@@ -109,7 +109,7 @@ async function reestablecerEstado(playerId, sala, socket) {
         socket.to(sala.id).emit('player-joined', playerId);
         console.log(`Jugador ${playerId} se unió al lobby ${sala.id}`);
         console.log(`emitiendo datos de partida`);
-        socket.emit(`datosPartida`, sala.maxPlayers, jugador.index);
+        socket.emit(`datosPartida`, sala.maxPlayers, jugador.index, sala.id);
         try {
             await esperarEvento('ack', jugador.socket);
         }
@@ -141,11 +141,12 @@ async function reestablecerEstado(playerId, sala, socket) {
             const manos  = await pedirYEsperar(socket2, 'manosReconexion',  'pedirManos');
             const jugadas = await pedirYEsperar(socket2, 'jugadasReconexion', 'pedirJugadas');
             const orden = await pedirYEsperar(socket2, 'ordenReconexion', 'pedirOrden');
+            const segundaBaraja = await pedirYEsperar(socket2, 'segundaBarajaReconexion', 'pedirSegundaBaraja');
 
             console.log({ baraja, puntos, manos, jugadas, orden });
 
             console.log("emitiendo reestablecer");
-            socket.emit("reestablecer", { baraja, puntos, manos, jugadas, orden });
+            socket.emit("reestablecer", { baraja, puntos, manos, jugadas, orden, segundaBaraja });
         }
         catch (err) {
             console.error('Error durante la reconexión:', err.message);
