@@ -4,6 +4,7 @@ import { useUser } from '../../context/UserContext';
 import usePost from '../../customHooks/usePost';
 import { useSocket } from '../../context/SocketContext';
 import { useNavigate } from 'react-router-dom';
+import PrivateRoomModal from './PrivateRoomModal';
 
 const Lobby = ({ pairs }) => {
 
@@ -13,6 +14,7 @@ const Lobby = ({ pairs }) => {
     const navigate = useNavigate();
     const [matchmaking, setMatchmaking] = useState(false);
     const [counter, setCounter] = useState("0:00");
+    const [showModal, setShowModal] = useState(false);
     const timerRef = useRef(null); // ← store timer ID
     const { username, mail, profilePic } = useUser();
     const [users, setUsers] = useState([{
@@ -99,6 +101,13 @@ const Lobby = ({ pairs }) => {
         setUsers(auxUsers);
     }
 
+
+    const joinRoom = () => {
+        setShowModal(true); // Mostrar el modal
+    };
+
+    const closeModal = () => setShowModal(false);
+
     return (
         <>
             <h1>{pairs ? "Sala de Partida 2 vs 2" : "Sala de Partida 1 vs 1"}</h1>
@@ -106,7 +115,10 @@ const Lobby = ({ pairs }) => {
             <LobbySlots slotCount={maxPlayers} playerSlotArgs={users} handleSlotClick={handleSlotClick}/>
 
             {!matchmaking ? (
-                <button onClick={startMatchmaking}>Empezar</button>
+                <div className="lobby-buttons">
+                    <button onClick={startMatchmaking}>Empezar</button>
+                    <button onClick={joinRoom}>Sala privada</button>
+                </div>
             ) : (
                 <div className="waiting-matchmaking-counter">
                     <h2>{counter}</h2>
@@ -115,6 +127,18 @@ const Lobby = ({ pairs }) => {
                         <img />
                     </button>
                 </div>
+            )}
+
+            {showModal && (
+                <PrivateRoomModal
+                    onClose={() => setShowModal(false)}
+                    onJoin={(roomCode) => {
+                        console.log("Unirse a sala con código:", roomCode);
+
+                        setShowModal(false);
+                    }}
+                    pairs
+                />
             )}
         </>
     );

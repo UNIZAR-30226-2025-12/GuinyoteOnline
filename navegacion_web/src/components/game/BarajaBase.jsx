@@ -20,10 +20,16 @@ class Carta{
 
 
 class BarajaBase {
-    constructor() {
+    constructor(arrayCartas) {
+        
         this.cartas = [];
-        this.inicializarBaraja();
-        //this.barajar();
+        if (!arrayCartas) {
+            this.inicializarBaraja();
+            this.barajar();
+        }
+        else {
+            this.crearBaraja(arrayCartas);
+        }   
     }
 
     inicializarBaraja() {
@@ -56,6 +62,10 @@ class BarajaBase {
        ];*/
     }
 
+    /**
+     * Funcion que crea la baraja a partir de un array de cartas
+     * @param {Array} arrayCartas 
+     */
     crearBaraja(arrayCartas) {
         this.cartas = [];
         for (let i = 0; i < arrayCartas.length; i++) {

@@ -30,30 +30,38 @@ class OnlineGameManager {
         this.TurnChange = this.TurnChange.bind(this);
     }
 
-    Init() {
+    Init({ arrayDeCartas }) {
         this.state.arrastre = false;
         this.state.segundaBaraja = false;
         this.state.finRonda = false;
         this.state.finJuego = false;
 
-        this.state.baraja = new BarajaClass();
-        //this.state.baraja.barajar();
+        this.state.baraja = new BarajaClass(arrayDeCartas);
 
-        this.state.triunfo = this.state.baraja.darCarta();
-        this.state.baraja.anyadirAlFinal(this.state.triunfo);
+        this.state.triunfo = this.state.baraja.darCarta() ;
+        this.state.baraja.anyadirAlFinal(this.state.triunfo) ;
 
-        this.InitJugadores();
+        /**
+         * ! Cuidado con esto, que hace ??
+         */
+        //this.InitJugadores();
 
-        this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
-        this.state.turnManager.reset();
+        /**
+         * ! Habría que hacer otro turnManager para el caso Online
+        //this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
+        //this.state.turnManager.reset();
 
         for (let i = 0; i < this.state.numPlayers; i++) {
             this.state.orden[i] = i;
         }
 
-        this.state.turnManager.tick();
+        this.state.turnManager.tick();*/
     }
 
+    /**
+     * ! Hace falta ???????????????????????????????????
+     * 
+     */
     InitJugadores() {
         this.state.players[0] = new PlayerBase(this);
         for (let j = 0; j < 6; j++) {
@@ -80,6 +88,9 @@ class OnlineGameManager {
         }
     }
 
+    /**
+     * 
+     */
     TurnChange() {
         this.state.players[this.state.orden[this.state.turnManager.state.playerTurn]].state.esMiTurno = true;
         

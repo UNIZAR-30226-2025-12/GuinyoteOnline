@@ -42,9 +42,15 @@ function OnlineGame() {
     const handleBarajaReceived = (baraja) => {
         // Reconocer la baraja recibida y // ! establecerla en el GameManager
         console.log("Baraja recibida:", baraja);
-        const barajaDes = descifrarBaraja({barajaString: baraja});
-        gameManager.state.baraja = barajaDes;
-    }   
+        const arrayDeCartas = descifrarBaraja({barajaString: baraja});
+
+        gameManager.Init(arrayDeCartas) ;
+        setPlayers([...gameManager.state.players]);
+        setTriunfo(gameManager.state.triunfo);
+        setIniciado(true);
+        setInformadorTexto("Turno de: " + `${username}`);
+        setCargando(false);
+    }
 
     useEffect(() => {
         if (!socket) {

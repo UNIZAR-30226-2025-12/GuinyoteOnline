@@ -950,23 +950,57 @@ io.on('connection', (socket) => {
     gameManager.iniciarSegundaRonda(lobby);
   });
 
-  // Unirse a una sala
-  socket.on('unirSalaPrivada', async ({ salaId, userId, codigoAcceso }) => {
-    /*const sala = salasEspera.get(salaId);
-    if (sala && sala.codigoAcceso === codigoAcceso && !sala.jugadores.includes(userId)) {
-      sala.jugadores.push(userId);
-      socket.join(salaId);
-      io.to(salaId).emit('actualizacionSala', sala);
+  socket.on('join-private-lobby', async ({ lobbyId, userId, codigoAcceso }) => {
+  try {
+    const lobby = findLobby(lobbyId);
 
-      // Si la sala está llena, iniciar partida
-      if (sala.jugadores.length === (sala.tipo === '1v1' ? 2 : 4)) {
-        const nuevaPartida = await iniciarPartida(sala);
-        partidasActivas.set(nuevaPartida.id, nuevaPartida);
-        io.to(salaId).emit('inicioPartida', nuevaPartida);
-        salasEspera.delete(salaId);
-      }
-    }*/
-  });
+    if (!lobby) {
+      socket.emit('errorSala', { message: 'La sala no existe.' });
+      return;
+    }
+    if (lobby.tipo !== 'privada') {
+      socket.emit('errorSala', { message: 'Esta sala no es privada.' });
+      return;
+    }
+    if (lobby.codigoAcceso !== codigoAcceso) {
+      socket.emit('errorSala', { message: 'Código de acceso incorrecto.' });
+      return;
+    }
+    if (lobby.jugadores.includes(userId)) {
+      socket.emit('errorSala', { message: 'Ya estás en la sala.' });
+      return;
+    }
+    if (lobby.jugadores.length >= lobby.maxPlayers) {
+      socket.emit('errorSala', { message: 'La sala ya está llena.' });
+      return;
+    }
+
+    // Usar función que ya tienes
+    joinPrivateLobby(lobbyId, userId, codigoAcceso);
+
+    socket.join(lobbyId);
+
+    // Emitir a todos los jugadores de la sala
+    socket.emit('joined-private-lobby', { message: 'Te has unido a la sala privada.', sala });
+    socket.to(lobbyId).emit('player-joined', userId);
+
+    console.log(`Jugador ${userId} se unió a la sala privada ${lobbyId}`);
+
+    if (lobby.jugadores.length === lobby.maxPlayers) {
+      await mutex.runExclusive(async () => {
+        if (!lobby.iniciado) {
+          lobby.iniciado = true;
+          await iniciarPartida(lobby);
+        }
+      });
+    }
+
+  } catch (error) {
+    console.error('Error en unirSalaPrivada:', error);
+    socket.emit('errorSala', { message: 'Error al unirse a la sala privada.' });
+  }
+});
+
 
   // Desconexión
   socket.on('disconnect', () => {

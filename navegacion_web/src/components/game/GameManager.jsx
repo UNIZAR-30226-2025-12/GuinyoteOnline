@@ -8,14 +8,17 @@ import TurnManager from "./TurnManager";
 import PlayerBase from "./PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
 import BarajaClass from "./BarajaBase";
+import { IoExtensionPuzzleOutline } from "react-icons/io5";
 
 class GameManager {
-    constructor(_numPlayers) {
+    constructor(_numPlayers, esOnline) {
         this.state = {
             turnManager: null,
             players: Array(_numPlayers).fill(null),
             orden: Array(_numPlayers).fill(null),
+            puntosJugadores: Array(_numPlayers).fill(0),
             numPlayers: _numPlayers,
+            esOnline: esOnline,
             baraja: null,
             cartasJugadas: Array(_numPlayers).fill(null),
             triunfo: null,
@@ -24,58 +27,79 @@ class GameManager {
             arrastre: false,
             finRonda: false,
             finJuego: false,
+            /**
+             * ! indexGanador: null,
+             * ! ganador: null,
+             * ! mostrarCantar: null,
+             * ! cartasMoviendo: null,
+             */
         };
 
         this.Evaluar = this.Evaluar.bind(this);
         this.TurnChange = this.TurnChange.bind(this);
     }
 
-    Init() {
+    Init(arrayDeCartas) {
         this.state.arrastre = false;
         this.state.segundaBaraja = false;
         this.state.finRonda = false;
         this.state.finJuego = false;
 
-        this.state.baraja = new BarajaClass();
-        //this.state.baraja.barajar();
+        // * -------------------------- INICIAR BARAJA ----------------------------
+        if (this.state.esOnline && arrayDeCartas) {
+            this.state.baraja = new BarajaClass(arrayDeCartas) ;
+        } else {
+            this.state.baraja = new BarajaClass() ;
+            //this.state.baraja.barajar();
+        }
 
         this.state.triunfo = this.state.baraja.darCarta();
         this.state.baraja.anyadirAlFinal(this.state.triunfo);
+        // * ----------------------------------------------------------------------
 
-        this.InitJugadores();
+        if (!this.state.esOnline) {
+            this.InitJugadores();
 
-        this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
-        this.state.turnManager.reset();
+            // ! Aqui todavia no tenemos el turno
+            this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
+            this.state.turnManager.reset();
 
-        for (let i = 0; i < this.state.numPlayers; i++) {
-            this.state.orden[i] = i;
-        }
+            for (let i = 0; i < this.state.numPlayers; i++) {
+                this.state.orden[i] = i;
+            }
 
-        this.state.turnManager.tick();
+            this.state.turnManager.tick();
+        }        
     }
 
     InitJugadores() {
-        this.state.players[0] = new PlayerBase(this);
-        for (let j = 0; j < 6; j++) {
-            this.state.players[0].anyadirCarta(this.state.baraja.darCarta());
+        if (this.state.esOnline) {
+            // * Conectarse con el websocket y recibir los jugadores
+            
         }
-        if (this.state.numPlayers === 2) {
-            this.state.players[1] = new IA_PlayerBase(this.state.numPlayers, this, 1);
+        else {
+            this.state.players[0] = new PlayerBase(this);
             for (let j = 0; j < 6; j++) {
-                this.state.players[1].anyadirCarta(this.state.baraja.darCarta());
+                this.state.players[0].anyadirCarta(this.state.baraja.darCarta());
             }
-        } else if (this.state.numPlayers === 4) {
-            this.state.players[1] = new IA_PlayerBase(this.state.numPlayers, this, 1);
-            for (let j = 0; j < 6; j++) {
-                this.state.players[1].anyadirCarta(this.state.baraja.darCarta());
-            }
-            this.state.players[2] = new IA_PlayerBase(this.state.numPlayers, this, 2);
-            for (let j = 0; j < 6; j++) {
-                this.state.players[2].anyadirCarta(this.state.baraja.darCarta());
-            }
-            this.state.players[3] = new IA_PlayerBase(this.state.numPlayers, this, 3);
-            for (let j = 0; j < 6; j++) {
-                this.state.players[3].anyadirCarta(this.state.baraja.darCarta());
+            if (this.state.numPlayers === 2) {
+                this.state.players[1] = new IA_PlayerBase(this.state.numPlayers, this, 1);
+                for (let j = 0; j < 6; j++) {
+                    this.state.players[1].anyadirCarta(this.state.baraja.darCarta());
+                }
+            } else if (this.state.numPlayers === 4) {
+                this.state.players[1] = new IA_PlayerBase(this.state.numPlayers, this, 1);
+                for (let j = 0; j < 6; j++) {
+                    this.state.players[1].anyadirCarta(this.state.baraja.darCarta());
+                }
+                this.state.players[2] = new IA_PlayerBase(this.state.numPlayers, this, 2);
+                for (let j = 0; j < 6; j++) {
+                    this.state.players[2].anyadirCarta(this.state.baraja.darCarta());
+                }
+                this.state.players[3] = new IA_PlayerBase(this.state.numPlayers, this, 3);
+                for (let j = 0; j < 6; j++) {
+                    this.state.players[3].anyadirCarta(this.state.baraja.darCarta());
+                }
             }
         }
     }

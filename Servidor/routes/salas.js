@@ -1,5 +1,6 @@
 const express = require("express");
 const { createLobby, joinLobby, joinPrivateLobby, autoJoinOrCreate, findAvailableCode, lobbies } = require('../lobbies');
+import crypto from 'crypto';
 
 const router = express.Router();
 
@@ -21,10 +22,11 @@ router.post("/matchmake", async (req, res) => {
  * Crea una sala privada con un código de invitación.
  */
 router.post("/crearPrivada", async (req, res) => {
-  const { idCreador, maxPlayers, codigoAcceso } = req.body;
+  const { idCreador, maxPlayers } = req.body ;
   try {
+    // Generar código único de 20 dígitos
+    const codigoAcceso = crypto.randomBytes(10).toString('hex').toUpperCase();
     let sala = createLobby(maxPlayers, idCreador, 'privada', codigoAcceso);
-    joinPrivateLobby(sala.id, idCreador, codigoAcceso);
     res.status(201).json(sala);
   } catch (error) {
     res.status(400).json({ message: "Error creando sala", error: error.message });
