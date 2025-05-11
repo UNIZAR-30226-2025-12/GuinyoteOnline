@@ -1,6 +1,6 @@
 const express = require("express");
 const { createLobby, joinLobby, joinPrivateLobby, autoJoinOrCreate, findAvailableCode, lobbies } = require('../lobbies');
-import crypto from 'crypto';
+const crypto = require('crypto');
 
 const router = express.Router();
 
