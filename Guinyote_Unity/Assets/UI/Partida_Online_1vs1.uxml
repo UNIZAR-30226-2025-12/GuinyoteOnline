@@ -3,6 +3,7 @@
     <engine:VisualElement style="flex-direction: row; width: 100%; height: 100%;">
         <engine:VisualElement style="width: 70%; height: 100%; flex-direction: column; align-items: center; justify-content: center;">
             <engine:Button name="atras" icon-image="project://database/Assets/Resources/Sprites/UI/atras.png" style="width: 93px; height: 78px; position: absolute; top: 10px; left: 10px; background-color: transparent; border-width: 0;" />
+            <engine:Button name="privateRoom" icon-image="project://database/Assets/Resources/Sprites/UI/candado.png" style="width: 50px; height: 50px; position: absolute; top: 10px; right: 10px; background-color: transparent; border-width: 0;" />
             <engine:Label text="Partida 1 vs 1" style="font-size: 30px; font-weight: bold; margin-bottom: 30px;" />
             <engine:VisualElement style="flex-direction: row; justify-content: center; align-items: center; margin-bottom: 10px;">
                 <engine:VisualElement name="slot1" style="width: 80px; height: 80px; border-width: 2px; border-color: black;" />
@@ -14,6 +15,8 @@
                 <engine:Label text="Nan" name="nombre_2" style="font-size: 20px; font-weight: bold; margin: 10px 0;" />
             </engine:VisualElement>
             <engine:Button text="Buscar partida" name="Start" style="width: 180px; height: 50px; font-size: 18px; margin-top: 50px; background-color: rgb(255, 255, 255);" />
+            <engine:Label name="invitationCode" text="" style="font-size: 16px; font-weight: bold; margin-top: 20px; display: none;" />
+            <engine:TextField name="joinCodeInput" placeholder-text="Introduce el código" style="width: 200px; height: 30px; margin-top: 10px; display: none;" />
         </engine:VisualElement>
         <engine:VisualElement name="panelAmigos" style="width: 30%; height: 100%; background-color: rgb(173, 216, 230); border-left-width: 2px; border-left-color: black; flex-direction: column; align-items: center;">
             <engine:Label text="Lista de amigos" style="margin-top: 10px; font-size: 20px; font-weight: bold; text-align: center;" />

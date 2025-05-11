@@ -29,6 +29,7 @@ namespace WebSocketClient {
         
         public async Task Connect(string url)
         {
+            if (ws != null && ws.Connected) return;
             connectionTCS = new TaskCompletionSource<bool>();
 
             Debug.Log("conectando...");
@@ -132,7 +133,87 @@ namespace WebSocketClient {
                 GameManager.numJugadores = response.GetValue<int>(0);
                 GameManager.esOnline = true;
                 miId = response.GetValue<int>(1);
+                miLobby = response.GetValue<string>(2);
                 enviarACK();
+            });
+
+            ws.On("pedirBaraja", async (response) => {
+                Debug.Log("enviando baraja al servidor");
+                string baraja = GameManager.Instance.Baraja.ObtenerBaraja();
+                await ws.EmitAsync("barajaReconexion", baraja);
+                Debug.Log("baraja enviada");
+            });
+
+            ws.On("pedirSegundaBaraja", async (response) => {
+                Debug.Log("enviando segunda baraja al servidor");
+                string msg = GameManager.Instance.segundaBaraja ? "true" : "false";
+                await ws.EmitAsync("segundaBarajaReconexion", msg);
+                Debug.Log("segunda baraja enviado");
+            });
+
+            ws.On("pedirPuntos", async (response) => {
+                Debug.Log("enviando puntos al servidor");
+                var data = new Dictionary<string, object>
+                {
+                    { "puntos0", GameManager.Instance.jugadores[0].puntos },
+                    { "puntos1", GameManager.Instance.jugadores[1].puntos },
+                    { "puntos2", GameManager.Instance.jugadores.Length == 4 ? GameManager.Instance.jugadores[2].puntos : 0 },
+                    { "puntos3", GameManager.Instance.jugadores.Length == 4 ? GameManager.Instance.jugadores[3].puntos : 0 }
+                };
+                await ws.EmitAsync("puntosReconexion", data);
+                Debug.Log("puntos enviados");
+            });
+
+            ws.On("pedirManos", async (response) => {
+                Debug.Log("enviando manos al servidor");
+                var data = new Dictionary<string, object>
+                {
+                    { "mano0", GameManager.Instance.jugadores[0].GetMano() },
+                    { "mano1", GameManager.Instance.jugadores[1].GetMano() },
+                    { "mano2", GameManager.Instance.jugadores.Length == 4 ? GameManager.Instance.jugadores[2].GetMano() : "0" },
+                    { "mano3", GameManager.Instance.jugadores.Length == 4 ? GameManager.Instance.jugadores[3].GetMano() : "0" }
+                };
+                await ws.EmitAsync("manosReconexion", data);
+                Debug.Log("manos enviadas");
+            });
+
+            ws.On("pedirJugadas", async (response) => {
+                Debug.Log("enviando jugadas al servidor");
+                var data = new Dictionary<string, object>
+                {
+                    { "jugada0", GameManager.Instance.cartasJugadas[0] != null ? GameManager.Instance.cartasJugadas[0].ToString() : "0" },
+                    { "jugada1", GameManager.Instance.cartasJugadas[1] != null ? GameManager.Instance.cartasJugadas[1].ToString() : "0" },
+                    { "jugada2", (GameManager.Instance.cartasJugadas.Length == 4 && GameManager.Instance.cartasJugadas[2] != null) ? GameManager.Instance.cartasJugadas[2].ToString() : "0" },
+                    { "jugada3", (GameManager.Instance.cartasJugadas.Length == 4 && GameManager.Instance.cartasJugadas[3] != null) ? GameManager.Instance.cartasJugadas[3].ToString() : "0" }
+                };
+                await ws.EmitAsync("jugadasReconexion", data);
+                Debug.Log("jugadas enviadas");
+            });
+
+            ws.On("pedirOrden", async (response) => {
+                Debug.Log("enviando orden de jugadores");
+                int[] orden = GameManager.Instance.orden;
+                string ordenTexto = orden[0].ToString() + orden[1].ToString();
+                if (GameManager.Instance.orden.Length == 4) ordenTexto += orden[2].ToString() + orden[3].ToString();
+                var data = new Dictionary<string, object>
+                {
+                    { "miId", miId },
+                    { "orden", ordenTexto },
+                    { "turno", GameManager.Instance.TurnManager.m_PlayerTurn }
+                };
+                await ws.EmitAsync("ordenReconexion", data);
+                Debug.Log("orden enviado");
+            });
+
+            ws.On("reestablecer", (response) => {
+                Debug.Log("reestableciendo estado");
+
+                var datos = response.GetValue<Dictionary<string, object>>();
+
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    GameManager.Instance.ReestablecerEstado(datos);
+                });
             });
 
             ws.OnConnected += async (sender, e) =>
@@ -151,6 +232,7 @@ namespace WebSocketClient {
             {
                 Console.WriteLine("Conexión cerrada.");
             };
+
             ws.Connect();
             await connectionTCS.Task;
         }
@@ -181,7 +263,6 @@ namespace WebSocketClient {
 
         public async Task JoinRoom(string lobbyId, string playerId)
         {
-            Debug.Log(ws.Connected);
             if (ws != null && ws.Connected)
             {
                 var data = new Dictionary<string, object>

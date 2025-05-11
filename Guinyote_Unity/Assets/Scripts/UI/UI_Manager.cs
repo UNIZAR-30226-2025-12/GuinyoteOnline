@@ -73,6 +73,9 @@ public class UIManager : MonoBehaviour
     private Button boton_cambiar_cartas;
     private Button boton_online;
     private VisualElement VisualProfilePicture;
+    private Button privateRoomButton;
+    private Label invitationCodeLabel;
+    private TextField joinCodeInput;
 
     /// <summary>
     /// Singleton pattern para asegurar que solo haya una instancia de UIManager en la escena.
@@ -133,7 +136,13 @@ public class UIManager : MonoBehaviour
     void updateReference(Scene scene, LoadSceneMode mode)
     {
         Scene currentScene = SceneManager.GetActiveScene();
-        var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+        var root = (UnityEngine.Object.FindObjectOfType(typeof(UIDocument)) as UIDocument);
+        if (root == null)
+        {
+            Debug.LogError("Error: No se encontró un UIDocument en la escena actual.");
+            return;
+        }
+        Debug.Log("UIDocument encontrado: " + root.name);
 
         if(currentScene.name == "Partida_IA" || currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name == "Perfil" || 
             currentScene.name == "Partida_Online" || currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2"){   
@@ -154,6 +163,9 @@ public class UIManager : MonoBehaviour
         else if (currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             updateReferenceStart(root, scene, mode);
+            if (currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2"){
+                updateReferencePartidaOnline(root, scene, mode);
+            }
         }
         else if (currentScene.name == "Perfil")
         {
@@ -210,7 +222,6 @@ public class UIManager : MonoBehaviour
                 Consultas.OnInicioSesion += (id, name, profilePicture, tapete, carta) => {
                     isLogged = true;
                     tab_login.style.display = DisplayStyle.None;
-                    BuscarPartidasActivas(id);
                     ChangeScene("Partida_Online");
                 };
             }
@@ -417,11 +428,79 @@ public class UIManager : MonoBehaviour
     /// <param name="mode">El modo de carga de la escena.</param>
     private void updateReferencePartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
     {
+        Debug.Log("Ejecutando updateReferencePartidaOnline para la escena: " + currentScene.name);
+
+        if (root == null || root.rootVisualElement == null)
+        {
+            Debug.LogError("Error: UIDocument o rootVisualElement no inicializado.");
+            return;
+        }
+
         boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1_Button");
-        boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_1vs1"));
+        if (boton_1vs1 != null)
+        {
+            boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_1vs1"));
+        }
+        else
+        {
+            Debug.LogError("Error: Botón 1vs1_Button no encontrado en el UIDocument.");
+        }
 
         boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2_Button");
-        boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
+        if (boton_2vs2 != null)
+        {
+            boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
+        }
+        else
+        {
+            Debug.LogError("Error: Botón 2vs2_Button no encontrado en el UIDocument.");
+        }
+
+        if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
+        {
+            privateRoomButton = root?.rootVisualElement?.Q<Button>("privateRoom");
+            if (privateRoomButton != null)
+            {
+                Debug.Log("Botón de candado encontrado y registrado.");
+                privateRoomButton.RegisterCallback<ClickEvent>(ev => {
+                    Debug.Log("Evento del botón de candado ejecutado.");
+
+                    invitationCodeLabel = root?.rootVisualElement?.Q<Label>("invitationCode");
+                    joinCodeInput = root?.rootVisualElement?.Q<TextField>("joinCodeInput");
+
+                    if (invitationCodeLabel == null || joinCodeInput == null)
+                    {
+                        Debug.LogError("Error: No se pudieron encontrar los elementos 'invitationCode' o 'joinCodeInput'.");
+                        return;
+                    }
+
+                    string generatedCode = GenerateRoomCode();
+                    Debug.Log("Código generado: " + generatedCode);
+
+                    invitationCodeLabel.text = "Código de invitación: " + generatedCode;
+                    invitationCodeLabel.style.display = DisplayStyle.Flex;
+                    joinCodeInput.style.display = DisplayStyle.Flex;
+
+                    MakeRoomPrivate(generatedCode);
+                    Debug.Log("Sala privada configurada correctamente.");
+                });
+            }
+            else
+            {
+                Debug.LogError("Error: Botón de candado no encontrado en la escena actual. Verifique que el botón 'privateRoom' esté presente en el UIDocument y que su nombre coincida.");
+            }
+        }
+    }
+
+    private string GenerateRoomCode()
+    {
+        return UnityEngine.Random.Range(1000, 9999).ToString();
+    }
+
+    private void MakeRoomPrivate(string code)
+    {
+        Debug.Log("Sala privada creada con código: " + code);
+        // Implement server-side logic to make the room private and share the code
     }
 
     /// <summary>
@@ -819,10 +898,6 @@ public class UIManager : MonoBehaviour
     async Task BuscarPartidasActivas(String id)
     {
         Debug.Log(id);
-        if (webSocketClient == null)
-        {
-            webSocketClient = new wsClient();
-        }
         if (!webSocketClient.isConnected())
         {
             await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
@@ -1008,12 +1083,6 @@ public class UIManager : MonoBehaviour
     public static void ChangeScene(string sceneName)
     {
         Debug.Log("Button Clicked");
-
-        // Cerrar conexión WebSocket si se cambia a una escena no relacionada con partidas online
-        if (Instance.webSocketClient != null && (sceneName != "Partida_Online_1vs1" && sceneName != "Partida_Online_2vs2" && sceneName != "Juego"))
-        {
-            Instance.webSocketClient.Close();
-        }
 
         lastScene.Push(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(sceneName);

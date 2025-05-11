@@ -9,6 +9,7 @@ function RankingModal({ show, handleClose }) {
 
     useEffect(() => {
         if (show) {
+            console.log(data);
             fetchData();
         }
     }, [show]);

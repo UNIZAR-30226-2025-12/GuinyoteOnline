@@ -36,6 +36,8 @@ function Homepage() {
     setMail,
     profilePic,
     setProfilePic,
+    setTapete,
+    setCartas,
     isUserRegistered,
     setIsUserRegistered
   } = useUser();
@@ -108,6 +110,9 @@ function Homepage() {
       setShowRegisterModal(false);
       setUsername(username);
       setMail(mail);
+      setProfilePic("default.png");
+      setTapete("default");
+      setCartas("default");
     }
   };
 

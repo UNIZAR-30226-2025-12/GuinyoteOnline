@@ -10,9 +10,9 @@ export const UserProvider = ({ children }) => {
   // Estado inicial basado en localStorage (solo se ejecuta una vez)
   const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
   const [mail, setMail] = useState(() => localStorage.getItem('mail') || '');
-  const [profilePic, setProfilePic] = useState(() => localStorage.getItem('profilePic') || '../assets/avatares/default.png');
-  const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'tapete1');
-  const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'cartas1');
+  const [profilePic, setProfilePic] = useState(() => localStorage.getItem('profilePic') || 'default.png');
+  const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default');
+  const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default');
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });

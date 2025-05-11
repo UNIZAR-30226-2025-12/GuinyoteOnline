@@ -5,7 +5,7 @@ public class TurnManager
     public event System.Action<int> TurnChange;
     public event System.Action Evaluation;
     public event System.Action FinRonda;
-    private int m_PlayerTurn;
+    public int m_PlayerTurn;
     private int m_PlayerCount;
 
     public TurnManager(int numPlayers)

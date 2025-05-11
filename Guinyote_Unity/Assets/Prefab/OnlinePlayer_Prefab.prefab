@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MoveTarget: {x: 0, y: 0, z: 0}
+  cartaPrefab: {fileID: -5075892240030708720, guid: 6e8f1a3a741871241a86799a72f84c68, type: 3}
   mano:
   - {fileID: 0}
   - {fileID: 0}
