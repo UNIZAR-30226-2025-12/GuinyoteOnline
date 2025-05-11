@@ -56,6 +56,13 @@ class BarajaBase {
        ]*/
     }
 
+    crearBaraja(arrayCartas) {
+        this.cartas = [];
+        for (let i = 0; i < arrayCartas.length; i++) {
+            this.cartas.push(new Carta(arrayCartas[i].palo, arrayCartas[i].numero));
+        }
+    }
+
     barajar() {
         for (let i = this.cartas.length - 1; i > 0; i--) {
             const index = Math.floor(Math.random() * (i + 1));

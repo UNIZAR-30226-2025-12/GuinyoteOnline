@@ -3,7 +3,7 @@ import { useUser } from '../../context/UserContext';
 import '/src/styles/CartasChangeModal.css'; // Asegúrate de tener este CSS o copiar el del tapete y adaptarlo
 import usePut from '../../customHooks/usePut';
 
-import cartas1Image from '../../assets/stacks/cartas1.png';
+import cartas1Image from '../../assets/stacks/default.png';
 import cartas2Image from '../../assets/stacks/cartas2.png';
 import cartas3Image from '../../assets/stacks/cartas3.png';
 

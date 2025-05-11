@@ -7,6 +7,7 @@ function HistorialPartidasModal() {
   const { mail } = useUser(); // Usuario actual
   const encodedMail = encodeURIComponent(mail);
   const { data, loading, error, fetchData } = useFetch(`https://guinyoteonline-hkio.onrender.com/partidas/historial/${encodedMail}`);
+  const avatarUrl = "/src/assets/avatares/";
 
   useEffect(() => {
     fetchData(); // Solo una vez al montar
@@ -39,7 +40,7 @@ function HistorialPartidasModal() {
                 {partida.jugadores.filter(j => j.equipo === 1).map((jugador, idx) => (
                   <div key={idx} className="jugador">
                     <img
-                      src={jugador.foto_perfil}
+                      src={avatarUrl + jugador.foto_perfil}
                       alt={`Foto de ${jugador.nombre}`}
                       className="foto-perfil"
                     />
@@ -61,7 +62,7 @@ function HistorialPartidasModal() {
                 {partida.jugadores.filter(j => j.equipo === 2).map((jugador, idx) => (
                   <div key={idx} className="jugador">
                     <img
-                      src={jugador.fotoPerfil}
+                      src={avatarUrl + jugador.foto_perfil}
                       alt={`Foto de ${jugador.nombre}`}
                       className="foto-perfil"
                     />
