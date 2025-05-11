@@ -71,7 +71,32 @@ function esperarEvento(evento, socket, timeoutMs = 10000) {
       resolve(data);
     }
 
-    socket.once(evento, onEvento);
+    socket.once(evento, onEvent);
+  });
+}
+
+async function pedirYEsperar(socket, eventoRespuesta, eventoPeticion, datos = null, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    console.log(`Esperando evento: ${eventoRespuesta}`);
+
+    const timeout = setTimeout(() => {
+      socket.removeListener(eventoRespuesta, onEvent);
+      reject(new Error(`Timeout esperando evento: ${eventoRespuesta}`));
+    }, timeoutMs);
+
+    function onEvent(data) {
+      clearTimeout(timeout);
+      console.log(`Evento recibido: ${eventoRespuesta}`);
+      resolve(data);
+    }
+
+    socket.once(eventoRespuesta, onEvent);
+    console.log(`Enviando petición: ${eventoPeticion}`);
+    if (datos !== null) {
+      socket.emit(eventoPeticion, datos);
+    } else {
+      socket.emit(eventoPeticion);
+    }
   });
 }
 
@@ -86,7 +111,7 @@ async function reestablecerEstado(playerId, sala, socket) {
         console.log(`emitiendo datos de partida`);
         socket.emit(`datosPartida`, sala.maxPlayers, jugador.index);
         try {
-            esperarEvento('ack', jugador.socket);
+            await esperarEvento('ack', jugador.socket);
         }
         catch (err) {
             console.log(`ack no recibido: ${err}`);
@@ -94,7 +119,7 @@ async function reestablecerEstado(playerId, sala, socket) {
         console.log(`emitiendo iniciar partida a ${jugador.socket.id}`);
         socket.emit("iniciarPartida", 'iniciarPartida');
         try {
-            esperarEvento('ack', jugador.socket);
+            await esperarEvento('ack', jugador.socket);
         }
         catch (err) {
             console.log(`ack no recibido: ${err}`);
@@ -110,23 +135,21 @@ async function reestablecerEstado(playerId, sala, socket) {
             }
         }
         
-        //Obtener baraja
-        socket2.emit('pedirBaraja');
-        baraja = esperarEvento('barajaReconexion', socket2);
+        try {
+            const baraja = await pedirYEsperar(socket2, 'barajaReconexion', 'pedirBaraja');
+            const puntos = await pedirYEsperar(socket2, 'puntosReconexion', 'pedirPuntos');
+            const manos  = await pedirYEsperar(socket2, 'manosReconexion',  'pedirManos');
+            const jugadas = await pedirYEsperar(socket2, 'jugadasReconexion', 'pedirJugadas');
+            const orden = await pedirYEsperar(socket2, 'ordenReconexion', 'pedirOrden');
 
-        //Obtener puntos
-        socket2.emit('pedirPuntos');
-        puntos = esperarEvento('puntosReconexion', socket2);
+            console.log({ baraja, puntos, manos, jugadas, orden });
 
-        //Obtener manos
-        socket2.emit('pedirManos');
-        manos = esperarEvento('manosReconexion', socket2);
-
-        //Obtener cartas en la mesa
-        socket2.emit('pedirJugadas');
-        jugadas = esperarEvento('jugadasReconexion', socket2);
-
-        socket.emit("reestablecer", baraja, puntos, manos, jugadas);
+            console.log("emitiendo reestablecer");
+            socket.emit("reestablecer", { baraja, puntos, manos, jugadas, orden });
+        }
+        catch (err) {
+            console.error('Error durante la reconexión:', err.message);
+        }
     }
 }
 
