@@ -1,3 +1,16 @@
+/**
+ * Carta component
+ * - This component represents a playing card in the game.
+ * 
+ * @param {number} palo - The suit of the card (0-3).
+ * @param {number} numero - The number of the card (0-9).
+ * @param {function} callbackClick - The function to call when the card is clicked.
+ * @param {boolean} enMano - Whether the card is in hand or not.
+ * 
+ * @returns {JSX.Element} The Carta component.
+ * 
+ */
+
 import { useState } from "react";
 import '/src/styles/Carta.css'
 

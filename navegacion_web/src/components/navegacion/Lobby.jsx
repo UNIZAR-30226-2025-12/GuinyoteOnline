@@ -3,13 +3,14 @@ import LobbySlots from './LobbySlots';
 import { useUser } from '../../context/UserContext';
 import usePost from '../../customHooks/usePost';
 import { useSocket } from '../../context/SocketContext';
+import { useNavigate } from 'react-router-dom';
 
 const Lobby = ({ pairs }) => {
 
     const { postData } = usePost('https://guinyoteonline-hkio.onrender.com') ;
     
     const socket = useSocket();
-
+    const navigate = useNavigate();
     const [matchmaking, setMatchmaking] = useState(false);
     const [counter, setCounter] = useState("0:00");
     const timerRef = useRef(null); // ← store timer ID
@@ -26,6 +27,7 @@ const Lobby = ({ pairs }) => {
     const handleIniciarPartida = () => {
         console.log("Recibido 'iniciarPartida' del servidor");
         socket.emit("ack");
+        navigate("/online_match");
     };
 
     useEffect(() => {
