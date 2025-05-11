@@ -23,61 +23,73 @@ function HistorialPartidasModal() {
     const usuario = jugadores.find(j => j.idUsuario === mail);
     const equipoUsuario = usuario?.equipo;
     const gano = (equipoUsuario === 1 && equipo1 > equipo2) || (equipoUsuario === 2 && equipo2 > equipo1);
-    return gano ? 'Ganó' : 'Perdió';
+    return gano ? 'VICTORIA' : 'DERROTA';
   };
   console.log("Datos del historial:", JSON.stringify(data, null, 2));
   return (
+    
     <div className="historial-partidas-modal">
-      <h3>Historial de Partidas</h3>
-      <div className="partidas-list">
-        {data.length === 0 ? (
-          <p>No has jugado ninguna partida aún.</p>
-        ) : (
-          data.map((partida, index) => (
-            <div key={index} className="partida-card">
-              {/* Equipo 1 */}
-              <div className="equipo equipo-1">
-                {partida.jugadores.filter(j => j.equipo === 1).map((jugador, idx) => (
+  <h3>Historial de Partidas</h3>
+  <div className="partidas-list">
+    {data.length === 0 ? (
+      <p>No has jugado ninguna partida aún.</p>
+    ) : (
+      data.map((partida, index) => {
+        const resultado = determinarResultado(partida.jugadores);
+        return (
+          <div
+            key={index}
+            className={`partida-card ${resultado === 'VICTORIA' ? 'ganada' : 'perdida'}`}
+          >
+            {/* Equipo 1 */}
+            <div className="equipo equipo-1">
+              {partida.jugadores
+                .filter(j => j.equipo === 1)
+                .map((jugador, idx) => (
                   <div key={idx} className="jugador">
-                    <img
-                      src={avatarUrl + jugador.foto_perfil}
-                      alt={`Foto de ${jugador.nombre}`}
-                      className="foto-perfil"
-                    />
-                    <div>
-                      <span>{jugador.nombre}</span><br />
-                      <span>Puntos: {jugador.puntuacion}</span>
+                    <div className="jugador-info">
+                      <span className="jugador-nombre">{jugador.nombre}</span>
+                      <img
+                        src={avatarUrl + jugador.foto_perfil}
+                        alt={`Foto de ${jugador.nombre}`}
+                        className="foto-perfil"
+                      />
+                      <span className="jugador-puntos">Puntos: {jugador.puntuacion}</span>
                     </div>
                   </div>
                 ))}
-              </div>
-
-              {/* Resultado */}
-              <div className="resultado">
-                <span>{determinarResultado(partida.jugadores)}</span>
-              </div>
-
-              {/* Equipo 2 */}
-              <div className="equipo equipo-2">
-                {partida.jugadores.filter(j => j.equipo === 2).map((jugador, idx) => (
-                  <div key={idx} className="jugador">
-                    <img
-                      src={avatarUrl + jugador.foto_perfil}
-                      alt={`Foto de ${jugador.nombre}`}
-                      className="foto-perfil"
-                    />
-                    <div>
-                      <span>{jugador.nombre}</span><br />
-                      <span>Puntos: {jugador.puntuacion}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
-          ))
-        )}
-      </div>
-    </div>
+
+            {/* Resultado */}
+            <div className="resultado">
+              <span>{resultado}</span>
+            </div>
+
+            {/* Equipo 2 */}
+            <div className="equipo equipo-2">
+              {partida.jugadores
+                .filter(j => j.equipo === 2)
+                .map((jugador, idx) => (
+                  <div key={idx} className="jugador">
+                    <div className="jugador-info">
+                      <span className="jugador-nombre">{jugador.nombre}</span>
+                      <img
+                        src={avatarUrl + jugador.foto_perfil}
+                        alt={`Foto de ${jugador.nombre}`}
+                        className="foto-perfil"
+                      />
+                      <span className="jugador-puntos">Puntos: {jugador.puntuacion}</span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        );
+      })
+    )}
+  </div>
+</div>
+
   );
 }
 

@@ -30,6 +30,10 @@ function ProfileModal() {
     setMail,
     profilePic,
     setProfilePic,
+    tapete,
+    setTapete,
+    cartas,
+    setCartas,
     isUserRegistered,
     setIsUserRegistered
   } = useUser();
@@ -68,12 +72,16 @@ function ProfileModal() {
     setUsername('');
     setMail('');
     setProfilePic('');
+    setTapete('');
+    setCartas('');
     setIsUserRegistered(false);
   
     // Limpiar localStorage
     localStorage.removeItem('username');
     localStorage.removeItem('mail');
-    localStorage.removeItem('profilePic')
+    localStorage.removeItem('profilePic');
+    localStorage.removeItem('cartas');
+    localStorage.removeItem('tapete');
     localStorage.removeItem('isUserRegistered');
   
     // Redirigir

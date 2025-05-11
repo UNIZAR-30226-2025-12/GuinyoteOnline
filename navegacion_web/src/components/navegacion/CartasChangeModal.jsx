@@ -8,7 +8,7 @@ import cartas2Image from '../../assets/stacks/cartas2.png';
 import cartas3Image from '../../assets/stacks/cartas3.png';
 
 const opcionesCartas = {
-  cartas1: cartas1Image,
+  default: cartas1Image,
   cartas2: cartas2Image,
   cartas3: cartas3Image
 };
