@@ -3,4 +3,9 @@
     <ui:Label name="PointsTeamB" text="Equipo B" style="-unity-text-align: middle-left; font-size: 40px; justify-content: center; align-items: center; bottom: 100px; left: 25px; position: absolute; width: 100px; height: 25px; color: rgb(255, 255, 255);" />
     <ui:Label text="Ganador" name="FinPartida_Label" style="position: absolute; align-self: center; top: 50%; width: 50px; height: 50px; justify-content: center; align-items: center; -unity-text-align: middle-center; font-size: 40px; color: rgb(255, 255, 255); display: flex; visibility: hidden;" />
     <ui:Button text="Volver al menu" name="atras" enabled="true" style="top: 90%; display: none;" />
+    <ui:Button text="Cantar&#10;Bastos" focusable="false" name="B_Bastos" style="bottom: 10px; top: auto; right: 320px; position: absolute;" />
+    <ui:Button text="Cantar&#10;Copas" focusable="false" name="B_Copas" style="bottom: 10px; top: auto; right: 245px; position: absolute;" />
+    <ui:Button text="Cantar&#10;Espadas" focusable="false" name="B_Espadas" style="bottom: 10px; top: auto; right: 160px; position: absolute;" />
+    <ui:Button text="Cantar&#10;Oros" focusable="false" name="B_Oros" style="bottom: 10px; top: auto; right: 85px; position: absolute;" />
+    <ui:Button text="Cambiar&#10;Siete" focusable="false" name="B_Siete" style="bottom: 10px; top: auto; right: 0; position: absolute;" />
 </ui:UXML>

@@ -15,20 +15,22 @@ const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCam
         controller.reset();
         await esperar(1000);
 
-        // CANTAR
-        controller.intentarCantar();
-        if (controller.state.cantadoEsteTurno) {
-          console.log("CANTANDO IA");
-          handleCantar(controller.state.paloCantadoEsteTurno);
-          await esperar(1000);
-        }
+        if(controller.state.ganador){
+          // CANTAR
+          controller.intentarCantar();
+          if (controller.state.cantadoEsteTurno) {
+            console.log("CANTANDO IA");
+            handleCantar(controller.state.paloCantadoEsteTurno);
+            await esperar(1000);
+          }
 
-        // CAMBIO SIETE
-        controller.intentarCambiarSiete();
-        if (controller.state.sieteCambiado) {
-          console.log("SIETE CAMBIADO IA");
-          handleCambiarSiete();
-          await esperar(1000);
+          // CAMBIO SIETE
+          controller.intentarCambiarSiete();
+          if (controller.state.sieteCambiado) {
+            console.log("SIETE CAMBIADO IA");
+            handleCambiarSiete();
+            await esperar(1000);
+          }
         }
 
         // JUGAR CARTA

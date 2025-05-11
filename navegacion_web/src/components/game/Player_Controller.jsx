@@ -36,7 +36,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete,
         <button
           key={index}
           className={`boton cantar${palo} ${
-            controller.state.sePuedeCantar[index] && controller.state.esMiTurno && !controller.state.cantadoEsteTurno
+            controller.state.sePuedeCantar[index] && esMiTurno && !controller.state.cantadoEsteTurno && controller.state.ganador
               ? isHovered[index]
                 ? "hover"
                 : "activo"
@@ -45,7 +45,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete,
           onMouseEnter={() => handleMouseEnter(index)} // Activa el hover
           onMouseLeave={() => handleMouseLeave(index)} // Desactiva el hover
           onClick={() => {
-            if (controller.state.sePuedeCantar[index] && controller.state.esMiTurno && !controller.state.cantadoEsteTurno) {
+            if (controller.state.sePuedeCantar[index] && esMiTurno && !controller.state.cantadoEsteTurno && controller.state.ganador) {
               controller.cantar(index);
               handleCantar(index);
               console.log(`Cantar activado para ${palo}`);
@@ -59,7 +59,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete,
       ))}
       <button
           className={`boton siete ${
-            esMiTurno && controller.state.sePuedeCambiarSiete
+            esMiTurno && controller.state.sePuedeCambiarSiete && controller.state.ganador
               ? isHovered[4]
                 ? "hover"
                 : "activo"
@@ -68,7 +68,7 @@ const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete,
           onMouseEnter={() => handleMouseEnter(4)} // Activa el hover
           onMouseLeave={() => handleMouseLeave(4)} // Desactiva el hover
           onClick={() => {
-            if (controller.state.sePuedeCambiarSiete) {
+            if (esMiTurno && controller.state.sePuedeCambiarSiete && controller.state.ganador) {
               handleCambiarSiete();
               console.log(`Cambiar siete activado`);
             } else {
