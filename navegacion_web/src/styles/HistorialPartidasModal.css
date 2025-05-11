@@ -1,0 +1,48 @@
+.historial-partidas-modal {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.partidas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.partida-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.equipo-1, .equipo-2 {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 40%; /* Puedes ajustar el ancho según necesites */
+}
+
+.resultado {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 20%; /* Esto asegura que el resultado ocupe un espacio entre los dos equipos */
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+.jugador {
+  display: flex;
+  justify-content: space-between;
+}
+
+.jugador span {
+  font-size: 14px;
+  color: #555;
+}
