@@ -15,6 +15,8 @@ export const UserProvider = ({ children }) => {
   const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default.png');
   const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default.png');
   const [stack, setStack] = useState(() => localStorage.getItem('stack') || 'default.png');
+  const [myProfile, setMyProfile] = useState(() => localStorage.getItem('myProfile') || 'default.png');
+  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || 'default.png');
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });
@@ -46,6 +48,10 @@ export const UserProvider = ({ children }) => {
       setStack,
       isUserRegistered,
       setIsUserRegistered,
+      myProfile,
+      setMyProfile,
+      profileId,
+      setProfileId,
     }}>
       {children}
     </UserContext.Provider>
