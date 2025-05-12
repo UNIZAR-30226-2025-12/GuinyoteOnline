@@ -29,9 +29,10 @@ public class Player_Controller : Player
                 }
             }
 
-            if (turno() && GameManager.esOnline)
+            if (turno())
             {
-                ws.enviarJugada(input);
+                if (GameManager.esOnline) ws.enviarJugada(input);
+                resetInput();
             }
         }
         base.Update();
