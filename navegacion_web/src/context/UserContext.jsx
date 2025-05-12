@@ -13,6 +13,7 @@ export const UserProvider = ({ children }) => {
   const [profilePic, setProfilePic] = useState(() => localStorage.getItem('profilePic') || 'default.png');
   const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default');
   const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default_stack');
+  const [deck, setDeck] = useState(() => localStorage.getItem('deck') || 'default');
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });
@@ -39,6 +40,8 @@ export const UserProvider = ({ children }) => {
       setTapete,
       cartas,
       setCartas,
+      deck,
+      setDeck,
       isUserRegistered,
       setIsUserRegistered,
     }}>

@@ -75,6 +75,7 @@ class GameManager {
     InitJugadores() {
         if (this.state.esOnline) {
             // * Conectarse con el websocket y recibir los jugadores
+            // ! No se si es necesario
             
         }
         else {
@@ -183,7 +184,14 @@ class GameManager {
         if (this.state.finRonda) {
             this.state.players[this.state.orden[0]].state.puntos += 10;
             this.terminarRonda();
-            this.barajarYRepartir();
+            // Si no es online, barajamos y reportimos
+            if (!this.state.esOnline) {
+                this.barajarYRepartir();
+            } else {
+                // * Si es online, 
+                // * - se espera a recibir la baraja del server
+                // * - se reparte a los jugadores
+            }
             return;
         } // 10 ultimas
 

@@ -16,7 +16,7 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
             const response = await postData({
                 idUsuario: mail,
                 maxPlayers: pairs ? '2v2' : '1v1',
-                codigoAcceso: roomCode.trim()
+                codigoAcceso: generatedCOde.trim()
             }, '/salas/unirsePrivada');
 
             onJoin(response.responseData.id); // navegar o unirse con ID recibido
@@ -33,8 +33,8 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
                 maxPlayers: pairs ? 4 : 2
             }, '/salas/crearPrivada');
 
-            setGeneratedCode(newCode);
-            setRoomCode(newCode);
+            setGeneratedCode(response.responseData.codigoAcceso);
+            setRoomCode(response.responseData.id);
         }
         catch (error) {
             alert("Error al crear la sala privada.");
@@ -65,7 +65,7 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
                 <input
                     type="text"
                     placeholder="Código de sala"
-                    value={roomCode}
+                    value={generatedCode}
                     onChange={(e) => setRoomCode(e.target.value)}
                 />
                 <div className="modal-buttons">

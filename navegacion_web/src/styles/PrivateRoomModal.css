@@ -1,66 +1,127 @@
 /* src/styles/PrivateRoomModal.css */
 
+/* Estilo para modo claro */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 1000;
 }
 
 .modal-content {
-  background-color: #fff;
+  position: relative;
+  background: white;
   padding: 2rem;
-  border-radius: 10px;
-  min-width: 300px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content h2 {
-  margin-bottom: 1rem;
-}
-
-.modal-content input {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  font-size: 1rem;
+  border-radius: 8px;
+  width: 350px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .modal-exit-button {
-    position: absolute;
-    background-color: white;
-    top: 1rem;
-    right: 1rem;
-    cursor: pointer;
-}
-
-.modal-buttons {
-  margin-top: 1rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.modal-buttons button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
   cursor: pointer;
 }
 
-.generate-code {
+.modal-exit-button img {
+  width: 20px;
+  height: 20px;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
   margin-top: 1rem;
-  padding: 1rem;
-  background-color: #f0f0f0;
-  border-radius: 6px;
+}
+
+.modal-buttons button {
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-buttons button:hover {
+  background-color: #0056b3;
+}
+
+.generated-code {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.generated-code h3 {
+  margin-top: 0.5rem;
+  font-size: 1.25rem;
+  color: #007bff;
 }
 
 .modal-divider {
+  height: 1px;
+  background-color: #ccc;
   margin: 1.5rem 0;
-  border-top: 1px solid #ccc;
-  width: 100%;
 }
+
+input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Estilo para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .modal-backdrop {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-content {
+    background: #242424;
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .modal-exit-button img {
+    filter: invert(1);
+  }
+
+  .modal-buttons button {
+    background-color: #0056b3;
+  }
+
+  .modal-buttons button:hover {
+    background-color: #003d7a;
+  }
+
+  .generated-code h3 {
+    color: #4da3ff;
+  }
+
+  input[type="text"] {
+    background-color: #444;
+    color: white;
+    border: 1px solid #666;
+  }
+}
+
