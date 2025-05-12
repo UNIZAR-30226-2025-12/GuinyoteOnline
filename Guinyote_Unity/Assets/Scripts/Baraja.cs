@@ -9,56 +9,10 @@ public class Baraja : MonoBehaviour
     public Baraja()
     {
         cartas = new List<(int, int)>();
-        /*for (int i = 0; i < 40; i++)
+        for (int i = 0; i < 40; i++)
         {
             cartas.Add((i % 4, i / 4));
-        }*/
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 6));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-        cartas.Add((0, 7));
-        cartas.Add((0, 9));
-
-
+        }
     }
 
     private void Start()

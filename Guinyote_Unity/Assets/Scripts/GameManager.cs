@@ -400,7 +400,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(ordenDatos);
         for (int i = 0; i < orden.Length; i++)
         {
-            orden[i] = (ordenDatos.orden[i] + webSocketClient.miId - ordenDatos.miId + numJugadores) % numJugadores;
+            orden[i] = (ordenDatos.orden[i] - webSocketClient.miId + ordenDatos.miId + numJugadores) % numJugadores;
         }
         Debug.Log("orden asignado");
         Debug.Log("Iniciando Jugadores");
