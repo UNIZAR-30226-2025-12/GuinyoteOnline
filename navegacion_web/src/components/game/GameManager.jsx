@@ -84,7 +84,7 @@ class GameManager {
                 this.state.players[0].anyadirCarta(this.state.baraja.darCarta());
             }
             if (this.state.numPlayers === 2) {
-                this.state.players[1] = new IA_PlayerBase(this.state.numPlayers, this, 1);
+                this.state.players[1] = (!this.state.esOnline) ? new IA_PlayerBase(this.state.numPlayers, this, 1) : new Online_PlayerBase(this.state.numPlayers, this, 1);
                 for (let j = 0; j < 6; j++) {
                     this.state.players[1].anyadirCarta(this.state.baraja.darCarta());
                 }

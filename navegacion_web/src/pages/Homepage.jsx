@@ -10,7 +10,7 @@ import RankingModal from '../components/navegacion/RankingModal';
 import FriendsModal from '../components/navegacion/FriendsModal';
 import '/src/styles/Homepage.css'
 import usePost from '../customHooks/usePost';
-import { useUser } from '../context/UserContext';
+import { cartaToStack, useUser } from '../context/UserContext';
 import ProfilePic from '../components/navegacion/ProfilePic';
 
 
@@ -139,7 +139,7 @@ function Homepage() {
       setProfilePic(response.responseData.foto_perfil);
       setTapete(response.responseData.tapete);
       setCartas(response.responseData.imagen_carta);
-      setStack(/*funcion para cambiar el tapete dependiendo del tipo de carta*/ )
+      setStack(cartaToStack(response.responseData.imagen_carta));
     }
   };
 

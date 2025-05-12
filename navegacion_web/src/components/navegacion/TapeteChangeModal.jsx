@@ -4,9 +4,9 @@ import '/src/styles/TapeteChangeModal.css';
 import usePut from '../../customHooks/usePut';
 
 const tapetesUrl = '/src/assets/tapetes/';
-const tapete1 = 'tapete1.png';
-const tapete2 = 'tapete2.png';
-const tapete3 = 'default.png';
+const tapete1 = 'default.png';
+const tapete2 = 'tapete1.png';
+const tapete3 = 'tapete2.png';
 
 function TapeteChangeModal({ show, handleClose }) {
 

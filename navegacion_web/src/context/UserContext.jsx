@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { TbChartArcs3 } from 'react-icons/tb';
 
 
 // Creamos el contexto
@@ -52,17 +53,22 @@ export const UserProvider = ({ children }) => {
 };
 
 function stackToCarta(stack) {
-  if (stack == "default.png") {
+  if (stack === "default.png") {
     return stack;
+  } else {
+    return stack.replace('stack', 'cartas');
   }
-  else if (stack = "stack2.png"){
-    return "cartas2.png";
-  }
-  else if (stack = "stack3.png"){
-    return "cartas3.png";
+  
+}
+
+function cartaToStack(cartas) {
+  if (cartas === "default.png") {
+    return cartas;
+  } else {
+    return cartas.replace('cartas', 'stack');
   }
 }
 
 // Hook para acceder fácilmente al contexto desde cualquier componente
 export const useUser = () => useContext(UserContext);
-export { stackToCarta };
+export { stackToCarta, cartaToStack };

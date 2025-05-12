@@ -4,16 +4,15 @@ import '/src/styles/CartasChangeModal.css'; // Asegúrate de tener este CSS o co
 import usePut from '../../customHooks/usePut';
 
 const stacksUrl = '/src/assets/stacks/';
-const stack1 = 'stack2.png';
-const stack2 = 'stack3.png';
-const stack3 = 'default.png';
+const stack1 = 'default.png';
+const stack2 = 'stack2.png';
+const stack3 = 'stack3.png';
 
 function CartasChangeModal({ show, handleClose }) {
 
   const exampleStacks = [stack1,stack2,stack3];
-  const { mail, cartas, setCartas, setStack, stack } = useUser();
+  const { mail, setCartas, setStack, stack } = useUser();
   const [newStack, setNewStack] = useState(stack);
-  const [newCartas, setNewCartas] = useState(cartas);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const { putData } = usePut('https://guinyoteonline-hkio.onrender.com');
@@ -23,11 +22,11 @@ function CartasChangeModal({ show, handleClose }) {
       setLoading(true);
       setErrorMsg('');
       console.log(`Stack seleccionado: ${newStack}`);
-      setNewCartas(stackToCarta(newStack));
-      console.log(newCartas);
+      const cartas = stackToCarta(newStack);
+      console.log(cartas);
 
       const encodedMail = encodeURIComponent(mail);
-      const response = await putData({ imagen_carta: newCartas }, `/usuarios/perfil/cambiarCartas/${encodedMail}`);
+      const response = await putData({ imagen_carta: cartas }, `/usuarios/perfil/cambiarCartas/${encodedMail}`);
 
       setLoading(false);
 
@@ -35,7 +34,7 @@ function CartasChangeModal({ show, handleClose }) {
         console.error('Error actualizando cartas:');
         setErrorMsg('Error al guardar el cambio. Intenta de nuevo.');
       } else {
-        setCartas(newCartas);
+        setCartas(cartas);
         setStack(newStack);
         handleClose();
       }
