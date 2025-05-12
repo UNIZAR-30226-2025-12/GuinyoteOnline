@@ -18,7 +18,7 @@ public class Baraja : MonoBehaviour
     private void Start()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/Dorso_Carta/" + UIManager.carta_picture);
+        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/tipos_carta/" + UIManager.carta_picture);
         spriteRenderer.sortingOrder = 20;
     }
 

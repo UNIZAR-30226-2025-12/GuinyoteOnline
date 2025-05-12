@@ -3,7 +3,7 @@
     <engine:VisualElement style="flex-grow: 1; position: absolute; height: 40%; width: 40%; top: 25%; left: 35%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: auto; bottom: auto; background-size: contain;" />
     <engine:Button text="Partida online" name="Online_Button" class="inicio-button" style="-unity-text-align: middle-center; bottom: auto; height: 10%; position: absolute; width: 25%; top: 35%; left: 3%; right: auto; background-color: rgb(255, 255, 255); font-size: 30%; -unity-font-style: bold; transform-origin: center;" />
     <engine:Button name="Login_Button" style="position: relative; height: 15%; width: 15%; opacity: 1; top: -3px; left: -5px; background-color: rgb(255, 255, 255);">
-        <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 15%; width: 50%; background-image: resource(&apos;Sprites/Login&apos;);" />
+        <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 15%; width: 50%; background-image: resource(&apos;Sprites/UI/login_button&apos;);" />
         <engine:Label text="Iniciar &#10;sesión" name="Login_Label" style="height: 24%; width: 50%; position: absolute; top: 30%; left: 50%; white-space: normal; align-items: stretch; font-size: 14%;" />
     </engine:Button>
     <engine:Button text="Partida IA" name="IA_Button" class="inicio-button" style="position: absolute; top: 50%; left: 3%; width: 25%; bottom: auto; right: auto; height: 10%; background-color: rgb(255, 255, 255); font-size: 30%;" />
