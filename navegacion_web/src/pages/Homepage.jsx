@@ -112,7 +112,7 @@ function Homepage() {
       setMail(mail);
       setProfilePic("default.png");
       setTapete("default");
-      setCartas("default");
+      setCartas("default_stack");
     }
   };
 

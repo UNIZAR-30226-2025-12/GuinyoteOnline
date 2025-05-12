@@ -3,14 +3,14 @@ import { useUser } from '../../context/UserContext';
 import '/src/styles/CartasChangeModal.css'; // Asegúrate de tener este CSS o copiar el del tapete y adaptarlo
 import usePut from '../../customHooks/usePut';
 
-import cartas1Image from '../../assets/stacks/default.png';
-import cartas2Image from '../../assets/stacks/cartas2.png';
-import cartas3Image from '../../assets/stacks/cartas3.png';
+import defaultCartasImage from '../../assets/stacks/default_stack.png';
+import stack2Image from '../../assets/stacks/stack2.png';
+import stack3Image from '../../assets/stacks/stack3.png';
 
 const opcionesCartas = {
-  default: cartas1Image,
-  cartas2: cartas2Image,
-  cartas3: cartas3Image
+  default_stack: defaultCartasImage,
+  stack2: stack2Image,
+  stack3: stack3Image
 };
 
 function CartasChangeModal({ show, handleClose }) {

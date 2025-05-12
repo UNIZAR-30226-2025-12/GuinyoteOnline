@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
   const [mail, setMail] = useState(() => localStorage.getItem('mail') || '');
   const [profilePic, setProfilePic] = useState(() => localStorage.getItem('profilePic') || 'default.png');
   const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default');
-  const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default');
+  const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default_stack');
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });

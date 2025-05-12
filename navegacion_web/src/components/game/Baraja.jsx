@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-
+import { useUser } from "../../context/UserContext";
 
 const Baraja = ({ controller }) => {
-    const [baraja] = useState(controller);
+    const {cartas} = useUser();
 
-    const spriteSrc = `/src/assets/stacks/Stack_3.png`;
+    const spriteSrc = `/src/assets/stacks/${cartas}.png`;
 
     return (
         <div className="baraja">
