@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using ConsultasBD;
@@ -8,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using WebSocketClient;
 using System.Threading.Tasks;
+using UnityEngine.Networking;
 //using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -73,7 +75,6 @@ public class UIManager : MonoBehaviour
     private Button boton_cambiar_cartas;
     private Button boton_online;
     private VisualElement VisualProfilePicture;
-    private Button privateRoomButton;
     private Label invitationCodeLabel;
     private TextField joinCodeInput;
 
@@ -157,13 +158,14 @@ public class UIManager : MonoBehaviour
             updateReferencePartidaIA(root, scene, mode);
         }
         else if(currentScene.name == "Partida_Online"){
-            //PARTIDA IA
+            //PARTIDA ONLINE
             updateReferencePartidaOnline(root, scene, mode);
         }
         else if (currentScene.name == "Partida_IA_1vs1" || currentScene.name == "Partida_IA_2vs2" || currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             updateReferenceStart(root, scene, mode);
-            if (currentScene.name =="Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2"){
+            if(currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
+            {
                 updateReferencePartidaOnline(root, scene, mode);
             }
         }
@@ -411,10 +413,6 @@ public class UIManager : MonoBehaviour
         else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
         {
             root.rootVisualElement.Q<VisualElement>("slot1").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + profile_picture);
-            
-            Consultas.OnAmigosConsultados += UpdateInvitarAmigos;
-            Consultas.OnAmigosConsultados -= UpdateAmigos;
-            StartCoroutine(Consultas.GetAmigosUsuario(id));
 
             //SACAR NOMBRES Y FOTOS DE PERFIL DEL RESTO DE LOS JUGADORES
         }
@@ -426,7 +424,7 @@ public class UIManager : MonoBehaviour
     /// <param name="root">El UIDocument de la escena actual.</param>
     /// <param name="currentScene">La escena actual.</param>
     /// <param name="mode">El modo de carga de la escena.</param>
-    private void updateReferencePartidaOnline(UIDocument root,Scene currentScene, LoadSceneMode mode)
+    private void updateReferencePartidaOnline(UIDocument root, Scene currentScene, LoadSceneMode mode)
     {
         Debug.Log("Ejecutando updateReferencePartidaOnline para la escena: " + currentScene.name);
 
@@ -436,71 +434,88 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1_Button");
-        if (boton_1vs1 != null)
+        if (currentScene.name == "Partida_Online")
         {
-            boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_1vs1"));
-        }
-        else
-        {
-            Debug.LogError("Error: Botón 1vs1_Button no encontrado en el UIDocument.");
-        }
-
-        boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2_Button");
-        if (boton_2vs2 != null)
-        {
-            boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
-        }
-        else
-        {
-            Debug.LogError("Error: Botón 2vs2_Button no encontrado en el UIDocument.");
-        }
-
-        if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
-        {
-            privateRoomButton = root?.rootVisualElement?.Q<Button>("privateRoom");
-            if (privateRoomButton != null)
+            boton_1vs1 = root.rootVisualElement.Q<Button>("1vs1_Button");
+            if (boton_1vs1 != null)
             {
-                Debug.Log("Botón de candado encontrado y registrado.");
-                privateRoomButton.RegisterCallback<ClickEvent>(ev => {
-                    Debug.Log("Evento del botón de candado ejecutado.");
-
-                    invitationCodeLabel = root?.rootVisualElement?.Q<Label>("invitationCode");
-                    joinCodeInput = root?.rootVisualElement?.Q<TextField>("joinCodeInput");
-
-                    if (invitationCodeLabel == null || joinCodeInput == null)
-                    {
-                        Debug.LogError("Error: No se pudieron encontrar los elementos 'invitationCode' o 'joinCodeInput'.");
-                        return;
-                    }
-
-                    string generatedCode = GenerateRoomCode();
-                    Debug.Log("Código generado: " + generatedCode);
-
-                    invitationCodeLabel.text = "Código de invitación: " + generatedCode;
-                    invitationCodeLabel.style.display = DisplayStyle.Flex;
-                    joinCodeInput.style.display = DisplayStyle.Flex;
-
-                    MakeRoomPrivate(generatedCode);
-                    Debug.Log("Sala privada configurada correctamente.");
-                });
+                boton_1vs1.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_1vs1"));
             }
             else
             {
-                Debug.LogError("Error: Botón de candado no encontrado en la escena actual. Verifique que el botón 'privateRoom' esté presente en el UIDocument y que su nombre coincida.");
+                Debug.LogError("Error: Botón 1vs1_Button no encontrado en el UIDocument.");
+            }
+
+            boton_2vs2 = root.rootVisualElement.Q<Button>("2vs2_Button");
+            if (boton_2vs2 != null)
+            {
+                boton_2vs2.RegisterCallback<ClickEvent>(ev => ChangeScene("Partida_Online_2vs2"));
+            }
+            else
+            {
+                Debug.LogError("Error: Botón 2vs2_Button no encontrado en el UIDocument.");
             }
         }
-    }
+        else if (currentScene.name == "Partida_Online_1vs1" || currentScene.name == "Partida_Online_2vs2")
+        {
+            var privateRoomButton = root.rootVisualElement.Q<Button>("PrivateRoom");
+            var modal = root.rootVisualElement.Q<VisualElement>("modal");
+            var closeModalButton = root.rootVisualElement.Q<Button>("closeModal");
 
-    private string GenerateRoomCode()
-    {
-        return UnityEngine.Random.Range(1000, 9999).ToString();
-    }
+            if (privateRoomButton == null)
+            {
+                Debug.LogError("privateRoom button not found");
+            }
+            else
+            {
+                privateRoomButton.RegisterCallback<ClickEvent>(ev =>
+                {
+                    Debug.Log("privateRoom button clicked");
+                    modal.style.display = DisplayStyle.Flex;
 
-    private void MakeRoomPrivate(string code)
-    {
-        Debug.Log("Sala privada creada con código: " + code);
-        // Implement server-side logic to make the room private and share the code
+                    var generateCodeButton = modal.Q<Button>("generateCode");
+                    var roomCodeInput = modal.Q<TextField>("roomCodeInput");
+                    var searchPrivateRoomButton = modal.Q<Button>("searchPrivateRoom");
+
+                    generateCodeButton.RegisterCallback<ClickEvent>(async ev =>
+                    {
+                        Debug.Log("Generate code button clicked");
+                        StartCoroutine(GeneratePrivateRoomCode(currentScene.name == "Partida_Online_2vs2", root));
+                    });
+
+                    searchPrivateRoomButton.RegisterCallback<ClickEvent>(async ev =>
+                    {
+                        Debug.Log("Search private room button clicked");
+                        string roomCode = roomCodeInput.value;
+                        if (string.IsNullOrWhiteSpace(roomCode))
+                        {
+                            Debug.LogError("El código de sala está vacío");
+                            return;
+                        }
+
+                        StartCoroutine(JoinPrivateRoom(roomCode, currentScene.name == "Partida_Online_2vs2"));
+                    });
+                });
+            }
+
+            if (modal == null)
+            {
+                Debug.LogError("Modal not found");
+            }
+
+            if (closeModalButton == null)
+            {
+                Debug.LogError("CloseModal button not found");
+            }
+            else
+            {
+                closeModalButton.RegisterCallback<ClickEvent>(ev =>
+                {
+                    Debug.Log("CloseModal button clicked");
+                    modal.style.display = DisplayStyle.None;
+                });
+            }
+        }
     }
 
     /// <summary>
@@ -980,38 +995,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    void UpdateInvitarAmigos(Usuario[] solicitudes)
-    {
-
-        Consultas.OnAmigosConsultados -= UpdateInvitarAmigos;
-        Consultas.OnAmigosConsultados += UpdateAmigos;
-
-        var   root = (UIDocument)FindObjectOfType(typeof(UIDocument));
-
-        // Obtener el ScrollView donde se mostrarán los amigos
-        ScrollView friendsScroll = root.rootVisualElement.Q<ScrollView>("listaAmigos");
-        friendsScroll.Clear(); // Limpiar el contenido actual del ScrollView
-
-        // Cargar el recurso visual para representar a una invitacion
-        VisualTreeAsset InvitaciónAsset = Resources.Load<VisualTreeAsset>("InvitarAmigo_elemento");
-
-        // Iterar sobre la lista de amigos y añadirlos al ScrollView
-        foreach (Usuario solicitud in solicitudes)
-        {
-
-            VisualElement InvitacionElement = InvitaciónAsset.CloneTree();
-            InvitacionElement.Q<VisualElement>("Profile_picture").style.backgroundImage = Resources.Load<Texture2D>("Sprites/Profile_pictures/" + System.IO.Path.GetFileNameWithoutExtension(solicitud.foto_perfil));
-            Label nombreUsuarioLabel = InvitacionElement.Q<Label>("Nombre_usuario");
-            nombreUsuarioLabel.text = solicitud.nombre;
-            Button aceptarButton = InvitacionElement.Q<Button>("accept_Button");
-            aceptarButton.RegisterCallback<ClickEvent>(ev => { 
-                //Enviar invitación a la sala
-            });
-            friendsScroll.Add(InvitacionElement);
-        }
-    }
-
-
     async void JoinRoom(Lobby lobby, string idUsuario)
     {
         // Configurar WebSocket para partidas online
@@ -1028,7 +1011,7 @@ public class UIManager : MonoBehaviour
     /// Dependiendo del tipo de partida, se establece el número de jugadores y si es online o no.
     /// Luego, se cambia a la escena del juego.
     /// </summary>
-    void beginGame(string tipo)
+    void beginGame(string tipo, string roomCode = null)
     {
         Debug.Log("Button Clicked");
 
@@ -1043,20 +1026,27 @@ public class UIManager : MonoBehaviour
             GameManager.numJugadores = (tipo == "Partida_Online_1vs1") ? 2 : 4;
             GameManager.esOnline = true;
 
-            string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
-            StartCoroutine(Consultas.BuscarPartidaPublica(id, roomType));
+            if (!string.IsNullOrEmpty(roomCode))
+            {
+                StartCoroutine(JoinPrivateRoom(roomCode, tipo == "Partida_Online_2vs2"));
+            }
+            else
+            {
+                string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
+                StartCoroutine(Consultas.BuscarPartidaPublica(id, roomType));
 
-            // Mostrar UI de PantallaEspera
-            VisualTreeAsset pantallaEsperaAsset = Resources.Load<VisualTreeAsset>("PantallaEspera");
-            VisualElement pantallaEspera = pantallaEsperaAsset.CloneTree();
-            var root = (UIDocument)FindObjectOfType(typeof(UIDocument));
-            root.rootVisualElement.Add(pantallaEspera);
+                // Mostrar UI de PantallaEspera
+                VisualTreeAsset pantallaEsperaAsset = Resources.Load<VisualTreeAsset>("PantallaEspera");
+                VisualElement pantallaEspera = pantallaEsperaAsset.CloneTree();
+                var root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+                root.rootVisualElement.Add(pantallaEspera);
 
-            Button cancelButton = pantallaEspera.Q<Button>("CancelButton");
-            cancelButton.RegisterCallback<ClickEvent>(ev => {
-                pantallaEspera.RemoveFromHierarchy();
-                webSocketClient.Close();
-            });
+                Button cancelButton = pantallaEspera.Q<Button>("CancelButton");
+                cancelButton.RegisterCallback<ClickEvent>(ev => {
+                    pantallaEspera.RemoveFromHierarchy();
+                    webSocketClient.Close();
+                });
+            }
         }
     }
 
@@ -1087,5 +1077,116 @@ public class UIManager : MonoBehaviour
         lastScene.Push(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(sceneName);
         Debug.Log("updateReference");
+    }
+
+    /// <summary>
+    /// Realiza una solicitud HTTP al servidor para buscar o unirse a una partida.
+    /// </summary>
+    /// <param name="url">La URL del endpoint del servidor.</param>
+    /// <param name="form">El formulario con los datos necesarios para la solicitud.</param>
+    /// <param name="onSuccess">Acción a ejecutar si la solicitud es exitosa.</param>
+    /// <param name="onError">Acción a ejecutar si ocurre un error.</param>
+    private IEnumerator SendRequest(string url, WWWForm form, Action<string> onSuccess, Action<string> onError)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Post(url, form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                onSuccess?.Invoke(www.downloadHandler.text);
+            }
+            else
+            {
+                onError?.Invoke(www.error);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Genera un código para una sala privada y lo muestra en la interfaz.
+    /// </summary>
+    /// <param name="isPairs">Indica si la sala es para 2v2 (true) o 1v1 (false).</param>
+    private IEnumerator GeneratePrivateRoomCode(bool isPairs, UIDocument root)
+    {
+        string url = "https://guinyoteonline-hkio.onrender.com/salas/crearPrivada";
+        WWWForm form = new WWWForm();
+        form.AddField("idCreador", id);
+        form.AddField("maxPlayers", isPairs ? 4 : 2);
+
+        yield return SendRequest(url, form, response =>
+        {
+            // Ensure execution on the main thread
+            UnityEngine.Debug.Log("Processing response on main thread");
+            var responseData = JsonUtility.FromJson<ResponseData>(response);
+            string newCode = responseData.responseData.codigoAcceso;
+            Debug.Log("Código generado: " + newCode);
+
+            var roomCodeInput = root.rootVisualElement.Q<TextField>("roomCodeInput");
+            if (roomCodeInput != null)
+            {
+                roomCodeInput.value = newCode;
+                Debug.Log("Código asignado al campo de texto correctamente.");
+
+                // Cerrar el modal
+                var modal = root.rootVisualElement.Q<VisualElement>("modal");
+                if (modal != null)
+                {
+                    modal.style.display = DisplayStyle.None;
+                }
+            }
+            else
+            {
+                Debug.LogError("Error: No se encontró el campo de texto 'roomCodeInput' en la interfaz de usuario.");
+            }
+        },
+        error =>
+        {
+            Debug.LogError("Error al generar el código de sala: " + error);
+        });
+    }
+
+    /// <summary>
+    /// Intenta unirse a una sala privada utilizando un código proporcionado.
+    /// </summary>
+    /// <param name="roomCode">El código de la sala a la que se desea unir.</param>
+    /// <param name="isPairs">Indica si la sala es para 2v2 (true) o 1v1 (false).</param>
+    private IEnumerator JoinPrivateRoom(string roomCode, bool isPairs)
+    {
+        string url = "https://guinyoteonline-hkio.onrender.com/salas/unirsePrivada";
+        WWWForm form = new WWWForm();
+        form.AddField("idUsuario", id);
+        form.AddField("maxPlayers", isPairs ? "2v2" : "1v1");
+        form.AddField("codigoAcceso", roomCode);
+
+        yield return SendRequest(url, form, response =>
+        {
+            var responseData = JsonUtility.FromJson<ResponseData>(response);
+            Debug.Log("Unido a la sala con ID: " + responseData.responseData.id);
+            // Aquí puedes manejar la lógica para unirse a la sala
+        },
+        error =>
+        {
+            Debug.LogError("Error al unirse a la sala: " + error);
+        });
+    }
+
+    /// <summary>
+    /// Clase auxiliar para deserializar la respuesta del servidor.
+    /// </summary>
+    [Serializable]
+    private class ResponseData
+    {
+        public Response responseData;
+    }
+
+    /// <summary>
+    /// Clase auxiliar para representar los datos de la respuesta del servidor.
+    /// </summary>
+    [Serializable]
+    private class Response
+    {
+        public string id;
+        public string codigoAcceso;
     }
 }
