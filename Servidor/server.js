@@ -8,7 +8,7 @@ const mutex = new Mutex();
 const { reestablecerEstado, iniciarPartida, enviarInput, guardarEstadoPartida } = require('./gameManager');
 const gameManager = require("./gameManager");
 const { connectDB } = require('../Bd/db');
-const { findLobby, findLobbyBySocketId, findLobbyByUserName, joinLobby } = require('./lobbies');
+const { findLobby, findLobbyBySocketId, findLobbyByUserName, joinLobby, lobbies } = require('./lobbies');
 require("dotenv").config();
 
 const saltRounds = 10; // Nivel de complejidad de las contraseñas
@@ -1011,8 +1011,32 @@ io.on('connection', (socket) => {
       const jugador = partidaActiva.jugadores.find(j => j.socket.id === socket.id);
       console.log(`partida ${partidaActiva.id} en pausa`);
       io.to(partidaActiva.id).emit('desconexion');
+      const todosDesconectados = partidaActiva.jugadores.every(j => j.socket.disconnected);
+      if (todosDesconectados) {
+        for (let i = lobbies.length - 1; i >= 0; i--) {
+          const sala = lobbies[i];
+          const enCurso = sala.estado === 'en curso';
+          const contieneJugador = sala.jugadores.some(j => j.correo === jugador.correo);
+
+          if (enCurso && contieneJugador) {
+            lobbies.splice(i, 1); // elimina 1 elemento en la posición i
+          }
+        }
+        console.log("todos los jugadores desconectados, partida eliminada");
+        return;
+      }
+      
       timeoutsReconexion.set(jugador.correo, setTimeout(async () => {
         io.to(partidaActiva.id).emit('partidaAbandonada');
+        for (let i = lobbies.length - 1; i >= 0; i--) {
+          const sala = lobbies[i];
+          const enCurso = sala.estado === 'en curso';
+          const contieneJugador = sala.jugadores.some(j => j.correo === jugador.correo);
+
+          if (enCurso && contieneJugador) {
+            lobbies.splice(i, 1); // elimina 1 elemento en la posición i
+          }
+        }
       }, 30000));
     }
     else {
