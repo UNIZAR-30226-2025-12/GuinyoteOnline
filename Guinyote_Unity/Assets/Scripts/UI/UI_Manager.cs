@@ -1109,41 +1109,37 @@ public class UIManager : MonoBehaviour
     /// <param name="isPairs">Indica si la sala es para 2v2 (true) o 1v1 (false).</param>
     private IEnumerator GeneratePrivateRoomCode(bool isPairs, UIDocument root)
     {
-        string url = "https://guinyoteonline-hkio.onrender.com/salas/crearPrivada";
-        WWWForm form = new WWWForm();
-        form.AddField("idCreador", id);
-        form.AddField("maxPlayers", isPairs ? 4 : 2);
+        Debug.Log("Generando sala privada...");
 
-        yield return SendRequest(url, form, response =>
+        Lobby lobby = null;
+        yield return StartCoroutine(Consultas.CrearSalaPrivada(id, isPairs ? "2vs2" : "1vs1", result => lobby = result));
+
+        if (lobby == null)
         {
-            // Ensure execution on the main thread
-            UnityEngine.Debug.Log("Processing response on main thread");
-            var responseData = JsonUtility.FromJson<ResponseData>(response);
-            string newCode = responseData.responseData.codigoAcceso;
-            Debug.Log("Código generado: " + newCode);
+            Debug.LogError("Error al crear la sala privada.");
+            yield break;
+        }
 
-            var roomCodeInput = root.rootVisualElement.Q<TextField>("roomCodeInput");
-            if (roomCodeInput != null)
-            {
-                roomCodeInput.value = newCode;
-                Debug.Log("Código asignado al campo de texto correctamente.");
+        Debug.Log("Sala privada creada con codigo de acceso: " + lobby.codigoAcceso);
 
-                // Cerrar el modal
-                var modal = root.rootVisualElement.Q<VisualElement>("modal");
-                if (modal != null)
-                {
-                    modal.style.display = DisplayStyle.None;
-                }
-            }
-            else
-            {
-                Debug.LogError("Error: No se encontró el campo de texto 'roomCodeInput' en la interfaz de usuario.");
-            }
-        },
-        error =>
+        var generateCodeButton = root.rootVisualElement.Q<Button>("generateCode");
+        var roomCodeInput = root.rootVisualElement.Q<TextField>("roomCodeInput");
+        var generatedCodeLabel = root.rootVisualElement.Q<Label>("generatedCodeLabel");
+        var roomCode = root.rootVisualElement.Q<Label>("roomCode");
+
+        if (generateCodeButton != null && roomCodeInput != null && generatedCodeLabel != null)
         {
-            Debug.LogError("Error al generar el código de sala: " + error);
-        });
+            generateCodeButton.style.display = DisplayStyle.None;
+            roomCodeInput.value = lobby.codigoAcceso;
+            roomCode.style.display = DisplayStyle.Flex;
+            generatedCodeLabel.text = lobby.codigoAcceso;
+            generatedCodeLabel.style.display = DisplayStyle.Flex;
+            Debug.Log("Código asignado al campo de texto y etiqueta correctamente.");
+        }
+        else
+        {
+            Debug.LogError("Error: No se encontró el botón 'generateCode', el campo de texto 'roomCodeInput' o la etiqueta 'generatedCodeLabel' en la interfaz de usuario.");
+        }
     }
 
     /// <summary>
