@@ -83,7 +83,7 @@
 /* Estilo para modo oscuro */
 @media (prefers-color-scheme: dark) {
   .modal-overlay {
-      background: (255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.1);
   }
 
   .modal-content {

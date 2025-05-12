@@ -3,17 +3,14 @@ import { useUser } from '../../context/UserContext';
 import '/src/styles/TapeteChangeModal.css';
 import usePut from '../../customHooks/usePut';
 
-import tapete1Image from '../../assets/tapetes/default.png';
-import tapete2Image from '../../assets/tapetes/tapete2.png';
-import tapete3Image from '../../assets/tapetes/tapete3.png';
-
-const tapetes = {
-  default: tapete1Image,
-  tapete2: tapete2Image,
-  tapete3: tapete3Image
-};
+const tapetesUrl = '/src/assets/tapetes/';
+const tapete1 = 'tapete1.png';
+const tapete2 = 'tapete2.png';
+const tapete3 = 'default.png';
 
 function TapeteChangeModal({ show, handleClose }) {
+
+  const exampleTapetes = [tapete1,tapete2,tapete3];
   const { mail, setTapete, tapete } = useUser();
   const [newTapete, setNewTapete] = useState(tapete);
   const [loading, setLoading] = useState(false);
@@ -48,20 +45,20 @@ function TapeteChangeModal({ show, handleClose }) {
     <div className="tapete-modal-overlay" onClick={handleClose}>
       <div className="tapete-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="tapete-options">
-          {Object.entries(tapetes).map(([key, src]) => (
+          {exampleTapetes.map((filename) => (
             <div
-              key={key}
-              className={`tapete-option ${newTapete === key ? 'selected' : ''}`}
-              onClick={() => setNewTapete(key)}
+              key={filename}
+              className={`tapete-option ${newTapete === filename ? 'selected' : ''}`}
+              onClick={() => setNewTapete(filename)}
             >
-              <img src={src} alt={key} />
+              <img src={tapetesUrl + filename} alt={filename} />
             </div>
           ))}
-        </div>
+</div>
 
         <div className="tapete-preview">
           <h3>Vista previa</h3>
-          <img src={tapetes[newTapete]} alt="Vista previa del tapete" />
+          <img src={tapetesUrl + newTapete} alt="Vista previa del tapete" />
           {loading && <p className="tapete-modal-loading">Guardando...</p>}
           {errorMsg && <p className="tapete-modal-error">{errorMsg}</p>}
           <div className="tapete-modal-buttons">

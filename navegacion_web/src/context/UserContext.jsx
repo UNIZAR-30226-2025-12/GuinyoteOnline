@@ -11,9 +11,9 @@ export const UserProvider = ({ children }) => {
   const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
   const [mail, setMail] = useState(() => localStorage.getItem('mail') || '');
   const [profilePic, setProfilePic] = useState(() => localStorage.getItem('profilePic') || 'default.png');
-  const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default');
-  const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default_stack');
-  const [deck, setDeck] = useState(() => localStorage.getItem('deck') || 'default');
+  const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default.png');
+  const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default.png');
+  const [stack, setStack] = useState(() => localStorage.getItem('stack') || 'default.png');
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });
@@ -25,8 +25,9 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('profilePic', profilePic);
     localStorage.setItem('tapete', tapete); 
     localStorage.setItem('cartas', cartas);
+    localStorage.setItem('stack', stack);
     localStorage.setItem('isUserRegistered', JSON.stringify(isUserRegistered));
-  }, [username, mail, profilePic, tapete, cartas, isUserRegistered]);
+  }, [username, mail, profilePic, tapete, cartas, stack, isUserRegistered]);
 
   return (
     <UserContext.Provider value={{ 
@@ -40,8 +41,8 @@ export const UserProvider = ({ children }) => {
       setTapete,
       cartas,
       setCartas,
-      deck,
-      setDeck,
+      stack,
+      setStack,
       isUserRegistered,
       setIsUserRegistered,
     }}>
@@ -50,5 +51,18 @@ export const UserProvider = ({ children }) => {
   );
 };
 
+function stackToCarta(stack) {
+  if (stack == "default.png") {
+    return stack;
+  }
+  else if (stack = "stack2.png"){
+    return "cartas2.png";
+  }
+  else if (stack = "stack3.png"){
+    return "cartas3.png";
+  }
+}
+
 // Hook para acceder fácilmente al contexto desde cualquier componente
 export const useUser = () => useContext(UserContext);
+export { stackToCarta };

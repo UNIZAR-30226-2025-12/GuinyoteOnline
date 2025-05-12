@@ -36,8 +36,8 @@ function UsernameChangeModal({ show,  handleClose }) {
   if (!show) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="usernamechange-modal-overlay" onClick={handleClose}>
+      <div className="usernamechange-modal-content" onClick={(e) => e.stopPropagation()}>
         <h3>Cambiar nombre de usuario</h3>
         <input
           type="text"
@@ -45,9 +45,9 @@ function UsernameChangeModal({ show,  handleClose }) {
           onChange={(e) => setNewUsername(e.target.value)}
           placeholder="Nuevo nombre de usuario"
         />
-        {loading && <p className="modal-loading">Guardando...</p>}
-        {errorMsg && <p className="modal-error">{errorMsg}</p>}
-        <div className="modal-buttons">
+        {loading && <p className="usernamechange-modal-loading">Guardando...</p>}
+        {errorMsg && <p className="usernamechange-modal-error">{errorMsg}</p>}
+        <div className="usernamechange-modal-buttons">
           <button onClick={handleSubmit} disabled={loading}>
             Guardar
           </button>

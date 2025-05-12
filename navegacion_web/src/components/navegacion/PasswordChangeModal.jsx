@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useUser } from '../../context/UserContext';
-import '/src/styles/PasswordChangeModal.css'; // Usa el mismo estilo del modal
+import '/src/styles/PasswordChangeModal.css'; 
 import usePut from '../../customHooks/usePut';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Iconos de ojo
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-function PasswordChangeModal({ show, handleClose }) {
+function PasswordChangeDialog({ show, handleClose }) {
   const { mail } = useUser();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -58,7 +58,7 @@ function PasswordChangeModal({ show, handleClose }) {
     setOldPassword('');
     setNewPassword('');
     setConfirmPassword('');
-    setTimeout(handleClose, 500); 
+    setTimeout(handleClose, 500);
   };
 
   const togglePasswordVisibility = (type) => {
@@ -70,8 +70,8 @@ function PasswordChangeModal({ show, handleClose }) {
   if (!show) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="passwordchange-modal-overlay" onClick={handleClose}>
+      <div className="passwordchange-modal-content" onClick={(e) => e.stopPropagation()}>
         <h3>Cambiar contraseña</h3>
 
         <div className="password-field">
@@ -110,9 +110,9 @@ function PasswordChangeModal({ show, handleClose }) {
           </button>
         </div>
 
-        {loading && <p className="modal-loading">Actualizando...</p>}
-        {errorMsg && <p className="modal-error">{errorMsg}</p>}
-        {successMsg && <p className="modal-success">{successMsg}</p>}
+        {loading && <p className="passwordchange-modal-loading">Actualizando...</p>}
+        {errorMsg && <p className="passwordchange-modal-error">{errorMsg}</p>}
+        {successMsg && <p className="passwordchange-modal-success">{successMsg}</p>}
 
         <div className="modal-buttons">
           <button onClick={handleSubmit} disabled={loading}>
@@ -127,4 +127,4 @@ function PasswordChangeModal({ show, handleClose }) {
   );
 }
 
-export default PasswordChangeModal;
+export default PasswordChangeDialog;

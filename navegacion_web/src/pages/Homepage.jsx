@@ -38,6 +38,7 @@ function Homepage() {
     setProfilePic,
     setTapete,
     setCartas,
+    setStack,
     isUserRegistered,
     setIsUserRegistered
   } = useUser();
@@ -111,8 +112,9 @@ function Homepage() {
       setUsername(username);
       setMail(mail);
       setProfilePic("default.png");
-      setTapete("default");
-      setCartas("default_stack");
+      setTapete("default.png");
+      setCartas("default.png");
+      setStack("default.png");
     }
   };
 
@@ -135,8 +137,9 @@ function Homepage() {
       setUsername(response.responseData.nombre);
       setMail(mail);
       setProfilePic(response.responseData.foto_perfil);
-      setTapete(response.responseData.tapete.replace('.png', ''));
-      setCartas(response.responseData.imagen_carta.replace('.png', ''));
+      setTapete(response.responseData.tapete);
+      setCartas(response.responseData.imagen_carta);
+      setStack(/*funcion para cambiar el tapete dependiendo del tipo de carta*/ )
     }
   };
 

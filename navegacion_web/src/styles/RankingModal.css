@@ -38,12 +38,26 @@
     animation: slideOut 0.5s forwards;
 }
 
-.modal-exit-button {
+.ranking-modal-exit-button {
     position: absolute;
-    background-color: white;
     top: 1rem;
     right: 1rem;
+    background-color: transparent; 
+    border: none; 
     cursor: pointer;
+    padding: 0.5rem; 
+    z-index: 1100; 
+}
+
+.ranking-modal-exit-button img {
+    width: 24px; 
+    height: 24px; 
+    filter: invert(0); 
+    transition: filter 0.3s ease; 
+}
+
+.ranking-modal-exit-button:hover img {
+    filter: invert(1); 
 }
 
 .ranking-overlay {

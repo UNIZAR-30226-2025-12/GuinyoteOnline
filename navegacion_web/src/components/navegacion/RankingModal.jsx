@@ -21,7 +21,7 @@ function RankingModal({ show, handleClose }) {
     return (
         <div className={`ranking-overlay ${show ? 'show' : 'hide'}`}>
             <div className={`ranking-modal ${show ? 'show' : 'hide'}`}>
-                <button className='modal-exit-button' onClick={handleClose}>
+                <button className='ranking-modal-exit-button' onClick={handleClose}>
                     <img src="https://img.icons8.com/material-rounded/24/000000/close-window.png" alt="Cerrar" />
                 </button>
                 <h1>Ranking</h1>

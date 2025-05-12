@@ -12,7 +12,7 @@ const av5 = 'default.png';
 
 function PicChangeModal({ show, handleClose }) {
   if (!show) return null;
-
+  
   const exampleImages = [av1, av2, av3, av4, av5];
   const {mail, profilePic, setProfilePic } = useUser();
   const { putData } = usePut('https://guinyoteonline-hkio.onrender.com');
@@ -35,10 +35,10 @@ function PicChangeModal({ show, handleClose }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="picchange-modal-overlay">
+      <div className="picchange-modal-content">
         <h3>Selecciona una nueva imagen de perfil</h3>
-        <div className="image-options">
+        <div className="picchange-image-options">
           {exampleImages.map((pic, index) => (
             <img
               key={index}
@@ -48,7 +48,7 @@ function PicChangeModal({ show, handleClose }) {
             />
           ))}
         </div>
-        <button className="close-modal-button" onClick={handleClose}>
+        <button className="picchange-close-modal-button" onClick={handleClose}>
           Cancelar
         </button>
       </div>
