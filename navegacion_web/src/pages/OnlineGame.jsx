@@ -5,12 +5,12 @@ import IA_Player from "../components/game/IA_Player";
 import Tapete from "../components/game/Tapete";
 import Baraja from "../components/game/Baraja";
 import Triunfo from "../components/game/Triunfo";
-import GameManager from "../components/game/OnlineGameManager";
+import GameManager from "../components/game/GameManager";
 import { useSocket } from "/src/context/SocketContext";
 
 function OnlineGame() {
     const numJugadores = 4; // Número de jugadores
-    const [gameManager] = useState(new OnlineGameManager(numJugadores)); // Componente GameManager con las funciones
+    const [gameManager] = useState(new GameManager(numJugadores)); // Componente GameManager con las funciones
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo

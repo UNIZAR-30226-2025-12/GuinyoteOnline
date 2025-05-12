@@ -135,6 +135,8 @@ function Homepage() {
       setUsername(response.responseData.nombre);
       setMail(mail);
       setProfilePic(response.responseData.foto_perfil);
+      setTapete(response.responseData.tapete.replace('.png', ''));
+      setCartas(response.responseData.imagen_carta.replace('.png', ''));
     }
   };
 
