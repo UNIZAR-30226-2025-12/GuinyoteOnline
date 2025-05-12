@@ -1,30 +1,41 @@
-
-/* Ocultar el tab header */
 .unity-tab__header {
     display: none;
 }
 
-
 .unity-button {
+    background-image: none;
     border-radius: 10px;
     padding: 10px;
+    border-width: 0;
+    border-color: transparent;
+    color: black;
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+
+.inicio-button:hover:enabled {
+    background-color: rgb(158, 158, 158);
+    color: rgb(100, 108, 255);
+    scale: 1.1 1.1;
 }
 
 .ventana {
-    background-color: #ADD8E6;
+    background-color: rgb(195, 195, 195);
     border-radius: 10px;
     padding: 20px;
     margin: 10px;
 }
 
-
 .ventana_derecha {
+    background-color: rgb(195, 195, 195);
     position: absolute;
-    right: 0px;
-    top: 0px;
-    bottom: 0px;
+    right: 0;
+    top: 0;
+    bottom: 0;
     left: auto;
     height: 100%;
     border-radius: 10px;
 }
 
+.unity-text-element {
+}

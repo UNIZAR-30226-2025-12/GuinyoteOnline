@@ -1,12 +1,12 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=0398abbafa8c9f942bb8076f4efac0a8&amp;type=3#Style" />
-    <engine:VisualElement style="flex-grow: 1; position: absolute; height: 40%; width: 40%; top: 25%; left: 40%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: 50%; bottom: 50%; background-size: contain;" />
-    <engine:Button text="Partida online" name="Online_Button" style="-unity-text-align: middle-center; bottom: 70%; height: 10%; position: absolute; width: 20%; top: 30%; left: 5%; right: -216px; background-color: rgb(255, 255, 255); font-size: 14%;" />
+    <engine:VisualElement style="flex-grow: 1; position: absolute; height: 40%; width: 40%; top: 25%; left: 35%; background-image: resource(&apos;Sprites/UI/Logo&apos;); right: auto; bottom: auto; background-size: contain;" />
+    <engine:Button text="Partida online" name="Online_Button" class="inicio-button" style="-unity-text-align: middle-center; bottom: auto; height: 10%; position: absolute; width: 25%; top: 35%; left: 3%; right: auto; background-color: rgb(255, 255, 255); font-size: 30%; -unity-font-style: bold; transform-origin: center;" />
     <engine:Button name="Login_Button" style="position: relative; height: 15%; width: 15%; opacity: 1; top: -3px; left: -5px; background-color: rgb(255, 255, 255);">
         <engine:VisualElement name="Profile_picture" style="flex-grow: 1; height: 15%; width: 50%; background-image: resource(&apos;Sprites/Login&apos;);" />
         <engine:Label text="Iniciar &#10;sesión" name="Login_Label" style="height: 24%; width: 50%; position: absolute; top: 30%; left: 50%; white-space: normal; align-items: stretch; font-size: 14%;" />
     </engine:Button>
-    <engine:Button text="Partida IA" name="IA_Button" style="position: absolute; top: 50%; left: 5%; width: 20%; bottom: auto; right: auto; height: 10%; background-color: rgb(255, 255, 255); font-size: 14%;" />
+    <engine:Button text="Partida IA" name="IA_Button" class="inicio-button" style="position: absolute; top: 50%; left: 3%; width: 25%; bottom: auto; right: auto; height: 10%; background-color: rgb(255, 255, 255); font-size: 30%;" />
     <engine:Button name="Ranking_Button" style="position: absolute; top: 5%; left: 90%; height: 15%; width: 10%; background-color: rgba(70, 70, 70, 0); -unity-background-image-tint-color: rgb(255, 255, 255); border-left-color: rgba(55, 55, 55, 0); border-right-color: rgba(55, 55, 55, 0); border-top-color: rgba(55, 55, 55, 0); border-bottom-color: rgba(55, 55, 55, 0);">
         <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/ranking&apos;); background-size: contain; width: 100%; height: initial; position: relative; top: auto; left: auto; bottom: auto;" />
         <engine:Label text="Ranking" name="Label" style="position: relative; top: auto; left: auto; font-size: 14%;" />
@@ -15,7 +15,7 @@
         <engine:VisualElement style="flex-grow: 1; background-image: resource(&apos;Sprites/UI/amigos&apos;); background-size: contain; width: 100%; height: initial; position: relative; top: auto; left: auto; bottom: auto;" />
         <engine:Label text="Amigos" style="position: relative; top: auto; left: auto; font-size: 14%;" />
     </engine:Button>
-    <engine:Button text="Reglas" name="reglas_Button" style="left: 85%; width: 10%; top: 90%; -unity-background-image-tint-color: rgb(255, 255, 255); background-color: rgb(255, 255, 255); height: 8%; position: absolute; font-size: 14%;" />
+    <engine:Button text="Reglas" name="reglas_Button" style="left: 85%; width: 10%; top: 87%; -unity-background-image-tint-color: rgb(255, 255, 255); background-color: rgb(255, 255, 255); height: 8%; position: absolute; font-size: 14%;" />
     <engine:Tab focusable="false" closeable="false" name="Login_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
         <engine:VisualElement class="ventana" style="flex-grow: 1; height: 379px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
             <engine:Button text="x" name="exit_Button" style="position: absolute; top: 7px; left: 345px; width: 63px; background-color: rgb(255, 255, 255);" />

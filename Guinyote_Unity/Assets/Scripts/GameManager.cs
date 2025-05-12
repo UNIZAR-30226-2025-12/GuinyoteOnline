@@ -840,41 +840,6 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("Inicio");
     }
 
-    /// <summary>
-    /// Crea una sala privada y espera a que otros jugadores se unan.
-    /// </summary>
-    public void CrearSalaPrivada()
-    {
-        StartCoroutine(ConsultasBD.Consultas.CrearSalaPrivada("idUsuarioEjemplo"));
-    }
-
-    /// <summary>
-    /// Se une a una sala privada mediante un código.
-    /// </summary>
-    /// <param name="codigoSala">El código de la sala privada.</param>
-    public void UnirseSalaPrivada(string codigoSala)
-    {
-        StartCoroutine(ConsultasBD.Consultas.UnirseSalaPrivada(codigoSala, "idUsuarioEjemplo"));
-    }
-
-    /// <summary>
-    /// Busca una partida pública.
-    /// </summary>
-    public void BuscarPartidaPublica()
-    {
-        StartCoroutine(ConsultasBD.Consultas.BuscarPartidaPublica("idUsuarioEjemplo", "1v1"));
-    }
-
-    /// <summary>
-    /// Sincroniza el estado del juego con el servidor.
-    /// </summary>
-    public void SincronizarEstado()
-    {
-        // Enviar el estado actual del juego al servidor y recibir actualizaciones.
-        Debug.Log("Sincronizando estado del juego...");
-        // Implementar lógica de sincronización aquí.
-    }
-
     private void OnDestroy()
     {
         if (webSocketClient != null)
