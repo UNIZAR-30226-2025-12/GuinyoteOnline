@@ -16,6 +16,8 @@
 import React, { useState, useRef } from 'react';
 import '/src/styles/FriendsRow.css';
 import usePost from '../../customHooks/usePost';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../context/UserContext';
 
 const assetsUrl = '/src/assets/';
 const avataresUrl = '/src/assets/avatares/';
@@ -23,6 +25,11 @@ const avataresUrl = '/src/assets/avatares/';
 const {postData}  = usePost('https://guinyoteonline-hkio.onrender.com/amigos/eliminarAmigo/');
 
 const FriendsRow = ({ img, username, mail, usrMail, onDelete }) => {
+
+    const navigate = useNavigate();
+
+    const { setMyProfile, setProfileId } = useUser();
+
     const [showModal, setShowModal] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [modalPosition, setModalPosition] = useState({ left: 0, top: 0 });
@@ -41,6 +48,9 @@ const FriendsRow = ({ img, username, mail, usrMail, onDelete }) => {
 
     const onClickProfile = () => {
         console.log("Pulsado perfil");
+        setMyProfile(false);
+        setProfileId(mail);
+        navigate(`/account/${username}`);
         setShowModal(false);
     }
 

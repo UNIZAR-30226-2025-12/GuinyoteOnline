@@ -4,12 +4,28 @@ import ProfileButton from '../components/navegacion/buttons/ProfileButton';
 import HistorialPartidasButton from '../components/navegacion/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
 import ProfileModal from '../components/navegacion/ProfileModal';
+import FriendProfileInfoModal from '../components/navegacion/FriendProfileInfoModal';
 import HistorialPartidasModal from '../components/navegacion/HistorialPartidasModal';
+import { useUser } from '../context/UserContext';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function AccountManagement() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [selectedOption, setSelectedOption] = useState('perfil'); // Inicializamos en 'perfil'
+
+  const { myProfile, setMyProfile, profileId, setProfileId } = useUser();
+
+  useEffect(() => {
+    const pathName = location.pathname;
+   
+    if (location.pathname == '/account') {
+      setMyProfile(true);
+      setProfileId('');
+    }
+  }, [location]);
 
   const handlePerfilClick = () => {
     setSelectedOption('perfil');
@@ -20,12 +36,13 @@ function AccountManagement() {
   };
 
   const handleBackClick = () => {
+    setMyProfile(true);  // O false, dependiendo de qué signifique "por defecto"
+    setProfileId('');
     navigate('/'); // Para volver al inicio si quieres
   };
 
   return (
     <div className="account-management-container">
-      
       <div className="left-panel">
         <button className="back-button" onClick={handleBackClick}> Volver</button>
 
@@ -36,11 +53,14 @@ function AccountManagement() {
       </div>
 
       <div className="right-panel">
-        {selectedOption === 'perfil' && <ProfileModal />}
+        {selectedOption === 'perfil' && (
+          myProfile ? <ProfileModal /> : <FriendProfileInfoModal />
+        )}
         {selectedOption === 'historial' && <HistorialPartidasModal />}
       </div>
     </div>
   );
+
 }
 
 export default AccountManagement;

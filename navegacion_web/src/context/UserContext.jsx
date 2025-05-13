@@ -15,8 +15,8 @@ export const UserProvider = ({ children }) => {
   const [tapete, setTapete] = useState(() => localStorage.getItem('tapete') || 'default.png');
   const [cartas, setCartas] = useState(() => localStorage.getItem('cartas') || 'default.png');
   const [stack, setStack] = useState(() => localStorage.getItem('stack') || 'default.png');
-  const [myProfile, setMyProfile] = useState(() => localStorage.getItem('myProfile') || 'default.png');
-  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || 'default.png');
+  const [myProfile, setMyProfile] = useState(() => localStorage.getItem('myProfile') || '');
+  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || '');
   const [isUserRegistered, setIsUserRegistered] = useState(() => {
     return localStorage.getItem('isUserRegistered') === 'true';
   });
@@ -30,7 +30,9 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('cartas', cartas);
     localStorage.setItem('stack', stack);
     localStorage.setItem('isUserRegistered', JSON.stringify(isUserRegistered));
-  }, [username, mail, profilePic, tapete, cartas, stack, isUserRegistered]);
+    localStorage.setItem('myProfile', myProfile);
+    localStorage.setItem('profileId', profileId);
+  }, [username, mail, profilePic, tapete, cartas, stack, isUserRegistered, myProfile, profileId]);
 
   return (
     <UserContext.Provider value={{ 
