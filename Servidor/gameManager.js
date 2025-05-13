@@ -158,7 +158,7 @@ async function iniciarPartida(sala) {
     console.log(`emitiendo iniciar partida a ${sala.id}`);
     io.to(sala.id).emit("iniciarPartida", 'iniciarPartida');
     
-    const baraja = mezclarBaraja(crearBaraja());
+    const baraja = barajaTest();//mezclarBaraja(crearBaraja());
     let barajaString = barajaToString(baraja);
     console.log("esperando confirmaciones");
     esperarMensajesDeTodos(io, sala, "ack", 15000)
@@ -220,7 +220,7 @@ async function iniciarSegundaRonda(lobby) {
     esperarMensajesDeTodos(io, sala, "ackFinRonda", 15000)
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
-        const baraja = mezclarBaraja(crearBaraja());
+        const baraja = barajaTest();//mezclarBaraja(crearBaraja());
         let barajaString = barajaToString(baraja);
         console.log(`emitiendo baraja a ${lobby}`);
         io.to(lobby).emit("barajaSegundaRonda", barajaString);
