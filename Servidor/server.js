@@ -976,7 +976,7 @@ io.on('connection', (socket) => {
     socket.join(lobbyId);
 
     // Emitir a todos los jugadores de la sala
-    socket.emit('joined-private-lobby', { message: 'Te has unido a la sala privada.', sala });
+    socket.emit('joined-private-lobby', { message: 'Te has unido a la sala privada.', lobbyId });
     socket.to(lobbyId).emit('player-joined', userId);
 
     console.log(`Jugador ${userId} se unió a la sala privada ${lobbyId}`);
