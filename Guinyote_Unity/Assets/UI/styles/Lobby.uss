@@ -1,0 +1,42 @@
+.lobby-title {
+    font-weight: bold;
+    font-size: 45px; /* Larger font size for the title */
+    margin-bottom: 32px;
+    color: white; /* Dark gray text */
+}
+
+.lobby-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 32px;
+    margin-right: 32px;
+    background-color: rgba(30, 30, 30, 0.99); /* Dark gray with slight transparency */
+    padding: 20px; /* Add padding for spacing */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Subtle shadow */
+    position: relative; /* Make the container a positioning context */
+}
+
+.button-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.lobby-back-button {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    cursor: pointer;
+    background-color: rgba(30, 30, 30, 0.99);
+    border-color: transparent;
+}
+
+.lobby-back-button:hover {
+    background-color: #444; /* Darker gray on hover */
+}
