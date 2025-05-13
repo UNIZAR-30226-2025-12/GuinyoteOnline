@@ -1,5 +1,5 @@
-import React, { useState } from 'react';  
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';  
+import { useNavigate, useParams } from 'react-router-dom';
 import ProfileButton from '../components/navegacion/buttons/ProfileButton';
 import HistorialPartidasButton from '../components/navegacion/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
@@ -7,25 +7,27 @@ import ProfileModal from '../components/navegacion/ProfileModal';
 import FriendProfileInfoModal from '../components/navegacion/FriendProfileInfoModal';
 import HistorialPartidasModal from '../components/navegacion/HistorialPartidasModal';
 import { useUser } from '../context/UserContext';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 function AccountManagement() {
   const navigate = useNavigate();
-  const location = useLocation();
+  
+  const { profileId: paramProfileId } = useParams(); // obtenemos /account/:profileId
 
-  const [selectedOption, setSelectedOption] = useState('perfil'); // Inicializamos en 'perfil'
+  const [selectedOption, setSelectedOption] = useState('perfil');
 
-  const { myProfile, setMyProfile, profileId, setProfileId } = useUser();
+  const { setMyProfile, setProfileId, myProfile } = useUser();
 
   useEffect(() => {
-    const pathName = location.pathname;
-   
-    if (location.pathname == '/account') {
+    if (paramProfileId) {
+      // Si hay un profileId en la URL, no es tu perfil
+      setMyProfile(false);
+      setProfileId(paramProfileId);
+    } else {
+      // Si no hay, estás viendo tu propio perfil
       setMyProfile(true);
       setProfileId('');
     }
-  }, [location]);
+  }, [paramProfileId]);
 
   const handlePerfilClick = () => {
     setSelectedOption('perfil');
@@ -36,9 +38,9 @@ function AccountManagement() {
   };
 
   const handleBackClick = () => {
-    setMyProfile(true);  // O false, dependiendo de qué signifique "por defecto"
+    setMyProfile(true);
     setProfileId('');
-    navigate('/'); // Para volver al inicio si quieres
+    navigate('/'); // volver al inicio
   };
 
   return (
@@ -60,7 +62,6 @@ function AccountManagement() {
       </div>
     </div>
   );
-
 }
 
 export default AccountManagement;
