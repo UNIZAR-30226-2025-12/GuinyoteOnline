@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import LobbySlots from '../components/LobbySlots';
+import LobbySlots from '../LobbySlots';
+import LobbySlots from './LobbySlots';
 import { useNavigate } from 'react-router-dom';
 import botPic from '/src/assets/avatares/default.png';
 import backButton from '/src/assets/back_button.png';
