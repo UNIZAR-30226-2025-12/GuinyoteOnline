@@ -953,6 +953,7 @@ io.on('connection', (socket) => {
   socket.on('join-private-lobby', async ({ lobbyId, userId, codigoAcceso }) => {
   try {
     const lobby = findLobby(lobbyId);
+    console.log(lobby);
 
     if (!lobby) {
       socket.emit('errorSala', { message: 'La sala no existe.' });
@@ -974,9 +975,6 @@ io.on('connection', (socket) => {
       socket.emit('errorSala', { message: 'La sala ya está llena.' });
       return;
     }
-
-    // Usar función que ya tienes
-    joinPrivateLobby(lobbyId, userId, codigoAcceso);
 
     socket.join(lobbyId);
 
