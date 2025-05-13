@@ -1178,3 +1178,4 @@ public class UIManager : MonoBehaviour
         public string codigoAcceso;
     }
 }
+

@@ -10,10 +10,10 @@
             <engine:Label name="Login_Label" text="Iniciar sesión" />
         </engine:Button>
         <engine:VisualElement name="gab-container" class="gab-container-position">
-            <engine:Button name="Online_Button" class="cm_long_button">
+            <engine:Button name="Online_Button" class="cm_long_button" style="margin-top: 8px; margin-bottom: 8px;">
                 <engine:Label text="Partida online" />
             </engine:Button>
-            <engine:Button name="IA_Button" class="cm_long_button">
+            <engine:Button name="IA_Button" class="cm_long_button" style="margin-top: 8px; margin-bottom: 8px;">
                 <engine:Label text="Partida IA" />
             </engine:Button>
         </engine:VisualElement>
@@ -31,7 +31,6 @@
             <engine:VisualElement class="cb_img" style="background-image: resource('Sprites/UI/rules_button'); width: 40px; height: 40px; margin-bottom: 5px;" />
             <engine:Label text="Reglas" />
         </engine:Button>
-        <engine:VisualElement style="background-image: resource('Sprites/UI/Logo'); width: 500px; height: 500px; background-repeat: no-repeat; background-position: center; background-size: contain; position: absolute; top: 10%; left: 40%;" />
         <engine:Tab focusable="false" closeable="false" name="Login_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
             <engine:VisualElement class="ventana" style="flex-grow: 1; height: 379px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
                 <engine:Button text="x" name="exit_Button" style="position: absolute; top: 7px; left: 345px; width: 63px; background-color: rgb(255, 255, 255);" />
