@@ -85,23 +85,6 @@ const Lobby = ({ pairs }) => {
         setMatchmaking(false);
     };
 
-    const handleSlotClick = (index) => {
-
-        const auxUsers = [...users];
-
-        // find if the user is already in the list
-        const userIndex = auxUsers.findIndex(user => user.email === mail);
-        // if the user is already in the list, remove it
-        if (userIndex !== -1) {
-            auxUsers[userIndex] = { nombre: null, email: null, foto_perfil: null };
-        }
-
-        auxUsers[index] = { nombre: username, email: mail, foto_perfil: profilePic };
-        // update the state
-        setUsers(auxUsers);
-    }
-
-
     const joinRoom = () => {
         setShowModal(true); // Mostrar el modal
     };
@@ -112,12 +95,11 @@ const Lobby = ({ pairs }) => {
         <>
             <h1>{pairs ? "Sala de Partida 2 vs 2" : "Sala de Partida 1 vs 1"}</h1>
 
-            <LobbySlots slotCount={maxPlayers} playerSlotArgs={users} handleSlotClick={handleSlotClick}/>
+            <LobbySlots slotCount={maxPlayers} playerSlotArgs={users}/>
 
             {!matchmaking ? (
                 <div className="lobby-buttons">
                     <button onClick={startMatchmaking}>Empezar</button>
-                    <button onClick={joinRoom}>Sala privada</button>
                 </div>
             ) : (
                 <div className="waiting-matchmaking-counter">

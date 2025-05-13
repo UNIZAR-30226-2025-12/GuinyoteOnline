@@ -8,8 +8,8 @@ import Baraja from "../components/game/Baraja";
 import Triunfo from "../components/game/Triunfo";
 import GameManager from "../components/game/GameManager";
 
-function Game() {
-    const numJugadores = 4; // Número de jugadores
+function Game({ pairs }) {
+    const numJugadores = pairs ? 4 : 2; // Número de jugadores
     const [gameManager] = useState(new GameManager(numJugadores)); // Componente GameManager con las funciones
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores

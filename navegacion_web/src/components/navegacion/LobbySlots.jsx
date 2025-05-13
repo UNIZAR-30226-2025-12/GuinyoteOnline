@@ -2,7 +2,7 @@ import React from 'react';
 import PlayerSlot from './PlayerSlot';
 import '/src/styles/LobbySlots.css'; // Create a CSS file for styling
 
-const LobbySlots = ({ slotCount, playerSlotArgs, handleSlotClick }) => {
+const LobbySlots = ({ slotCount, playerSlotArgs, handleSlotClick = () => {} }) => {
 
     const renderSlots = () => {
         const half = Math.ceil(slotCount / 2);
