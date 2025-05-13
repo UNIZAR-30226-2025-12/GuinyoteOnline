@@ -7,7 +7,7 @@ import useFetch from '../../customHooks/useFetch';
 
 const avataresUrl = '/src/assets/avatares/';
 const tapetesUrl = '/src/assets/tapetes/';
-const cartasUrl = '/src/assets/stacks/';
+const cartasUrl = '/src/assets/tipos_carta/';
 
 function FriendProfileInfoModal() {
 
@@ -16,6 +16,7 @@ function FriendProfileInfoModal() {
     } = useUser();
 
     const [friendData, setFriendData] = useState(null);
+    
 
     const encodedMail = encodeURIComponent(profileId);
     const { data, loading, error, fetchData } = useFetch(`https://guinyoteonline-hkio.onrender.com/usuarios/perfil/${encodedMail}`);
@@ -23,7 +24,7 @@ function FriendProfileInfoModal() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchData(); // Solo una vez al montar
+        if (!data) fetchData();
     }, []);
 
     useEffect(() => {
