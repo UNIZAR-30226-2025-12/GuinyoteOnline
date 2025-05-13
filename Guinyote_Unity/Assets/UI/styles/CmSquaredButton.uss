@@ -1,0 +1,28 @@
+/* Estilo para el botón cuadrado en Unity */
+.cm_squared_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 200px;
+    padding: 0 16px;
+    background-color: #2c2c2c; /* Fondo oscuro */
+    color: white; /* Texto blanco */
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cm_squared_button:hover {
+    background-color: #3a3a3a; /* Fondo más claro al pasar el cursor */
+    color: #4866f8; /* Color de texto al pasar el cursor */
+    transform: scale(1.05); /* Ampliar ligeramente al pasar el cursor */
+}
+
+.cm_squared_button:active {
+    background-color: #4e4e4e; /* Fondo más oscuro al hacer clic */
+    transform: scale(0.95); /* Reducir ligeramente al hacer clic */
+}
