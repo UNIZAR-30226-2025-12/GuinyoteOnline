@@ -37,6 +37,7 @@ router.post("/crearPrivada", async (req, res) => {
  * Unirse a una sala privada mediante un código de invitación.
  */
 router.post("/unirsePrivada", (req, res) => {
+    console.log(req.body);
     const { codigoAcceso, idUsuario, maxPlayers } = req.body;
     try {
       let sala = findAvailableCode((maxPlayers === '1v1') ? 2 : 4, codigoAcceso);
