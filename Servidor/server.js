@@ -956,23 +956,18 @@ io.on('connection', (socket) => {
     console.log(lobby);
 
     if (!lobby) {
+      console.log("la sala no existe");
       socket.emit('errorSala', { message: 'La sala no existe.' });
       return;
     }
     if (lobby.tipo !== 'privada') {
+      console.log("la sala no es privada");
       socket.emit('errorSala', { message: 'Esta sala no es privada.' });
       return;
     }
     if (lobby.codigoAcceso !== codigoAcceso) {
+      console.log("el código de la sala no es correcto");
       socket.emit('errorSala', { message: 'Código de acceso incorrecto.' });
-      return;
-    }
-    if (lobby.jugadores.includes(userId)) {
-      socket.emit('errorSala', { message: 'Ya estás en la sala.' });
-      return;
-    }
-    if (lobby.jugadores.length >= lobby.maxPlayers) {
-      socket.emit('errorSala', { message: 'La sala ya está llena.' });
       return;
     }
 
@@ -984,7 +979,7 @@ io.on('connection', (socket) => {
 
     console.log(`Jugador ${userId} se unió a la sala privada ${lobbyId}`);
 
-    if (lobby.jugadores.length === lobby.maxPlayers) {
+    if (io.sockets.adapter.rooms.get(lobbyId)?.size === lobby.maxPlayers) {
       await mutex.runExclusive(async () => {
         if (!lobby.iniciado) {
           lobby.iniciado = true;
