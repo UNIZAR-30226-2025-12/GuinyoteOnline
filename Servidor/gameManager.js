@@ -291,8 +291,6 @@ async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiar
         });
     };
 
-    sendToSockets(Array.from(pending));
-
     socketsEnSala.forEach(socket => {
         const ackHandler = () => {
             if (pending.has(socket.id)) {
@@ -317,7 +315,6 @@ async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiar
     };
 
     setTimeout(retry, timeout);
-    sendToSockets(Array.from(pending));
 }
 
 async function enviarInput(idJugador, sala, carta, cantar, cambiarSiete) {
