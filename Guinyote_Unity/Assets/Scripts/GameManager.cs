@@ -372,7 +372,7 @@ public class GameManager : MonoBehaviour
         
         
         Baraja.Barajar(datos["baraja"].ToString());
-        segundaBaraja = (datos["baraja"].ToString() == "true");
+        segundaBaraja = (datos["segundaBaraja"].ToString() == "true");
         triunfo = Baraja.ObtenerUltima();
         if (triunfo != null)
         {

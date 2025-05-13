@@ -39,7 +39,7 @@
 
 .background-container {
   height: 100%;
-  background-color: black;
+  background-color:rgb(25, 25, 25);
 }
 
 .background-image-layer {

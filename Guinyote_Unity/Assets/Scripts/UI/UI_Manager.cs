@@ -118,6 +118,7 @@ public class UIManager : MonoBehaviour
         Consultas.OnRankingConsultado += UpdateRanking;
         Consultas.OnCambiarInfoUsuario += updateInfoUsuario;
         Consultas.OnPartidaEncontrada += JoinRoom;
+        Consultas.OnPartidaPrivadaEncontrada += JoinPrivateRoom;
 
         if (webSocketClient == null)
         {
@@ -492,8 +493,10 @@ public class UIManager : MonoBehaviour
                             Debug.LogError("El código de sala está vacío");
                             return;
                         }
+                        GameManager.numJugadores = (currentScene.name == "Partida_Online_1vs1") ? 2 : 4;
+                        GameManager.esOnline = true;
 
-                        StartCoroutine(JoinPrivateRoom(roomCode, currentScene.name == "Partida_Online_2vs2"));
+                        StartCoroutine(Consultas.UnirseSalaPrivada(roomCode, id, currentScene.name == "Partida_Online_2vs2" ? "2v2" : "1v1"));
                     });
                 });
             }
@@ -569,7 +572,7 @@ public class UIManager : MonoBehaviour
         updateProfilePictures();
         updateCartas();
         updateTapetes();
-        
+
         scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
         scroll_historial.style.display = DisplayStyle.None;
 
@@ -1030,27 +1033,20 @@ public class UIManager : MonoBehaviour
             GameManager.numJugadores = (tipo == "Partida_Online_1vs1") ? 2 : 4;
             GameManager.esOnline = true;
 
-            if (!string.IsNullOrEmpty(roomCode))
-            {
-                StartCoroutine(JoinPrivateRoom(roomCode, tipo == "Partida_Online_2vs2"));
-            }
-            else
-            {
-                string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
-                StartCoroutine(Consultas.BuscarPartidaPublica(id, roomType));
+            string roomType = (tipo == "Partida_Online_1vs1") ? "1v1" : "2v2";
+            StartCoroutine(Consultas.BuscarPartidaPublica(id, roomType));
 
-                // Mostrar UI de PantallaEspera
-                VisualTreeAsset pantallaEsperaAsset = Resources.Load<VisualTreeAsset>("PantallaEspera");
-                VisualElement pantallaEspera = pantallaEsperaAsset.CloneTree();
-                var root = (UIDocument)FindObjectOfType(typeof(UIDocument));
-                root.rootVisualElement.Add(pantallaEspera);
+            // Mostrar UI de PantallaEspera
+            VisualTreeAsset pantallaEsperaAsset = Resources.Load<VisualTreeAsset>("PantallaEspera");
+            VisualElement pantallaEspera = pantallaEsperaAsset.CloneTree();
+            var root = (UIDocument)FindObjectOfType(typeof(UIDocument));
+            root.rootVisualElement.Add(pantallaEspera);
 
-                Button cancelButton = pantallaEspera.Q<Button>("CancelButton");
-                cancelButton.RegisterCallback<ClickEvent>(ev => {
-                    pantallaEspera.RemoveFromHierarchy();
-                    webSocketClient.Close();
-                });
-            }
+            Button cancelButton = pantallaEspera.Q<Button>("CancelButton");
+            cancelButton.RegisterCallback<ClickEvent>(ev => {
+                pantallaEspera.RemoveFromHierarchy();
+                webSocketClient.Close();
+            });
         }
     }
 
@@ -1116,7 +1112,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("Generando sala privada...");
 
         Lobby lobby = null;
-        yield return StartCoroutine(Consultas.CrearSalaPrivada(id, isPairs ? "2vs2" : "1vs1", result => lobby = result));
+        yield return StartCoroutine(Consultas.CrearSalaPrivada(id, isPairs ? "2v2" : "1v1", result => lobby = result));
 
         if (lobby == null)
         {
@@ -1151,24 +1147,16 @@ public class UIManager : MonoBehaviour
     /// </summary>
     /// <param name="roomCode">El código de la sala a la que se desea unir.</param>
     /// <param name="isPairs">Indica si la sala es para 2v2 (true) o 1v1 (false).</param>
-    private IEnumerator JoinPrivateRoom(string roomCode, bool isPairs)
+    async void JoinPrivateRoom(Lobby lobby, string idUsuario, string roomCode)
     {
-        string url = "https://guinyoteonline-hkio.onrender.com/salas/unirsePrivada";
-        WWWForm form = new WWWForm();
-        form.AddField("idUsuario", id);
-        form.AddField("maxPlayers", isPairs ? "2v2" : "1v1");
-        form.AddField("codigoAcceso", roomCode);
-
-        yield return SendRequest(url, form, response =>
+        Debug.Log("Uniendose a la sala privada...");
+        // Configurar WebSocket para partidas online
+        if (!webSocketClient.isConnected())
         {
-            var responseData = JsonUtility.FromJson<ResponseData>(response);
-            Debug.Log("Unido a la sala con ID: " + responseData.responseData.id);
-            // Aquí puedes manejar la lógica para unirse a la sala
-        },
-        error =>
-        {
-            Debug.LogError("Error al unirse a la sala: " + error);
-        });
+            await webSocketClient.Connect("wss://guinyoteonline-hkio.onrender.com");
+        }
+        Debug.Log(lobby.id);
+        await webSocketClient.JoinPrivateRoom(lobby.id, idUsuario, roomCode);
     }
 
     /// <summary>

@@ -110,6 +110,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   jugada: {fileID: 0}
+  m_esMiTurno: 0
   puntos: 0
   ganador: 0
   cantadoEsteTurno: 0
