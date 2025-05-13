@@ -1,6 +1,7 @@
 const { 
     crearBaraja, 
-    mezclarBaraja, 
+    mezclarBaraja,
+    barajaTest,
     repartirCartas,
     validarJugada,
     calcularGanadorBaza,
