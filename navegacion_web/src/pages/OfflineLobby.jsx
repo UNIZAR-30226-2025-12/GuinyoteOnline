@@ -1,36 +1,31 @@
-import React, { useEffect } from 'react';
-import LobbySlots from '../components/navegacion/LobbySlots';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import botPic from '/src/assets/avatares/default.png';
 import backButton from '/src/assets/back_button.png';
 import '/src/styles/Lobby.css'
+import '/src/styles/Homepage.css'
+import MatchFormatButtons from '../components/navegacion/buttons/MatchFormatButtons';
+import OfflineRoom from '../components/navegacion/OfflineRoom';
 
-const OfflineLobby = ({ pairs }) => {
+function OfflineLobby() {
 
   const navigate = useNavigate();
 
-  const maxPlayers = !pairs ? 2 : 4;
+  const [itemSelected, setItemSelected] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  useEffect(() => {
-    const botsNeeded = maxPlayers - 1;
+  const handle1v1Click = () => {
+  
+      setItemSelected(true);
+      setSelectedItem("1v1");
 
-    const bots = Array.from({ length: botsNeeded }, (_, i) => ({
-      nombre: `Bot ${i + 1}`,
-      email: `bot${i + 1}@ai.local`,
-      foto_perfil: botPic
-    }));
+  }
 
-    const allPlayers = [
-      { nombre: username, email: mail, foto_perfil: profilePic },
-      ...bots
-    ];
+  const handle2v2Click = () => {
+  
+      setItemSelected(true);
+      setSelectedItem("2v2");
 
-    setUsers(allPlayers);
-  }, [pairs, username, mail, profilePic, maxPlayers]);
-
-  const handleStart = () => {
-    navigate("/offline_game", { state: { pairs } });
-  };
+  }
 
   const handleBack = () => {
     navigate(-1);
@@ -39,19 +34,40 @@ const OfflineLobby = ({ pairs }) => {
 
   return (
     <>
-      <button className='lobby-back-button' onClick={handleBack}>
-        <img src={backButton} alt="Volver atrás" />
-      </button>
+      {!itemSelected && (
+        <>
+          <div className='background-layer'/>
+          <div className="lobby-container">
+            <button className='lobby-back-button' onClick={handleBack} >
+                <img src={backButton} alt="Volver atrás" />
+            </button>
+            <h1 className="game-title">Selecciona el formato de partida</h1>
+            <MatchFormatButtons onClick2v2Match={handle2v2Click} onClick1v1Match={handle1v1Click} />
+          </div>
+        </>
+      )}
+      
+      {itemSelected && selectedItem === "1v1" && (
+        <>
+          <button className='lobby-back-button' onClick={() => setItemSelected(false)} >
+                <img src={backButton} alt="Volver atrás" />
+          </button>
+          <OfflineRoom pairs={false} />
+        </>
+      )}
 
-      <h1>{pairs ? "Sala de Partida 2 vs 2" : "Sala de Partida 1 vs 1"}</h1>
-
-      <LobbySlots slotCount={maxPlayers} playerSlotArgs={users}/>
-
-      <div className="lobby-buttons">
-          <button onClick={handleStart}>Empezar</button>
-      </div>
+      {itemSelected && selectedItem === "2v2" && (
+        <>
+          <button className='lobby-back-button' onClick={() => setItemSelected(false)} >
+                <img src={backButton} alt="Volver atrás" />
+          </button>
+          <OfflineRoom pairs={true} />
+        </>
+      )}
     </>
   );
-};
+}
 
 export default OfflineLobby;
+
+

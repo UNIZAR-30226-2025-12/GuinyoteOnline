@@ -156,31 +156,13 @@ function Homepage() {
   }
 
   const handlePartidaOfflineClick = () => {
-    setMostrarOfflineOption(true);
+    navigate('/offline_lobby');
   };
 
   const handleAccountManagementClick = () => {
     if (isUserRegistered) {
       navigate('/account');
     }
-  }
-
-  const handle1v1Click = () => {
-  
-      setMostrarOfflineOption(false);
-      navigate('/offline_lobby', { state: { pairs: false } });
-
-  }
-
-  const handle2v2Click = () => {
-  
-      setMostrarOfflineOption(false);
-      navigate('/offline_lobby', { state: { pairs: false } });
-
-  }
-
-  const handleBack = () => {
-    setMostrarOfflineOption(false);
   }
 
   return (
@@ -196,19 +178,6 @@ function Homepage() {
           <RankingModal show={showRanking} handleClose={handleRankingModalClose} />
           <FriendsModal show={showFriends} handleClose={handleFriendsModalClose} mail={mail}/>
       </div>
-
-      {mostrarOfflineOption && (
-        <>
-          <div className='modal-overlay'/>
-            <div className="modal-lobby-container ">
-              <button className='lobby-back-button' onClick={handleBack} >
-                  <img src={backButton} alt="Volver atrás" />
-              </button>
-              <h1 className="game-title">Selecciona el formato de partida</h1>
-              <MatchFormatButtons onClick2v2Match={handle2v2Click} onClick1v1Match={handle1v1Click} />
-            </div>
-        </>
-      )}
     </>
   )
 }
