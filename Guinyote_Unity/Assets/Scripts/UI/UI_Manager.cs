@@ -573,6 +573,10 @@ public class UIManager : MonoBehaviour
         scroll_historial = root.rootVisualElement.Q<ScrollView>("History_Scroll");
         scroll_historial.style.display = DisplayStyle.None;
 
+        temp_tapete_picture = null;
+        temp_carta_picture = null;
+        temp_profile_picture = null;
+
         perfil_configuracion = root.rootVisualElement.Q<VisualElement>("Profile_Config");
         perfil_configuracion.Q<Button>("SaveButton").RegisterCallback<ClickEvent>(ev => {
             if(temp_tapete_picture != null && temp_tapete_picture != ""){
