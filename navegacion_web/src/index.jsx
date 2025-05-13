@@ -23,6 +23,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/offline_match" element={<Game />} />
             <Route path="/lobby" element={<OnlineLobby />} />
             <Route path="/account" element={<AccountManagement />} />
+            <Route path="/account/:profileId" element={<AccountManagement />} />
           </Routes>
         </Router>
       </SocketProvider>

@@ -953,40 +953,35 @@ io.on('connection', (socket) => {
   socket.on('join-private-lobby', async ({ lobbyId, userId, codigoAcceso }) => {
   try {
     const lobby = findLobby(lobbyId);
+    console.log(lobby);
 
     if (!lobby) {
+      console.log("la sala no existe");
       socket.emit('errorSala', { message: 'La sala no existe.' });
       return;
     }
     if (lobby.tipo !== 'privada') {
+      console.log("la sala no es privada");
       socket.emit('errorSala', { message: 'Esta sala no es privada.' });
       return;
     }
-    if (lobby.codigoAcceso !== codigoAcceso) {
+    if (lobby.codigoAcceso != codigoAcceso) {
+      console.log("el código de la sala no es correcto");
+      console.log(lobby.codigoAcceso);
+      console.log(codigoAcceso);
       socket.emit('errorSala', { message: 'Código de acceso incorrecto.' });
       return;
     }
-    if (lobby.jugadores.includes(userId)) {
-      socket.emit('errorSala', { message: 'Ya estás en la sala.' });
-      return;
-    }
-    if (lobby.jugadores.length >= lobby.maxPlayers) {
-      socket.emit('errorSala', { message: 'La sala ya está llena.' });
-      return;
-    }
-
-    // Usar función que ya tienes
-    joinPrivateLobby(lobbyId, userId, codigoAcceso);
 
     socket.join(lobbyId);
 
     // Emitir a todos los jugadores de la sala
-    socket.emit('joined-private-lobby', { message: 'Te has unido a la sala privada.', sala });
+    socket.emit('joined-private-lobby', { message: 'Te has unido a la sala privada.', lobbyId });
     socket.to(lobbyId).emit('player-joined', userId);
 
     console.log(`Jugador ${userId} se unió a la sala privada ${lobbyId}`);
 
-    if (lobby.jugadores.length === lobby.maxPlayers) {
+    if (io.sockets.adapter.rooms.get(lobbyId)?.size === lobby.maxPlayers) {
       await mutex.runExclusive(async () => {
         if (!lobby.iniciado) {
           lobby.iniciado = true;

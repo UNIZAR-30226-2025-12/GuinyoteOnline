@@ -50,13 +50,13 @@ function findAvailableCode(maxPlayers, codigoAcceso) {
 
 function joinLobby(lobbyId, playerId) {
   const lobby = lobbies.find((l) => l.id === lobbyId);
-  if (!lobby || lobby.jugadores.length >= lobby.maxPlayers) return null;
+  if (!lobby || lobby.jugadores.length >= lobby.maxPlayers || lobby.jugadores.includes(playerId)) return null;
   lobby.jugadores.push(playerId);
 }
 
 function joinPrivateLobby(lobbyId, playerId, codigoAcceso) {
   const lobby = lobbies.find((l) => l.id === lobbyId);
-  if (!lobby || lobby.jugadores.length >= lobby.maxPlayers || lobby.codigoAcceso != codigoAcceso) return null;
+  if (!lobby || lobby.jugadores.length >= lobby.maxPlayers || lobby.codigoAcceso != codigoAcceso || lobby.jugadores.includes(playerId)) return null;
   lobby.jugadores.push(playerId);
 }
 

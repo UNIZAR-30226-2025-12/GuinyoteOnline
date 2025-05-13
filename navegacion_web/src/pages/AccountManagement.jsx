@@ -1,15 +1,33 @@
-import React, { useState } from 'react';  
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';  
+import { useNavigate, useParams } from 'react-router-dom';
 import ProfileButton from '../components/navegacion/buttons/ProfileButton';
 import HistorialPartidasButton from '../components/navegacion/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
 import ProfileModal from '../components/navegacion/ProfileModal';
+import FriendProfileInfoModal from '../components/navegacion/FriendProfileInfoModal';
 import HistorialPartidasModal from '../components/navegacion/HistorialPartidasModal';
+import { useUser } from '../context/UserContext';
 
 function AccountManagement() {
   const navigate = useNavigate();
+  
+  const { profileId: paramProfileId } = useParams(); // obtenemos /account/:profileId
 
-  const [selectedOption, setSelectedOption] = useState('perfil'); // Inicializamos en 'perfil'
+  const [selectedOption, setSelectedOption] = useState('perfil');
+
+  const { setMyProfile, setProfileId, myProfile } = useUser();
+
+  useEffect(() => {
+    if (paramProfileId) {
+      // Si hay un profileId en la URL, no es tu perfil
+      setMyProfile(false);
+      setProfileId(paramProfileId);
+    } else {
+      // Si no hay, estás viendo tu propio perfil
+      setMyProfile(true);
+      setProfileId('');
+    }
+  }, [paramProfileId]);
 
   const handlePerfilClick = () => {
     setSelectedOption('perfil');
@@ -20,12 +38,13 @@ function AccountManagement() {
   };
 
   const handleBackClick = () => {
-    navigate('/'); // Para volver al inicio si quieres
+    setMyProfile(true);
+    setProfileId('');
+    navigate('/'); // volver al inicio
   };
 
   return (
     <div className="account-management-container">
-      
       <div className="left-panel">
         <button className="back-button" onClick={handleBackClick}> Volver</button>
 
@@ -36,7 +55,9 @@ function AccountManagement() {
       </div>
 
       <div className="right-panel">
-        {selectedOption === 'perfil' && <ProfileModal />}
+        {selectedOption === 'perfil' && (
+          myProfile ? <ProfileModal /> : <FriendProfileInfoModal />
+        )}
         {selectedOption === 'historial' && <HistorialPartidasModal />}
       </div>
     </div>
