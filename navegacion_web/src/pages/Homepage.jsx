@@ -15,7 +15,6 @@ import '/src/styles/Lobby.css'
 import usePost from '../customHooks/usePost';
 import { cartaToStack, useUser } from '../context/UserContext';
 import ProfilePic from '../components/navegacion/ProfilePic';
-import OfflineLobby from '../components/pages/Lobby';
 
 
 function Homepage() {
