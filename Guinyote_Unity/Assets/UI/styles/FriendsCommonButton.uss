@@ -1,0 +1,24 @@
+/* Estilo para el botón común de amigos en Unity */
+.friends-common-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333; /* Fondo oscuro */
+    color: white; /* Texto blanco */
+    cursor: pointer;
+    border-radius: 0;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    width: 100%;
+}
+
+.friends-common-button-icon {
+    margin-left: 10px;
+    height: 20px;
+}
+
+.friends-common-button:hover {
+    background-color: #3a3a3a; /* Fondo más claro al pasar el cursor */
+    color: white;
+}

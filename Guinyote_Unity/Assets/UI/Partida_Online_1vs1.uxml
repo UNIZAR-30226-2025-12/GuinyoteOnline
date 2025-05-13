@@ -26,6 +26,8 @@
                     <engine:Label text="Sala Privada" style="font-size: 20px; font-weight: bold; margin-bottom: 20px;" />
                     <engine:Button name="closeModal" text="X" style="position: absolute; top: 10px; right: 10px; width: 30px; height: 30px;" />
                     <engine:Button name="generateCode" text="Generar código" style="width: 200px; height: 40px; margin-bottom: 20px;" />
+                    <engine:Label name="roomCode" text="Código de la sala" style="font-size: 18px; font-weight: bold; margin: 10px 0; text-align: center; display: none;" />
+                    <engine:Label name="generatedCodeLabel" text="" style="font-size: 16px; font-weight: bold; margin: 10px 0; display: none;" />
                     <engine:Label text="Buscar partida por código" style="font-size: 16px; font-weight: bold; margin: 10px 0;" />
                     <engine:TextField name="roomCodeInput" placeholder-text="Introducir código" style="width: 200px; height: 40px; margin-bottom: 20px;" />
                     <engine:Button name="searchPrivateRoom" text="Buscar partida privada" style="width: 200px; height: 40px;" />

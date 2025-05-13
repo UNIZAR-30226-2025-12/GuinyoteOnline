@@ -1,0 +1,34 @@
+/* Estilo para el botón común en Unity */
+.cb_button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: #242424; /* Fondo oscuro */
+    color: white; /* Texto blanco */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button span {
+    font-size: 14px;
+    color: white;
+}
+
+.cb_img {
+    width: 40px;
+    height: 40px;
+    display: block;
+    margin: 0 auto 5px auto;
+    margin-bottom: 5px;
+}
+
+.cb_button:hover {
+    background-color: #3a3a3a;
+    color: white;
+}
+
+.cb_img:hover {
+}

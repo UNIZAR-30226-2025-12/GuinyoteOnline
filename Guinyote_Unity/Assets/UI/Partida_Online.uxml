@@ -1,7 +1,16 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI/Style.uss?fileID=7433441132597879392&amp;guid=0398abbafa8c9f942bb8076f4efac0a8&amp;type=3#Style" />
-    <engine:Label text="Partida Online" style="top: 10%; left: 40%; width: 85px; position: absolute; font-size: 30px;" />
-    <engine:Button text="1 vs 1" name="1vs1_Button" style="top: 40%; left: 25%; width: 167px; height: 86px; position: absolute; background-color: rgb(255, 255, 255);" />
-    <engine:Button text="2 vs 2" name="2vs2_Button" style="top: 40%; left: 55%; width: 167px; height: 86px; position: absolute; background-color: rgb(255, 255, 255);" />
-    <engine:Button icon-image="project://database/Assets/Resources/Sprites/UI/atras.png?fileID=2800000&amp;guid=e1424596349e675458de8a62305ce426&amp;type=3#atras" name="atras" style="width: 93px; height: 78px; background-color: rgba(188, 188, 188, 0); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); position: absolute;" />
+    <Style src="styles/Homepage.uss" />
+    <Style src="styles/Lobby.uss" />
+    <Style src="styles/CmSquaredButton.uss" />
+    <engine:VisualElement class="background-container" style="display: flex; flex-direction: column; justify-content: center;">
+        <engine:VisualElement class="background-layer"/>
+        <engine:VisualElement class="lobby-container">
+            <engine:Button name="atras" class="lobby-back-button" style="background-image: resource('Sprites/UI/atras');" />
+            <engine:Label text="Selecciona el formato de partida" class="lobby-title" />
+            <engine:VisualElement class="button-row">
+                <engine:Button text="1 vs 1" name="1vs1_Button" class="cm_squared_button" style="margin-left: 20px; margin-right: 20px; margin-bottom: 16px;"/>
+                <engine:Button text="2 vs 2" name="2vs2_Button" class="cm_squared_button" style="margin-left: 20px; margin-right: 20px; margin-bottom: 16px;"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
 </engine:UXML>

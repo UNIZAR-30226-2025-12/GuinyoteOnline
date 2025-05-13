@@ -14,6 +14,56 @@ const PUNTOS = {
     '2': 0
 };
 
+function barajaTest() {
+    const baraja = [];
+    //Jugador 1 iniciales
+    baraja.push({palo: 0, valor: 7});
+    baraja.push({palo: 0, valor: 9});
+    baraja.push({palo: 1, valor: 0});
+    baraja.push({palo: 0, valor: 6});
+    baraja.push({palo: 2, valor: 2});
+    baraja.push({palo: 2, valor: 4});
+    //Jugador 2 iniciales
+    baraja.push({palo: 1, valor: 7});
+    baraja.push({palo: 1, valor: 9});
+    baraja.push({palo: 1, valor: 6});
+    baraja.push({palo: 2, valor: 0});
+    baraja.push({palo: 2, valor: 5});
+    baraja.push({palo: 3, valor: 1});
+    //Jugador 3 iniciales o triunfo y siguientes cartas
+    baraja.push({palo: 0, valor: 8});
+    baraja.push({palo: 3, valor: 3});
+    baraja.push({palo: 2, valor: 8});
+    baraja.push({palo: 1, valor: 4});
+    baraja.push({palo: 3, valor: 7});
+    baraja.push({palo: 3, valor: 9});
+    //Jugador 4 iniciales o siguientes cartas
+    baraja.push({palo: 1, valor: 2});
+    baraja.push({palo: 0, valor: 3});
+    baraja.push({palo: 3, valor: 8});
+    baraja.push({palo: 2, valor: 7});
+    baraja.push({palo: 2, valor: 3});
+    baraja.push({palo: 1, valor: 3});
+    //Triunfo 4 jugadores y siguientes cartas
+    baraja.push({palo: 0, valor: 0});
+    baraja.push({palo: 1, valor: 8});
+    baraja.push({palo: 3, valor: 2});
+    baraja.push({palo: 3, valor: 0});
+    baraja.push({palo: 2, valor: 1});
+    baraja.push({palo: 1, valor: 5});
+    baraja.push({palo: 0, valor: 5});
+    baraja.push({palo: 0, valor: 1});
+    baraja.push({palo: 3, valor: 6});
+    baraja.push({palo: 2, valor: 9});
+    baraja.push({palo: 0, valor: 2});
+    baraja.push({palo: 1, valor: 1});
+    baraja.push({palo: 0, valor: 4});
+    baraja.push({palo: 3, valor: 5});
+    baraja.push({palo: 3, valor: 4});
+    baraja.push({palo: 2, valor: 6});
+    return baraja;
+}
+
 // Crear baraja
 function crearBaraja() {
     const baraja = [];
@@ -115,6 +165,7 @@ module.exports = {
     crearBaraja,
     mezclarBaraja,
     barajaToString,
+    barajaTest,
     repartirCartas,
     validarJugada,
     calcularGanadorBaza,

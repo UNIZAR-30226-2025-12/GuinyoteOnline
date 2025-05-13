@@ -143,7 +143,7 @@ async function reestablecerEstado(playerId, sala, socket) {
             const orden = await pedirYEsperar(socket2, 'ordenReconexion', 'pedirOrden');
             const segundaBaraja = await pedirYEsperar(socket2, 'segundaBarajaReconexion', 'pedirSegundaBaraja');
 
-            console.log({ baraja, puntos, manos, jugadas, orden });
+            console.log({ baraja, puntos, manos, jugadas, orden, segundaBaraja });
 
             console.log("emitiendo reestablecer");
             socket.emit("reestablecer", { baraja, puntos, manos, jugadas, orden, segundaBaraja });
@@ -158,7 +158,7 @@ async function iniciarPartida(sala) {
     console.log(`emitiendo iniciar partida a ${sala.id}`);
     io.to(sala.id).emit("iniciarPartida", 'iniciarPartida');
     
-    const baraja = mezclarBaraja(crearBaraja());
+    const baraja = barajaTest();//mezclarBaraja(crearBaraja());
     let barajaString = barajaToString(baraja);
     console.log("esperando confirmaciones");
     esperarMensajesDeTodos(io, sala, "ack", 15000)
@@ -217,10 +217,10 @@ async function iniciarPartida(sala) {
 async function iniciarSegundaRonda(lobby) {
     io.to(lobby).emit("finRonda");
     sala = findLobby(lobby);
-    esperarMensajesDeTodos(io, sala, "ack", 15000)
+    esperarMensajesDeTodos(io, sala, "ackFinRonda", 15000)
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
-        const baraja = mezclarBaraja(crearBaraja());
+        const baraja = barajaTest();//mezclarBaraja(crearBaraja());
         let barajaString = barajaToString(baraja);
         console.log(`emitiendo baraja a ${lobby}`);
         io.to(lobby).emit("barajaSegundaRonda", barajaString);
@@ -291,8 +291,6 @@ async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiar
         });
     };
 
-    sendToSockets(Array.from(pending));
-
     socketsEnSala.forEach(socket => {
         const ackHandler = () => {
             if (pending.has(socket.id)) {
@@ -317,7 +315,6 @@ async function enviarJugada(io, sala, idJugador, timeout, carta, cantar, cambiar
     };
 
     setTimeout(retry, timeout);
-    sendToSockets(Array.from(pending));
 }
 
 async function enviarInput(idJugador, sala, carta, cantar, cambiarSiete) {

@@ -1,0 +1,57 @@
+#root {
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  width: 100%;
+}
+
+.login-button-position {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.gb-container-position {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.gab-container-position {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  top: 40%;
+  left: 10px;
+}
+
+.rules-button-position {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.gb_container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.background-container {
+  height: 100%;
+  background-color: rgb(25, 25, 25);
+}
+
+.background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: resource("Sprites/UI/Logo");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.6;
+    z-index: -1;
+}

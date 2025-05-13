@@ -9,67 +9,100 @@ import GameManager from "../components/game/GameManager";
 import { useSocket } from "/src/context/SocketContext";
 
 function OnlineGame() {
-    const numJugadores = 4; // Número de jugadores
-    const [gameManager] = useState(new GameManager(numJugadores)); // Componente GameManager con las funciones
+    const numJugadores = 2; // Número de jugadores
+    const [gameManager] = useState(new GameManager(numJugadores, true)); // Componente GameManager con las funciones
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
     const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
     const [cargando, setCargando] = useState(true); // Estado para carga inicial
+    
+    const [arrayDeCartas, setArrayDeCartas] = useState(null); // Estado para la baraja
+    const [ordenRecibido, setOrdenRecibido] = useState(null) ;
+    
 
     const { username } = useUser();
 
     const socket = useSocket();
 
+    /**
+     * Funciona correctamente
+     */
+    const descifrarBaraja = (baraja) => {
 
-    const descifrarBaraja = (barajaString) => {
-        // Añadir código para crear la baraja // ! establecerla en el GameManager
-        const baraja = barajaString.split(";").map((carta) => {
+        const barajaDescifrada = baraja.split(";").map((carta) => {
             const [numero, palo] = carta.split(",");
             return {
                 numero: parseInt(numero),
                 palo: parseInt(palo),
             };
-        });
+        })
 
-        crearBaraja(baraja);
+        console.log("Baraja cifrada:", barajaDescifrada);
 
-        console.log("Baraja descifrada:", baraja);
-        
-        return baraja ;
+        return barajaDescifrada;
+
     }
 
-    const handleBarajaReceived = (baraja) => {
+    const onBarajaRecibida = (baraja) => {
+        // Envio ACK al servidor para confirmar la recepción de la baraja
+        socket.emit("ack") ;
         // Reconocer la baraja recibida y // ! establecerla en el GameManager
         console.log("Baraja recibida:", baraja);
-        const arrayDeCartas = descifrarBaraja({barajaString: baraja});
 
-        gameManager.Init(arrayDeCartas) ;
-        setPlayers([...gameManager.state.players]);
-        setTriunfo(gameManager.state.triunfo);
-        setIniciado(true);
-        setInformadorTexto("Turno de: " + `${username}`);
-        setCargando(false);
+        setArrayDeCartas(descifrarBaraja(baraja));
+
     }
 
     useEffect(() => {
-        if (!socket) {
-            console.error("Socket no disponible");
-            return;
+        if (arrayDeCartas && ordenRecibido) {
+            // Inciar el juego
+            gameManager.Init(arrayDeCartas, ordenRecibido.primero, ordenRecibido.index);
+            setPlayers([...gameManager.state.players]);
+            setTriunfo(gameManager.state.triunfo);
+            setIniciado(true);
+            setInformadorTexto("Turno de: " + `${username}`);
+            setCargando(false);
         }
-
-        socket.on("baraja", handleBarajaReceived) ; 
-    }, [socket]);
+    }, [ordenRecibido, arrayDeCartas])
 
 
-    const handleInit = () => {
-        gameManager.Init();
-        setPlayers([...gameManager.state.players]);
-        setTriunfo(gameManager.state.triunfo);
-        setIniciado(true);
-        setInformadorTexto("Turno de: " + `${username}`);
-        setCargando(false);
-    };
+    const onPrimeroReceived = (primero, index) => {
+
+        console.log("Recibido primero: ", primero);
+        console.log("Recibido primero index: ", index);
+
+        setOrdenRecibido({primero, index}) ;
+
+        
+
+    }
+
+    const onJugadaReceived = (carta, cantar, cambiarSiete) => {
+        // * Asignar input de jugador online y ejecutar turno
+
+        console.log(carta)
+        console.log(cantar)
+        console.log(cambiarSiete)
+
+        socket.emit("ack");
+    }
+
+    useEffect(() => {
+
+        socket.on('baraja', onBarajaRecibida);
+
+        socket.on('primero', onPrimeroReceived);
+
+        socket.on('jugada', onJugadaReceived);
+
+        return () => {
+            socket.off('baraja', onBarajaRecibida);
+            socket.off('primero', onPrimeroReceived);
+            socket.off('jugada', onJugadaReceived);
+        };
+
+    }, []);
 
     const handleCartaClick = async (index) => {
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
@@ -119,10 +152,6 @@ function OnlineGame() {
 
         setInformadorTexto("Cantan " + traduccion[palo]);
     }
-
-    useEffect(() => {
-        handleInit();
-    }, []);
 
     if (cargando) {
         return <div className="cargando">Cargando partida...</div>;

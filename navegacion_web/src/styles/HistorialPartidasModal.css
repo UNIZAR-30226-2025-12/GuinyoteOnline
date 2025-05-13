@@ -96,3 +96,11 @@
   background-color: #f43d29; /* Rojo claro */
   border: 1px solid #000000;
 }
+
+.partida-card {
+  transition: transform 0.2s ease-in-out;
+}
+.partida-card:hover {
+  transform: scale(1.02);
+}
+

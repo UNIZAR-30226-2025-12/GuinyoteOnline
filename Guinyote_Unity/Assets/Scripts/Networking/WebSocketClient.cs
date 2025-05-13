@@ -76,7 +76,7 @@ namespace WebSocketClient {
                     await Task.Delay(100);
                 }
                 Debug.Log("¡La variable 'ackFinRonda' ahora es true!");
-                enviarACK();
+                enviarACK("ackFinRonda");
                 ackFinRonda = false;
             });
 
@@ -237,10 +237,10 @@ namespace WebSocketClient {
             await connectionTCS.Task;
         }
 
-        public async void enviarACK(string msg = "Confirmacion enviada")
+        public async void enviarACK(string nombreAck = "ack")
         {
             Debug.Log("enviando confirmacion");
-            await ws.EmitAsync("ack", msg);
+            await ws.EmitAsync(nombreAck, "Confirmacion enviada");
         }
 
         public async void enviarFinRonda()
@@ -271,6 +271,23 @@ namespace WebSocketClient {
                     { "playerId", playerId }
                 };
                 await ws.EmitAsync("join-lobby", data);
+            }
+            miLobby = lobbyId;
+        }
+
+        public async Task JoinPrivateRoom(string lobbyId, string roomCode, string playerId)
+        {
+            if (ws != null && ws.Connected)
+            {
+                Debug.Log("Enviando join-private-lobby");
+                var data = new Dictionary<string, object>
+                {
+                    { "lobbyId", lobbyId },
+                    { "userId", playerId },
+                    { "codigoAcceso", roomCode }
+                };
+                await ws.EmitAsync("join-private-lobby", data);
+                Debug.Log("Enviado");
             }
             miLobby = lobbyId;
         }

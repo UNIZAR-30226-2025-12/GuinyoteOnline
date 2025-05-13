@@ -1,0 +1,19 @@
+/* Estilo para el botón redondo en Unity */
+.cm_round_button {
+    display: flex;
+    align-items: center;
+    width: 400px;
+    height: 75px;
+    justify-content: center;
+    padding: 15px 30px;
+    background-color: #242424; /* Fondo oscuro */
+    color: white; /* Texto blanco */
+    border: none;
+    border-radius: 6px;
+    font-size: 40px;
+}
+
+.cm_round_button:hover {
+    background-color: #3a3a3a; /* Fondo más claro al pasar el cursor */
+    color: #4866f8; /* Color de texto al pasar el cursor */
+}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import '/src/styles/ProfileModal.css';
 import PicChangeModal from './PicChangeModal';
 import { useUser } from '../../context/UserContext';
@@ -9,19 +10,11 @@ import ConfirmLogoutModal from './ConfirmLogoutModal';
 import TapeteChangeModal from './TapeteChangeModal';
 import CartasChangeModal from './CartasChangeModal';
 import PasswordChangeModal from './PasswordChangeModal';
+import useFetch from '../../customHooks/useFetch';
 
 const avataresUrl = '/src/assets/avatares/';
 
 function ProfileModal() {
-
-  const [showPicChangeModal,setShowPicChangeModal] = useState(false);
-  const [showUsernameChangeModal,setShowUsernameChangeModal] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showTapeteChangeModal, setShowTapeteChangeModal] = useState(false);
-  const [showCartasChangeModal, setShowCartasChangeModal] = useState(false);
-  const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
-
-  const navigate = useNavigate();
 
   const {
     username,
@@ -35,9 +28,20 @@ function ProfileModal() {
     cartas,
     setCartas,
     isUserRegistered,
-    setIsUserRegistered
+    setIsUserRegistered,
   } = useUser();
 
+  const [showPicChangeModal,setShowPicChangeModal] = useState(false);
+  const [showUsernameChangeModal,setShowUsernameChangeModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showTapeteChangeModal, setShowTapeteChangeModal] = useState(false);
+  const [showCartasChangeModal, setShowCartasChangeModal] = useState(false);
+  const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
+
+  const [friendData, setFriendData] = useState(null);
+
+  const navigate = useNavigate();
+ 
   const handlePicChange = () => {
       console.log("Abrir modal para cambiar la foto de perfil");
       // Aquí iría la lógica para abrir el modal de selección de imagen

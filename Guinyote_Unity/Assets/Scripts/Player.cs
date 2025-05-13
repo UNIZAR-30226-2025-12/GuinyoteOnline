@@ -37,6 +37,8 @@ public class Player : MonoBehaviour
     {
         if (m_CartaDesplazandose)
         {
+            try
+            {
             jugada.transform.position = Vector3.MoveTowards(jugada.transform.position, m_MoveTarget, 15f * Time.deltaTime);
 
             if (jugada.transform.position == m_MoveTarget)
@@ -44,6 +46,11 @@ public class Player : MonoBehaviour
                 m_esMiTurno = false;
                 m_CartaDesplazandose = false;
                 GameManager.Instance.TurnManager.Tick();
+            }
+            }
+            catch
+            {
+                Debug.Log(jugada);
             }
         }
     }
