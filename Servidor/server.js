@@ -965,8 +965,10 @@ io.on('connection', (socket) => {
       socket.emit('errorSala', { message: 'Esta sala no es privada.' });
       return;
     }
-    if (lobby.codigoAcceso !== codigoAcceso) {
+    if (lobby.codigoAcceso != codigoAcceso) {
       console.log("el código de la sala no es correcto");
+      console.log(lobby.codigoAcceso);
+      console.log(codigoAcceso);
       socket.emit('errorSala', { message: 'Código de acceso incorrecto.' });
       return;
     }
