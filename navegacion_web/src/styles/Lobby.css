@@ -61,5 +61,51 @@
     .lobby-back-button img {
         filter: brightness(0) invert(1); /* Invert colors for dark mode */
     }
+
+    .modal-lobby-container {
+        background-color: rgba(30, 30, 30, 0.98);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-lobby-title {
+        color: #fff;
+    }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000; /* Capa superior */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contenedor del modal (adaptado a tus estilos existentes) */
+.modal-lobby-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(245, 245, 245, 0.98); /* Fondo sólido con ligera transparencia */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+  z-index: 1001; /* Por encima del overlay */
+}
+
+/* Título del modal */
+.modal-lobby-title {
+  font-weight: bold;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
 }
 

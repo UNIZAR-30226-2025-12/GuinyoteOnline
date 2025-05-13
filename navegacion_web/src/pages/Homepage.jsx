@@ -199,14 +199,14 @@ function Homepage() {
 
       {mostrarOfflineOption && (
         <>
-          <div className='background-layer'/>
-          <div className="lobby-container">
-            <button className='lobby-back-button' onClick={handleBack} >
-                <img src={backButton} alt="Volver atrás" />
-            </button>
-            <h1 className="game-title">Selecciona el formato de partida</h1>
-            <MatchFormatButtons onClick2v2Match={handle2v2Click} onClick1v1Match={handle1v1Click} />
-          </div>
+          <div className='modal-overlay'/>
+            <div className="modal-lobby-container ">
+              <button className='lobby-back-button' onClick={handleBack} >
+                  <img src={backButton} alt="Volver atrás" />
+              </button>
+              <h1 className="game-title">Selecciona el formato de partida</h1>
+              <MatchFormatButtons onClick2v2Match={handle2v2Click} onClick1v1Match={handle1v1Click} />
+            </div>
         </>
       )}
     </>
