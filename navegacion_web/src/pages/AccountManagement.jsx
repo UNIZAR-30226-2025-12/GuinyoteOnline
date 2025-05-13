@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';  
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';  
+import { useNavigate } from 'react-router-dom';
 import ProfileButton from '../components/navegacion/buttons/ProfileButton';
 import HistorialPartidasButton from '../components/navegacion/buttons/HistorialPartidasButton';
 import '/src/styles/AccountManagement.css';
@@ -7,27 +7,27 @@ import ProfileModal from '../components/navegacion/ProfileModal';
 import FriendProfileInfoModal from '../components/navegacion/FriendProfileInfoModal';
 import HistorialPartidasModal from '../components/navegacion/HistorialPartidasModal';
 import { useUser } from '../context/UserContext';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function AccountManagement() {
   const navigate = useNavigate();
-  
-  const { profileId: paramProfileId } = useParams(); // obtenemos /account/:profileId
+  const location = useLocation();
 
-  const [selectedOption, setSelectedOption] = useState('perfil');
+  const [selectedOption, setSelectedOption] = useState('perfil'); // Inicializamos en 'perfil'
 
-  const { setMyProfile, setProfileId, myProfile } = useUser();
+  const { myProfile, setMyProfile, profileId, setProfileId } = useUser();
+
+  const [stats, setStats] = useState({ victorias: 0, derrotas: 0 });
 
   useEffect(() => {
-    if (paramProfileId) {
-      // Si hay un profileId en la URL, no es tu perfil
-      setMyProfile(false);
-      setProfileId(paramProfileId);
-    } else {
-      // Si no hay, estás viendo tu propio perfil
+    
+   
+    if (location.pathname == '/account') {
       setMyProfile(true);
       setProfileId('');
     }
-  }, [paramProfileId]);
+  }, [location]);
 
   const handlePerfilClick = () => {
     setSelectedOption('perfil');
@@ -38,9 +38,9 @@ function AccountManagement() {
   };
 
   const handleBackClick = () => {
-    setMyProfile(true);
+    setMyProfile(true);  // O false, dependiendo de qué signifique "por defecto"
     setProfileId('');
-    navigate('/'); // volver al inicio
+    navigate('/'); // Para volver al inicio si quieres
   };
 
   return (
@@ -58,10 +58,11 @@ function AccountManagement() {
         {selectedOption === 'perfil' && (
           myProfile ? <ProfileModal /> : <FriendProfileInfoModal />
         )}
-        {selectedOption === 'historial' && <HistorialPartidasModal />}
+        {selectedOption === 'historial' && <HistorialPartidasModal myProfile={myProfile} profileId={profileId} setStats={setStats}/>}
       </div>
     </div>
   );
+
 }
 
 export default AccountManagement;

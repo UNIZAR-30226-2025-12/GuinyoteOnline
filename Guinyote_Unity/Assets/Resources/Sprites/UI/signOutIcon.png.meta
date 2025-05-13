@@ -172,7 +172,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      signOutIcon_0: 231177389212902440
+      signOutIcon_1: -1727183160255071828
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

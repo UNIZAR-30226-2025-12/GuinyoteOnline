@@ -18,7 +18,7 @@ public class Baraja : MonoBehaviour
     private void Start()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/tipos_carta/" + UIManager.carta_picture);
+        spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/stacks/" + UIManager.carta_picture);
         spriteRenderer.sortingOrder = 20;
     }
 
@@ -113,7 +113,6 @@ public class Baraja : MonoBehaviour
         {
             int palo = cartas[cartas.Count - 1].Item1;
             int num = cartas[cartas.Count - 1].Item2;
-            cartas.RemoveAt(0);
             Carta carta = Instantiate(cartaPrefab, transform.position, Quaternion.identity);
             carta.setCarta(palo, num);
             
@@ -126,4 +125,3 @@ public class Baraja : MonoBehaviour
         }
     }
 }
-

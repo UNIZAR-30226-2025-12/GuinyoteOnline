@@ -172,9 +172,14 @@ namespace ConsultasBD
         public static event Action<String> OnCambiarInfoUsuario;
 
         /// <summary>
-        /// Evento que se activa al encontrar una partida online.
+        /// Evento que se activa al encontrar una partida publica online.
         /// </summary>
         public static event Action<Lobby, String> OnPartidaEncontrada;
+        
+        /// <summary>
+        /// Evento que se activa al encontrar una partida privada online.
+        /// </summary>
+        public static event Action<Lobby, String, String> OnPartidaPrivadaEncontrada;
 
 
         /// <summary>
@@ -678,12 +683,13 @@ namespace ConsultasBD
         /// <param name="codigoSala">El código de la sala privada.</param>
         /// <param name="idUsuario">El ID del usuario que se une.</param>
         /// <returns>Un IEnumerator para la ejecución de la corrutina.</returns>
-        public static IEnumerator UnirseSalaPrivada(string codigoSala, string idUsuario)
+        public static IEnumerator UnirseSalaPrivada(string codigoSala, string idUsuario, string maxPlayers)
         {
             Debug.Log("Uniéndose a sala privada...");
             WWWForm form = new WWWForm();
-            form.AddField("codigoSala", codigoSala);
+            form.AddField("codigoAcceso", codigoSala);
             form.AddField("idUsuario", idUsuario);
+            form.AddField("maxPlayers", maxPlayers);
             UnityWebRequest www = UnityWebRequest.Post(address + "/salas/unirsePrivada", form);
             yield return www.SendWebRequest();
 
@@ -694,7 +700,8 @@ namespace ConsultasBD
             else
             {
                 Debug.Log("Unido a la sala privada: " + www.downloadHandler.text);
-                // Manejar la respuesta del servidor.
+                Lobby lobby = JsonUtility.FromJson<Lobby>(www.downloadHandler.text);
+                OnPartidaPrivadaEncontrada?.Invoke(lobby, codigoSala, idUsuario);
             }
         }
 
