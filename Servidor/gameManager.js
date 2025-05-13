@@ -143,7 +143,7 @@ async function reestablecerEstado(playerId, sala, socket) {
             const orden = await pedirYEsperar(socket2, 'ordenReconexion', 'pedirOrden');
             const segundaBaraja = await pedirYEsperar(socket2, 'segundaBarajaReconexion', 'pedirSegundaBaraja');
 
-            console.log({ baraja, puntos, manos, jugadas, orden });
+            console.log({ baraja, puntos, manos, jugadas, orden, segundaBaraja });
 
             console.log("emitiendo reestablecer");
             socket.emit("reestablecer", { baraja, puntos, manos, jugadas, orden, segundaBaraja });
@@ -217,7 +217,7 @@ async function iniciarPartida(sala) {
 async function iniciarSegundaRonda(lobby) {
     io.to(lobby).emit("finRonda");
     sala = findLobby(lobby);
-    esperarMensajesDeTodos(io, sala, "ack", 15000)
+    esperarMensajesDeTodos(io, sala, "ackFinRonda", 15000)
     .then(async (respuestas) => {
         console.log('Todos respondieron', respuestas);
         const baraja = mezclarBaraja(crearBaraja());
