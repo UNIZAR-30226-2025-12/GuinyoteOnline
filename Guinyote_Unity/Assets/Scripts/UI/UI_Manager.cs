@@ -674,14 +674,14 @@ public class UIManager : MonoBehaviour
     void updateCartas()
     {
         VisualTreeAsset cartaAsset = Resources.Load<VisualTreeAsset>("Imagen_elegir_elemento");
-        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/Dorso_Carta"))
+        foreach (Texture2D foto_textura in Resources.LoadAll<Texture2D>("Sprites/tipos_carta"))
         {
             String carta=foto_textura.name;
             Debug.Log("Carta: " + carta);
             String cartaName = System.IO.Path.GetFileNameWithoutExtension(carta);
             VisualElement cartaElement = cartaAsset.CloneTree();
             Button imagen_boton = cartaElement.Q<Button>("Imagen_Button");
-            string relativePath = "Sprites/Dorso_Carta/" + cartaName;
+            string relativePath = "Sprites/tipos_carta/" + cartaName;
             imagen_boton.style.backgroundImage = Resources.Load<Texture2D>(relativePath);
             cartaElement.Q<Label>("Name").text = cartaName;
             imagen_boton.RegisterCallback<ClickEvent>(ev => { 

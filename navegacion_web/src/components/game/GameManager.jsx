@@ -6,9 +6,9 @@
 
 import TurnManager from "./TurnManager";
 import PlayerBase from "./PlayerBase";
+import Online_PlayerBase from "./Online_PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
 import BarajaClass from "./BarajaBase";
-import { IoExtensionPuzzleOutline } from "react-icons/io5";
 
 class GameManager {
     constructor(_numPlayers, esOnline) {
@@ -39,44 +39,72 @@ class GameManager {
         this.TurnChange = this.TurnChange.bind(this);
     }
 
-    Init(arrayDeCartas) {
+    Init(arrayDeCartas, primero, index) {
+
+        console.log("Array de cartas en Init: ", arrayDeCartas)
+
         this.state.arrastre = false;
         this.state.segundaBaraja = false;
         this.state.finRonda = false;
         this.state.finJuego = false;
 
         // * -------------------------- INICIAR BARAJA ----------------------------
-        if (this.state.esOnline && arrayDeCartas) {
+        if (this.state.esOnline) {
+            console.log("Inicializando baraja online") ;
             this.state.baraja = new BarajaClass(arrayDeCartas) ;
         } else {
             this.state.baraja = new BarajaClass() ;
             //this.state.baraja.barajar();
         }
+        // * ----------------------------------------------------------------------
+
+
+        // * -------------------------- INICIAR ORDEN ----------------------------
+        
+        for (let i = 0; i < this.state.numPlayers; i++) {
+            this.state.orden[i] = (primero + i - index + this.state.numPlayers) % this.state.numPlayers;
+        }
+
+        // * ----------------------------------------------------------------------
+
+        this.InitJugadores(index);
 
         this.state.triunfo = this.state.baraja.darCarta();
         this.state.baraja.anyadirAlFinal(this.state.triunfo);
-        // * ----------------------------------------------------------------------
+            
+        this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
+        this.state.turnManager.reset();
 
-        if (!this.state.esOnline) {
-            this.InitJugadores();
+        this.state.turnManager.tick(); 
 
-            // ! Aqui todavia no tenemos el turno
-            this.state.turnManager = new TurnManager(this.state.numPlayers, this.Evaluar, this.TurnChange, this.state.players);
-            this.state.turnManager.reset();
-
-            for (let i = 0; i < this.state.numPlayers; i++) {
-                this.state.orden[i] = i;
-            }
-
-            this.state.turnManager.tick();
-        }        
     }
 
-    InitJugadores() {
-        if (this.state.esOnline) {
-            // * Conectarse con el websocket y recibir los jugadores
-            // ! No se si es necesario
+    InitJugadores(index) {
+        console.log("Iniciando los jugadores");
+        if (this.state.esOnline && index != null) {
+            // * Si es online y recibimos el index del server inicializamos los jugadores
+            // * El jugador 0 es el local y el resto son online
+            this.state.players[0] = new PlayerBase(this);
             
+            // * Estos usuarios se inicializan dependiendo del número de jugadores
+            // * Cada jugador se inicializa a partir del index recibido
+            for (let i = 1; i < this.state.numPlayers; i++) {
+
+                index = (index + i) % this.state.numPlayers;
+                this.state.players[i] = new Online_PlayerBase(this.state.numPlayers, this, index);
+
+            }
+
+            // * Aquí se inicializan las manos de los jugadores
+            // * en función del orden
+            for (let i = 0; i < this.state.numPlayers; i++) {
+                for (let j = 0; j < 6; j++) {
+                    this.state.players[this.state.orden[i]].anyadirCarta(this.state.baraja.darCarta());
+                }
+            }   
+            
+            console.log(this.state.players[0].mano)
+            console.log(this.state.players[1].mano)
         }
         else {
             this.state.players[0] = new PlayerBase(this);
@@ -84,7 +112,7 @@ class GameManager {
                 this.state.players[0].anyadirCarta(this.state.baraja.darCarta());
             }
             if (this.state.numPlayers === 2) {
-                this.state.players[1] = (!this.state.esOnline) ? new IA_PlayerBase(this.state.numPlayers, this, 1) : new Online_PlayerBase(this.state.numPlayers, this, 1);
+                this.state.players[1] = new IA_PlayerBase(this.state.numPlayers, this, 1);
                 for (let j = 0; j < 6; j++) {
                     this.state.players[1].anyadirCarta(this.state.baraja.darCarta());
                 }
