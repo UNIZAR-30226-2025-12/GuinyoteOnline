@@ -14,7 +14,7 @@ import { Socket } from "socket.io-client";
 import { useSocket } from "../../context/SocketContext";
 
 class GameManager {
-    constructor(_numPlayers, esOnline, enviarFinRonda) {
+    constructor(_numPlayers, esOnline, _enviarFinRonda) {
         this.state = {
             turnManager: null,
             players: Array(_numPlayers).fill(null),
@@ -31,7 +31,7 @@ class GameManager {
             finRonda: false,
             finJuego: false,
             myIndex: null,
-            enviarFinRonda: enviarFinRonda
+            enviarFinRonda: _enviarFinRonda
         };
 
         this.Evaluar = this.Evaluar.bind(this);
@@ -238,7 +238,7 @@ class GameManager {
                     if (this.state.myIndex === 0) {
 
                         console.log("Enviar fin de ronda al servidor");
-                        enviarFinRonda() ;
+                        this.enviarFinRonda() ;
                     }
                 }
             }

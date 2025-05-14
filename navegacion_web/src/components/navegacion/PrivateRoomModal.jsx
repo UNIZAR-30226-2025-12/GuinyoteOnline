@@ -6,6 +6,7 @@ import { useUser } from '../../context/UserContext';
 const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
     const [roomCode, setRoomCode] = useState('');
     const [generatedCode, setGeneratedCode] = useState(null);
+    const [sendCodigoAcceso, setSendCodigoAcceso] = useState("") ;
     const { postData } = usePost('https://guinyoteonline-hkio.onrender.com');
     const { mail } = useUser();
 
@@ -15,7 +16,7 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
             const response = await postData({
                 idUsuario: mail,
                 maxPlayers: pairs ? '2v2' : '1v1',
-                codigoAcceso: generatedCode.trim()
+                codigoAcceso: sendCodigoAcceso.trim()
             }, '/salas/unirsePrivada');
 
             onJoin(response.responseData.id, response.responseData.codigoAcceso); // navegar o unirse con ID recibido
@@ -33,6 +34,7 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
             }, '/salas/crearPrivada');
 
             setGeneratedCode(response.responseData.codigoAcceso);
+            setSendCodigoAcceso(response.responseData.codigoAcceso)
             setRoomCode(response.responseData.id);
         }
         catch (error) {
@@ -64,8 +66,8 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
                 <input
                     type="text"
                     placeholder="Código de sala"
-                    value={generatedCode}
-                    onChange={(e) => setRoomCode(e.target.value)}
+                    value={sendCodigoAcceso}
+                    onChange={(e) => setSendCodigoAcceso(e.target.value)}
                 />
                 <div className="modal-buttons">
                     <button onClick={handleJoin}>Buscar</button>
