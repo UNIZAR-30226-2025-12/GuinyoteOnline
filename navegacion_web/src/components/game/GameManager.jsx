@@ -9,6 +9,9 @@ import PlayerBase from "./PlayerBase";
 import Online_PlayerBase from "./Online_PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
 import BarajaClass from "./BarajaBase";
+import { useGameContext } from "../../context/GameContext";
+import { Socket } from "socket.io-client";
+import { useSocket } from "../../context/SocketContext";
 
 class GameManager {
     constructor(_numPlayers, esOnline, enviarFinRonda) {
@@ -254,6 +257,23 @@ class GameManager {
                 this.state.ganador = 2;
                 this.state.finJuego = true;
             }
+        }
+        if(this.state.finJuego && this.state.esOnline && this.state.myIndex === 0) {
+
+            const game = useGameContext() ; 
+
+            const socket = useSocket() ;
+
+            let wrapper = [{ 
+                puntos0: this.state.players[0].state.puntos,
+                puntos1: this.state.players[1].state.puntos,
+                puntos2: this.state.players[2].state.puntos,
+                puntos3: this.state.players[3].state.puntos,
+                lobby: game.lobbyId
+            }]
+
+            socket.emit('fin-partida', wrapper) ;
+
         }
     }
 
