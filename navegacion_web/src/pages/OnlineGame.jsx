@@ -8,6 +8,7 @@ import GameManager from "../components/game/GameManager";
 import { useSocket } from "/src/context/SocketContext";
 import { useGameContext } from "../context/GameContext";
 import Online_Player from "../components/game/Online_Player";
+import { useNavigate } from "react-router-dom";
 
 function OnlineGame() {
 
@@ -18,6 +19,8 @@ function OnlineGame() {
 
     // * Socket de la partida
     const socket = useSocket();
+
+    const navigate = useNavigate() ; 
 
     // * Debería funcionar
     const enviarFinRonda = () => {
@@ -362,6 +365,10 @@ function OnlineGame() {
 
     // * ------------------------------------------------------------------------
 
+    function handleInit() {
+        navigate("/") ;
+    }
+
     if (cargando) {
         return <div className="cargando">Cargando partida...</div>;
     }
@@ -431,7 +438,7 @@ function OnlineGame() {
                 ) : (
                     <div>
                         <h1 className="GanadorLabel">Ganador: Equipo {gameManager.state.ganador}</h1>
-                        <button className="botonInit" onClick={handleInit}>Reiniciar</button>
+                        <button className="botonInit" onClick={handleInit}>Volver al inicio</button>
                     </div>
                 )}
         </div>
