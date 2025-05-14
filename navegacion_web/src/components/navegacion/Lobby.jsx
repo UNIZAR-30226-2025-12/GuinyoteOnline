@@ -30,9 +30,14 @@ const Lobby = ({ pairs, onClickAtras }) => {
 
     const game = useGameContext() ;
 
+    
+
     const handleIniciarPartida = () => {
         console.log("Recibido 'iniciarPartida' del servidor");
         socket.emit("ack");
+
+        game.setNumPlayers(maxPlayers) ;
+
         navigate("/online_match");
     };
 
@@ -128,9 +133,12 @@ const Lobby = ({ pairs, onClickAtras }) => {
                     onJoin={(roomCode, codigoAcceso) => {
                         console.log("Unirse a sala con código:", roomCode);
 
-                        socket.emit('join-private-lobby', { lobbyId: roomCode, userId: username, codigoAcceso: codigoAcceso }) ;
+                        socket.on('iniciarPartida', handleIniciarPartida) ;
 
-                        navigate('/online_match')
+                        game.setNumPlayers(maxPlayers) ;
+                        game.setLobbyId(roomCode) ;
+
+                        socket.emit('join-private-lobby', { lobbyId: roomCode, userId: username, codigoAcceso: codigoAcceso }) ;
 
                         setShowModal(false);
                     }}

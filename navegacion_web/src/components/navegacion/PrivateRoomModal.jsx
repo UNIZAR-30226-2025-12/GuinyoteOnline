@@ -29,7 +29,7 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
         try {
             const response = await postData({
                 idCreador: mail,
-                maxPlayers: pairs ? 4 : 2
+                maxPlayers: pairs ? '2v2' : '1v1'
             }, '/salas/crearPrivada');
 
             setGeneratedCode(response.responseData.codigoAcceso);
