@@ -32,7 +32,7 @@ const OfflineRoom = ({ pairs }) => {
     ];
 
   const handleStart = () => {
-    navigate("/offline_game");
+    navigate("/offline_match");
     game.setNumPlayers(maxPlayers) ;
   };
 

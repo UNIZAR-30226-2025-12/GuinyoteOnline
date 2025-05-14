@@ -7,10 +7,14 @@ import Tapete from "../components/game/Tapete";
 import Baraja from "../components/game/Baraja";
 import Triunfo from "../components/game/Triunfo";
 import GameManager from "../components/game/GameManager";
+import { useGameContext } from "../context/GameContext";
 
-function Game({ pairs }) {
-    const numJugadores = pairs ? 4 : 2; // Número de jugadores
-    const [gameManager] = useState(new GameManager(numJugadores)); // Componente GameManager con las funciones
+function Game() {
+    
+    const { numPlayers } = useGameContext() ;
+    const numJugadores = numPlayers; // Número de jugadores
+
+    const [gameManager] = useState(new GameManager(numJugadores, false, null)); // Componente GameManager con las funciones
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
@@ -19,8 +23,17 @@ function Game({ pairs }) {
 
     const { username } = useUser();
 
+    const primeroAleatorio = Math.floor(Math.random() * numJugadores);
+    const indexAleatorio = Math.floor(Math.random() * numJugadores);
+
+    
+
     const handleInit = () => {
-        gameManager.Init();
+        // * Init con aleatoriedad 
+        //gameManager.Init(null, primeroAleatorio, indexAleatorio);
+        // * Init fijo
+        gameManager.Init(null, 0, 0) ;
+
         setPlayers([...gameManager.state.players]);
         setTriunfo(gameManager.state.triunfo);
         setIniciado(true);
@@ -74,11 +87,15 @@ function Game({ pairs }) {
         let player = gameManager.state.players[playerIndex];
         let traduccion = ["Bastos", "Copas", "Espadas", "Oros"];
 
+        player.cantar(palo) ;
+
         setInformadorTexto("Cantan " + traduccion[palo]);
     }
 
     useEffect(() => {
-        handleInit();
+        if (!iniciado) {
+            handleInit();
+        }
     }, []);
 
     if (cargando) {

@@ -60,6 +60,8 @@ class GameManager {
             this.state.orden[i] = (primero + i - index + this.state.numPlayers) % this.state.numPlayers;
         }
         console.log("------------------- FINALIZADA INICIALIZACIÓN ORDEN -------------------")
+
+        console.log(this.state.orden);
         // * ----------------------------------------------------------------------
 
         // * ----------- Calcular el triunfo antes de iniciar la partida ----------
@@ -142,12 +144,13 @@ class GameManager {
     }
 
     Evaluar() {
-        
+
         this.evaluarLogic();
         // * Reseteo las cartas jugadas
         this.state.cartasJugadas = Array(this.state.numPlayers).fill(null);
         // * Paso al siguiente turno
         this.state.turnManager.tick();
+        // * 
     }
 
     evaluarLogic() {
@@ -200,6 +203,9 @@ class GameManager {
         for (let i = 0; i < this.state.numPlayers; i++) {
             this.state.orden[i] = (i + indexGanador) % this.state.numPlayers;
         }
+
+        this.state.indexGanador = indexGanador;
+
         for (let i = 0; i < this.state.numPlayers; i++) {
             this.state.players[this.state.orden[i]].anyadirCarta(this.state.baraja.darCarta());
         }
@@ -289,10 +295,17 @@ class GameManager {
 
         // * ----------------------------------------------------------------------
 
+        console.log("numPlayers", this.state.numPlayers) ;
+
+        console.log(this.state.orden);
+
+        console.log(this.state.players);
+
         for (let i = 0; i < this.state.numPlayers; i++)
         {
             for (let j = 0; j < 6; j++)
             {
+                console.log("Añadiendo carta ", j) ;
                 this.state.players[this.state.orden[i]].anyadirCarta(this.state.baraja.darCarta());
             }
             this.state.players[this.state.orden[i]].reset();
