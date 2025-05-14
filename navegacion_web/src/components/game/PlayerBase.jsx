@@ -6,7 +6,7 @@ class PlayerBase {
             puntos: 0,
             ganador: false,
             esMiTurno: false,
-            input: { carta: -1, cantar: -1, cambiarSiete: false },
+            input: { carta: null, cantar: null, cambiarSiete: null },
             palosCantados: [false, false, false, false],
             sePuedeCantar: [false, false, false, false],
             paloCantadoEsteTurno: -1,
@@ -176,12 +176,15 @@ class PlayerBase {
     }
 
     turno() {
-        if (this.state.input.carta > -1 && this.state.input.carta < 6 && this.state.gameManager.state.arrastre) {
-            if (!this.cartaValidaEnArrastre()) {
-                return false;
+        if (!this.state.isOnline) {
+            if (this.state.input.carta > -1 && this.state.input.carta < 6 && this.state.gameManager.state.arrastre) {
+                if (!this.cartaValidaEnArrastre()) {
+                    return false;
+                }
             }
+            return true;
+        } else {
         }
-        return true;
     }
 
     getCartaJugada(paloJugado) {

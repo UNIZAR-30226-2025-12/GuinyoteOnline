@@ -2,18 +2,18 @@ import React, { useEffect } from "react";
 import Carta from "./Carta";
 import '/src/styles/Game.css';
 
-const Online_Player = ({ controller, numPlayer, cartaJugada, handleCartaClick, handleCambiarSiete, handleCantar }) => {
+const Online_Player = ({ controller, numPlayer, cartaJugada }) => {
   const spriteSrc = `/src/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 
-  const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Espera
 
-  useEffect(() => {
-    const ejecutarTurnoOnline = async () => {
+  // * ESTO NO DEBERÍA HACER FALTA
+  /*useEffect(() => {
+    
       if (esMiTurno) {
+
         // RESET
         controller.reset();
-        await esperar(1000);
 
         if(controller.state.ganador){
           // CANTAR
@@ -21,7 +21,6 @@ const Online_Player = ({ controller, numPlayer, cartaJugada, handleCartaClick, h
           if (controller.state.cantadoEsteTurno) {
             console.log("CANTANDO IA");
             handleCantar(controller.state.paloCantadoEsteTurno);
-            await esperar(1000);
           }
 
           // CAMBIO SIETE
@@ -29,22 +28,19 @@ const Online_Player = ({ controller, numPlayer, cartaJugada, handleCartaClick, h
           if (controller.state.sieteCambiado) {
             console.log("SIETE CAMBIADO IA");
             handleCambiarSiete();
-            await esperar(1000);
           }
         }
 
         // JUGAR CARTA
-        let index = controller.turnoLogic();
+        let index = controller.turnoLogic(null);
         handleCartaClick(index);
       }
-    };
 
-    ejecutarTurnoIA(); // Llamar a la función asíncrona
-  }, [esMiTurno, controller.state.gameManager.state.turnManager.state.playerTurn]);
+  }, [esMiTurno, controller.state.gameManager.state.turnManager.state.playerTurn]);*/
 
   return (
     <>
-      <div className={"cartaJugadaIA_" + numIA}>
+      <div className={"cartaJugadaIA_" + numPlayer}>
         {cartaJugada && (
           <Carta
             id={cartaJugada.id}
@@ -56,9 +52,9 @@ const Online_Player = ({ controller, numPlayer, cartaJugada, handleCartaClick, h
           />
         )}
       </div>
-      <div className={"manoIA_" + numIA}>
+      <div className={"manoIA_" + numPlayer}>
         <img src={spriteSrc} alt='Mano' />
-        <div className={"cartasIA_" + numIA}>
+        <div className={"cartasIA_" + numPlayer}>
         {controller.state.mano.map((carta, index) => (
             carta && (
               <div key={index} className={"carta " +  index}>

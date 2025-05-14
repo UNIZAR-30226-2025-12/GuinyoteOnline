@@ -3,6 +3,7 @@ import LobbySlots from './LobbySlots';
 import { useUser } from '../../context/UserContext';
 import usePost from '../../customHooks/usePost';
 import { useSocket } from '../../context/SocketContext';
+import { useGameContext } from '../../context/GameContext';
 import { useNavigate } from 'react-router-dom';
 import PrivateRoomModal from './PrivateRoomModal';
 
@@ -25,6 +26,8 @@ const Lobby = ({ pairs }) => {
     ]);
 
     const maxPlayers = !pairs ? 2 : 4;
+
+    const game = useGameContext() ;
 
     const handleIniciarPartida = () => {
         console.log("Recibido 'iniciarPartida' del servidor");
@@ -52,6 +55,9 @@ const Lobby = ({ pairs }) => {
             console.warn("Socket not connected");
             return;
         }
+
+        game.setLobbyId(lobbyId);
+        game.setNumPlayers(maxPlayers);
 
         socket.emit('join-lobby', {
             lobbyId,

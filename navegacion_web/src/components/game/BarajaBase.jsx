@@ -29,6 +29,7 @@ class BarajaBase {
         }
         else {
             this.crearBaraja(arrayCartas);
+            console.log(this.cartas) ;
         }   
     }
 
@@ -67,8 +68,10 @@ class BarajaBase {
      * @param {Array} arrayCartas 
      */
     crearBaraja(arrayCartas) {
+        console.log("Array de cartas en crearBaraja", arrayCartas)
         this.cartas = [];
         for (let i = 0; i < arrayCartas.length; i++) {
+            console.log(i, arrayCartas[i].palo, arrayCartas[i].numero)
             this.cartas.push(new Carta(arrayCartas[i].palo, arrayCartas[i].numero));
         }
     }

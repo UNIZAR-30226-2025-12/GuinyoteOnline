@@ -1,32 +1,53 @@
 import { use, useState, useEffect } from "react";
 import { useUser } from '/src/context/UserContext';
 import Player from "../components/game/Player_Controller";
-import IA_Player from "../components/game/IA_Player";
 import Tapete from "../components/game/Tapete";
 import Baraja from "../components/game/Baraja";
 import Triunfo from "../components/game/Triunfo";
 import GameManager from "../components/game/GameManager";
 import { useSocket } from "/src/context/SocketContext";
+import { useGameContext } from "../context/GameContext";
+import Online_Player from "../components/game/Online_Player";
 
 function OnlineGame() {
-    const numJugadores = 2; // Número de jugadores
-    const [gameManager] = useState(new GameManager(numJugadores, true)); // Componente GameManager con las funciones
-    const [iniciado, setIniciado] = useState(false); // Esta iniciado
-    const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
-    const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
-    const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
-    const [cargando, setCargando] = useState(true); // Estado para carga inicial
-    
-    const [arrayDeCartas, setArrayDeCartas] = useState(null); // Estado para la baraja
-    const [ordenRecibido, setOrdenRecibido] = useState(null) ;
-    
 
-    const { username } = useUser();
+    // * Id del lobby y numJugadores
+    const game = useGameContext() ;
+    const numJugadores = game.numPlayers ; // Número de jugadores
+    const lobbyId = game.lobbyId ; // lobbyId
 
+    // * Socket de la partida
     const socket = useSocket();
 
+    // * Debería funcionar
+    const enviarFinRonda = () => {
+        console.log("Enviado fin de partida") ;
+        socket.emit("fin-partida", game.lobbyId);
+    }
+
+    // * Recibe numJugadores, partida online true, enviarFinRonda para manejar el fin de ronda
+    const [gameManager] = useState(new GameManager(numJugadores, true, enviarFinRonda));
+
+    // ! Ns si es necesario
+    const [iniciado, setIniciado] = useState(false); // Esta iniciado
+    // ! Ns si es necesario
+    const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
+    
+    // * Informa de lo que ocurre en la partida
+    const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
+
+    // * Para mostrar una pantalla de carga
+    const [cargando, setCargando] = useState(true); // Estado para carga inicial
+    
+    // * Para gestionar la inicialización del juego
+    const [arrayDeCartas, setArrayDeCartas] = useState(null); // Estado para la baraja
+    const [ordenRecibido, setOrdenRecibido] = useState(null) ;
+    const [players, setPlayers] = useState(gameManager.state.players) ; // Jugadores
+
+
     /**
-     * Funciona correctamente
+     * * Pasa de una baraja en formato numero,palo;numero,palo
+     * * A un array de js con { {numero, palo} , {numero, palo} ... }
      */
     const descifrarBaraja = (baraja) => {
 
@@ -38,120 +59,308 @@ function OnlineGame() {
             };
         })
 
-        console.log("Baraja cifrada:", barajaDescifrada);
-
         return barajaDescifrada;
 
     }
 
+    // * --------------------- EVENTOS DE MENSAJES DEL JUEGO RECIBIDOS ---------------------
+
+    /**
+     * * Gestiona el mensaje de baraja recibido, emite ack
+     * * - Decodifica la baraja y establece el arrayDeCartas
+     */
     const onBarajaRecibida = (baraja) => {
+
         // Envio ACK al servidor para confirmar la recepción de la baraja
         socket.emit("ack") ;
-        // Reconocer la baraja recibida y // ! establecerla en el GameManager
-        console.log("Baraja recibida:", baraja);
-
+        // Reconocer la baraja recibida y establecerla en el GameManager
+        console.log("Primera baraja recibida");
+        // Establecer el arrayDeCartas
         setArrayDeCartas(descifrarBaraja(baraja));
 
     }
 
+    /**
+     * * Gestiona el mensaje de Primero recibido
+     * * - Establece el indice del que empieza y el indice del jugador local
+     */
+    const onPrimeroRecibida = (primero, index) => {
+
+        console.log("Recibido orden para inicialización") ;        
+
+        setOrdenRecibido({primero, index}) ;
+
+    }
+
+    // ! ---------- INICIAR EL GAMEMANAGER CON LA BARAJA Y ORDEN ----------
+
     useEffect(() => {
         if (arrayDeCartas && ordenRecibido) {
+
+            console.log("Iniciando el juego") ;
             // Inciar el juego
             gameManager.Init(arrayDeCartas, ordenRecibido.primero, ordenRecibido.index);
-            setPlayers([...gameManager.state.players]);
             setTriunfo(gameManager.state.triunfo);
+            setPlayers([...gameManager.state.players]);
             setIniciado(true);
-            setInformadorTexto("Turno de: " + `${username}`);
+            setInformadorTexto("Turno de: " + `${gameManager.state.orden[0]}`);
             setCargando(false);
         }
     }, [ordenRecibido, arrayDeCartas])
 
+    // ! ------------------------------------------------------------------
 
-    const onPrimeroReceived = (primero, index) => {
-
-        console.log("Recibido primero: ", primero);
-        console.log("Recibido primero index: ", index);
-
-        setOrdenRecibido({primero, index}) ;
-
+    /**
+     * * Gestiona el mensaje de jugada recibido
+     * * - Hace que se ejecute el turno de un oponente 
+     */
+    const onJugadaRecibida = (carta, cantar, cambiarSiete) => {
         
+        socket.emit('ack');
 
+        console.log("Jugada recibida: carta: " + carta + ", cantar: " + cantar + ", cambiarSiete : " + cambiarSiete) ;
+
+        if (carta !== -1) {
+            handleJugadaRecibidaCarta(carta) ;
+        } else if (cantar !== -1) {
+            handleJugadaRecibidaCantar(cantar) ;
+        } else if (cambiarSiete) {
+            handleJugadaRecibidaCambiarSiete() ;
+        }
+        
     }
 
-    const onJugadaReceived = (carta, cantar, cambiarSiete) => {
-        // * Asignar input de jugador online y ejecutar turno
+    /**
+     * * Gestiona el mensaje de fin de ronda recibido
+     * * - Envía un ack
+     */
+    const onFinRonda = () => {
 
-        console.log(carta)
-        console.log(cantar)
-        console.log(cambiarSiete)
+        console.log("Finalizar ronda recibido");
 
-        socket.emit("ack");
+        socket.emit('ackFinRonda');
     }
+
+
+    /**
+     * * Gestiona el mensaje de segunda baraja recibida
+     * * - Inicia la segunda ronda
+     */
+    const onSegundaBarajaRecibida = (baraja) => {
+
+        console.log("Segunda baraja recibida"); 
+
+        const arrayCartasSegundaBaraja = descifrarBaraja(baraja) ;
+    
+        gameManager.barajarYRepartir(arrayCartasSegundaBaraja) ;
+    }
+
+    // * -----------------------------------------------------------------------------------
+
+
+    // * ---------------- MANEJO DE LOS MENSAJES RECIBIDOS ----------------
 
     useEffect(() => {
 
+        // Borra cualquier suscripción de las funciones
+        socket.off('baraja');
+        socket.off('primero');
+        socket.off('jugada');
+        socket.off('finRonda');
+        socket.off('barajaSegundaRonda');
+
+        // Suscribe las acciones a los mensajes recibidos
         socket.on('baraja', onBarajaRecibida);
-
-        socket.on('primero', onPrimeroReceived);
-
-        socket.on('jugada', onJugadaReceived);
+        socket.on('primero', onPrimeroRecibida);
+        socket.on('jugada', onJugadaRecibida);
+        socket.on('finRonda', onFinRonda);
+        socket.on('barajaSegundaRonda', onSegundaBarajaRecibida);
 
         return () => {
+            // Cuando se desmonta el componente, se borra la suscripción
             socket.off('baraja', onBarajaRecibida);
-            socket.off('primero', onPrimeroReceived);
-            socket.off('jugada', onJugadaReceived);
+            socket.off('primero', onPrimeroRecibida);
+            socket.off('jugada', onJugadaRecibida);
+            socket.off('finRonda', onFinRonda);
+            socket.off('barajaSegundaRonda', onSegundaBarajaRecibida);
         };
 
     }, []);
 
-    const handleCartaClick = async (index) => {
+    // * ------------------------------------------------------------------------
+
+
+    // * ----------------------- FUNCIONES JUGADOR LOCAL ------------------------
+
+    // * Función que envía la jugada del jugador local 
+    function sendPlay () {
+        let wrapper = {
+            input: JSON.stringify(gameManager.state.players[0].state.input),
+            lobby: game.lobbyId,
+            miId: socket.id
+        };
+
+        console.log("Enviada jugada: ", wrapper)
+
+        // * Se envía la jugada al servidor
+        socket.emit('realizarJugada', wrapper);
+
+        // * Resetear el estado del input del usuario
+        gameManager.state.players[0].state.input = { carta: -1, cantar: -1, cambiarSiete: false };
+    }
+
+    // * Función que gestiona el jugar una carta
+    function handleCartaClick(indexJugado) {
+
+        handleCardPlayed(indexJugado) ;
+        
+        sendPlay () ;
+
+        console.log("Cambiando turno");
+
+        // * Cambias el turno
+        gameManager.state.turnManager.tick();
+
+        setInformadorTexto("Turno de: " + `${gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]}`);
+
+    }
+
+    // * Función que gestiona el cambiar el siete
+    function handleCambiarSiete() {
+        
+        handleSevenChanged() ;
+
+        sendPlay () ;
+    
+    }
+
+    // * Función que gestiona el cantar un palo
+    function handleCantar(palo) {
+
+        handleCantarReceived(palo) ;
+
+        sendPlay () ;
+
+    }
+
+    // * ------------------------------------------------------------------------
+
+    // * ---------------------- FUNCIONES JUGADORES ONLINE ----------------------
+
+    function handleJugadaRecibidaCarta(indexJugado) {
+
+        handleCardPlayed(indexJugado) ;
+
+
+        console.log("Cambiando turno");
+
+        // * Cambias el turno
+        gameManager.state.turnManager.tick();
+
+        setInformadorTexto("Turno de: " + `${gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]}`);
+
+    }
+
+    // * Función que gestiona el cambiar el siete
+    function handleJugadaRecibidaCambiarSiete() {
+        
+        handleSevenChanged() ;
+
+    }
+
+    // * Función que gestiona el cantar un palo
+    function handleJugadaRecibidaCantar(palo) {
+
+        handleCantarReceived(palo) ;
+
+    }
+
+    // * ------------------------------------------------------------------------
+
+    // * ------------------------ FUNCIONES JUEGO ONLINE ------------------------
+    /**
+     * * Esta función maneja la selección de una jugada
+     * @param index: índice de la carta seleccionada en la mano del jugador
+     */
+    function handleCardPlayed(indexJugado) {
+
+        // * Obtener el jugador al que le toca tirar
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
         let player = gameManager.state.players[playerIndex];
-        if (!player.turno()) {
-            console.log("Carta no válida");
-            return;
-        }
-        let carta = player.state.mano[index];
 
+        // * Obtener la carta que ha tirado
+        let carta = player.state.mano[indexJugado];
+
+        console.log(".................CARTA JUGADA.....................");
+        console.log("Gestionando carta jugada");
+        console.log("Carta jugada: ", carta) ;
+        console.log("..................................................");
+
+        // * Se modifican las cartas jugadas
         const nuevasCartasJugadas = [...gameManager.state.cartasJugadas];
         nuevasCartasJugadas[playerIndex] = carta;
         gameManager.state.cartasJugadas = nuevasCartasJugadas;
-        player.state.mano[index] = null;
+
+        // * Se elimina la carta de la mano del jugador y se le quita el turno 
+        player.state.mano[indexJugado] = null;
         player.state.esMiTurno = false;
 
-        setPlayers([...gameManager.state.players]);
-        setInformadorTexto("Turno de: " + `${username}`);
+        // * Establecer la carta jugada
+        player.state.input = { carta: indexJugado, cantar: -1, cambiarSiete: false };
 
-        gameManager.state.turnManager.tick();
+        setPlayers([...gameManager.state.players]);
+
+        // * Informamos por pantalla
+        setInformadorTexto("Turno de: " + `${gameManager.state.orden[gameManager.state.turnManager.state.playerTurn]}`);
+
     };
 
-    const handleCambiarSiete = async () => {
+    function handleSevenChanged() {
+        
+        // * Obtener el jugador al que le toca tirar
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
         let player = gameManager.state.players[playerIndex];
 
+        // * Encontrar el índice del 7 del palo del triunfo
         const index = player.state.mano.findIndex(
             (c) => c && c.numero === 6 && c.palo === gameManager.state.triunfo.palo
         );
-        if (index === -1) {console.log("Error cambiar siete invocado cuando no se puede cambiar"); return;}
 
+        // * Cambiar el triunfo por el siete y el siete por el triunfo
         const triunfoAux = gameManager.state.triunfo;
-
         setTriunfo(player.state.mano[index]);
         player.state.mano[index] = triunfoAux;
         player.state.sePuedeCambiarSiete = false;
         player.state.sieteCambiado = true;
-        setPlayers([...gameManager.state.players]);
+
+        // * Informamos por pantalla
         setInformadorTexto("Cambian siete");
+        setPlayers([...gameManager.state.players]);
+
+        // * Establecer la jugada
+        player.state.input = { carta: -1, cantar: -1, cambiarSiete: true };
 
     }
 
-    const handleCantar = async (palo) => {
+    function handleCantarReceived(palo) {
+
+        // * Obtener el jugador al que le toca tirar
         let playerIndex = gameManager.state.orden[gameManager.state.turnManager.state.playerTurn];
         let player = gameManager.state.players[playerIndex];
-        let traduccion = ["Bastos", "Copas", "Espadas", "Oros"];
 
+        // * Informamos por pantalla
+        let traduccion = ["Bastos", "Copas", "Espadas", "Oros"];
         setInformadorTexto("Cantan " + traduccion[palo]);
+
+        // * El jugador canta del palo correspondiente
+        player.cantar(palo) ;
+
+        // * Establecer la jugada
+        player.state.input = { carta: -1, cantar: palo, cambiarSiete: false };
+
     }
+
+    // * ------------------------------------------------------------------------
 
     if (cargando) {
         return <div className="cargando">Cargando partida...</div>;
@@ -172,38 +381,28 @@ function OnlineGame() {
                             handleCantar={handleCantar}
                         />
                         {numJugadores === 2 && (
-                            <IA_Player
+                            <Online_Player
                                 controller={gameManager.state.players[1]}
-                                numIA={2}
-                                handleCartaClick={handleCartaClick}
+                                numPlayer={2}
                                 cartaJugada={gameManager.state.cartasJugadas[1]}
-                                handleCambiarSiete={handleCambiarSiete}
-                                handleCantar={handleCantar}
                             />
                         )}
                         {numJugadores === 4 && (
                             <div className="IAs">
-                                <IA_Player
+                                <Online_Player
                                     controller={gameManager.state.players[1]}
-                                    numIA={1}
-                                    handleCartaClick={handleCartaClick}
+                                    numPlayer={1}
                                     cartaJugada={gameManager.state.cartasJugadas[1]}
-                                    handleCambiarSiete={handleCambiarSiete}
-                                    handleCantar={handleCantar}
                                 />
-                                <IA_Player
+                                <Online_Player
                                     controller={gameManager.state.players[2]}
-                                    numIA={2} handleCartaClick={handleCartaClick}
+                                    numPlayer={2}
                                     cartaJugada={gameManager.state.cartasJugadas[2]}
-                                    handleCambiarSiete={handleCambiarSiete}
-                                    handleCantar={handleCantar}
                                 />
-                                <IA_Player
+                                <Online_Player
                                     controller={gameManager.state.players[3]}
-                                    numIA={3} handleCartaClick={handleCartaClick}
+                                    numPlayer={3}
                                     cartaJugada={gameManager.state.cartasJugadas[3]}
-                                    handleCambiarSiete={handleCambiarSiete}
-                                    handleCantar={handleCantar}
                                 />
                             </div>
                         )}

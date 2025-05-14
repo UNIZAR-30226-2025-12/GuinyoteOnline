@@ -15,12 +15,17 @@ class TurnManager {
     tick() {
         
         let newTurn = this.state.playerTurn + 1;
+
+        
+
         if (newTurn >= this.state.playerCount) {
             this.reset()
+            console.log("TurnManager reset");
             this.state.evaluar();
         }
         else{
             this.state.playerTurn = newTurn;
+            console.log("TurnManager turnChange");
             this.state.turnChange();
         }
     }
