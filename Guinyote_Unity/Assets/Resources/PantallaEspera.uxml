@@ -1,4 +1,7 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Label text="Esperando jugadores..." style="top: 40%; left: 35%; width: 200px; position: absolute; font-size: 25px; text-align: center;" />
-    <engine:Button text="Cancelar" name="CancelButton" style="top: 70%; left: 40%; width: 120px; height: 40px; position: absolute; background-color: rgb(255, 255, 255);" />
+    <Style src="project://database/Assets/UI/styles/CmSquaredButton.uss?fileID=7433441132597879392&amp;guid=d69ebae70fe43ee4db9fdfabe9e6faf4&amp;type=3#CmSquaredButton" />
+    <Style src="project://database/Assets/UI/styles/Homepage.uss?fileID=7433441132597879392&amp;guid=6838bb594a5d04443b54b77e3e7aeb00&amp;type=3#Homepage" />
+    <engine:VisualElement class="background-container" style="flex-grow: 1;" />
+    <engine:Label text="Esperando jugadores..." style="top: 30%; left: 30%; width: 50%; position: absolute; font-size: 25px; text-align: center; color: rgb(255, 255, 255); -unity-font-style: bold; right: 30%; bottom: 30%;" />
+    <engine:Button text="Cancelar" name="CancelButton" class="cm_squared_button" style="top: 70%; left: 40%; width: 120px; height: 40px; position: absolute;" />
 </engine:UXML>

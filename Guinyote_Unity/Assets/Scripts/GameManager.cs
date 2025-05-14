@@ -194,6 +194,7 @@ public class GameManager : MonoBehaviour
         if (triunfo != null) Baraja.AnyadirAlFinal(triunfo);
         triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
         triunfo.transform.rotation = Quaternion.Euler(0,0,90);
+        triunfo.sr.sprite = Resources.Load<Sprite>("Sprites/Cartas/" + triunfo.traduccion[triunfo.Palo] + "_" + triunfo.Numero.ToString());
 
         TurnManager = new TurnManager(jugadores.Length);
         TurnManager.TurnChange += TurnChange;
@@ -378,6 +379,7 @@ public class GameManager : MonoBehaviour
         {
             triunfo.transform.position = new Vector3(Baraja.transform.position.x - 2, Baraja.transform.position.y, 0);
             triunfo.transform.rotation = Quaternion.Euler(0,0,90);
+            triunfo.sr.sprite = Resources.Load<Sprite>("Sprites/Cartas/" + triunfo.traduccion[triunfo.Palo] + "_" + triunfo.Numero.ToString());
         }
         if (datos["baraja"].ToString() == "") arrastre = true;
 

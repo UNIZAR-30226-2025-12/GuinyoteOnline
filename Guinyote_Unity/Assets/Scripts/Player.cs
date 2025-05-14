@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
             }
             catch
             {
-                Debug.Log(jugada);
+                Destroy(jugada);
             }
         }
     }
@@ -122,7 +122,8 @@ public class Player : MonoBehaviour
             {
                 if (this is Player_Controller)
                 {
-                   carta.enMano = true; 
+                   carta.enMano = true;
+                   carta.sr.sprite = Resources.Load<Sprite>("Sprites/Cartas/" + carta.traduccion[carta.Palo] + "_" + carta.Numero.ToString());
                 }
                 mano[i] = carta;
                 carta.transform.rotation = this.transform.rotation;
@@ -143,6 +144,7 @@ public class Player : MonoBehaviour
                 carta.enMano = false; 
             }
             jugada = carta;
+            jugada.sr.sprite = Resources.Load<Sprite>("Sprites/Cartas/" + jugada.traduccion[jugada.Palo] + "_" + jugada.Numero.ToString());
             return true;
         }
         else
@@ -159,11 +161,13 @@ public class Player : MonoBehaviour
                 //INTERCAMBIO DE CARTAS
                 Carta aux = mano[i]; 
                 mano[i] = GameManager.Instance.triunfo;
+                mano[i].sr.sprite = Resources.Load<Sprite>("Sprites/Cartas/" + mano[i].traduccion[mano[i].Palo] + "_" + mano[i].Numero.ToString());
                 GameManager.Instance.triunfo = aux;
 
                 //CAMBIO POSICION 7
                 GameManager.Instance.triunfo.transform.rotation = mano[i].transform.rotation;
                 GameManager.Instance.triunfo.transform.position = mano[i].transform.position;
+                GameManager.Instance.triunfo.sr.sprite = Resources.Load<Sprite>("Sprites/tipos_carta/" + UIManager.carta_picture);
                 if (this is Player_Controller)
                 {
                    GameManager.Instance.triunfo.enMano = false; 

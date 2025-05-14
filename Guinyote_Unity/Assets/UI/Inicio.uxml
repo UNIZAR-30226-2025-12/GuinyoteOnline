@@ -2,6 +2,7 @@
     <Style src="styles/Homepage.uss" />
     <Style src="styles/CommonButton.uss" />
     <Style src="styles/CmLongButton.uss" />
+    <Style src="styles/CmProfileButton.uss" />
 
     <engine:VisualElement class="background-container">
         <engine:VisualElement class="background-layer" />
@@ -32,67 +33,67 @@
             <engine:Label text="Reglas" />
         </engine:Button>
         <engine:Tab focusable="false" closeable="false" name="Login_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
-            <engine:VisualElement class="ventana" style="flex-grow: 1; height: 379px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
-                <engine:Button text="x" name="exit_Button" style="position: absolute; top: 7px; left: 345px; width: 63px; background-color: rgb(255, 255, 255);" />
-                <engine:Button text="Registrarse" name="register_Button" style="position: absolute; top: 310px; left: 41px; background-color: rgb(255, 255, 255);" />
-                <engine:Button text="Aceptar" name="accept_Button" style="position: absolute; top: 308px; left: 290px; background-color: rgb(255, 255, 255);" />
+            <engine:VisualElement class="ventana" style="flex-grow: 1; height: 379px; background-color: rgb(60, 60, 60); width: 418px; position: absolute; top: -13px; left: -2px; color: white; font-weight: bold; border-radius: 8px; border: 1px solid #f0f0f0;">
+                <engine:Button class="cm_profile_button" text="x" name="exit_Button" style="position: absolute; top: 7px; left: 345px; width: 45px; height: 45px;" />
+                <engine:Button class="cm_profile_button" text="Registrarse" name="register_Button" style="position: absolute; top: 310px; left: 41px; width: 90px; height: 40px;" />
+                <engine:Button class="cm_profile_button" text="Aceptar" name="accept_Button" style="position: absolute; top: 308px; left: 290px; width: 90px; height: 40px;" />
                 <engine:Label text="Iniciar sesión" style="position: absolute; top: 41px; left: 174px; -unity-font-style: bold;" />
                 <engine:Label text="Correo electrónico" style="position: absolute; top: 105px; left: 70px;" />
                 <engine:Label text="Contraseña" style="position: absolute; top: 188px; left: 70px;" />
-                <engine:TextField name="user_Field" style="position: absolute; top: 142px; left: 68px; width: 221px;" />
-                <engine:TextField name="Password_Field" password="true" style="position: absolute; top: 230px; left: 70px; width: 221px;" />
+                <engine:TextField name="user_Field" style="position: absolute; top: 142px; left: 68px; width: 221px; color: black; border-radius: 8px;" />
+                <engine:TextField name="Password_Field" password="true" style="position: absolute; top: 230px; left: 70px; width: 221px; color: black; border-radius: 8px;" />
                 <engine:Label name="error_Label" style="position: absolute; top: 282px; left: 70px; height: 17px; width: 329px; display: flex;" />
             </engine:VisualElement>
         </engine:Tab>
         <engine:Tab focusable="false" closeable="false" name="Register_Tab" style="height: 342px; width: 426px; position: absolute; left: 111px; top: 18px; display: none;">
-            <engine:VisualElement class="ventana" style="flex-grow: 1; height: 433px; background-color: rgb(173, 216, 230); width: 418px; position: absolute; top: -13px; left: -2px;">
-                <engine:Button text="Cancelar" name="exit_Button" style="position: absolute; top: 373px; left: 53px; width: 63px; background-color: rgb(255, 255, 255);" />
-                <engine:Button text="Aceptar" name="accept_Button" style="position: absolute; top: 370px; left: 292px; background-color: rgb(255, 255, 255);" />
+            <engine:VisualElement class="ventana" style="flex-grow: 1; height: 433px; background-color: rgb(60, 60, 60); width: 418px; position: absolute; top: -13px; left: -2px; color: white; font-weight: bold; border-radius: 8px; border: 1px solid #f0f0f0;">
+                <engine:Button class="cm_profile_button" text="Cancelar" name="exit_Button" style="position: absolute; top: 373px; left: 53px; width: 90px; height: 40px;" />
+                <engine:Button class="cm_profile_button" text="Aceptar" name="accept_Button" style="position: absolute; top: 370px; left: 292px; width: 90px; height: 40px;" />
                 <engine:Label text="Registrarse" style="position: absolute; top: 3px; left: 170px; -unity-font-style: bold;" />
                 <engine:Label text="Correo electrónico" style="position: absolute; top: 34px; left: 70px;" />
                 <engine:Label text="Contraseña" style="position: absolute; top: 187px; left: 70px;" />
-                <engine:TextField name="Password2_Field" password="true" style="position: absolute; top: 300px; left: 70px; width: 221px;" />
-                <engine:TextField name="Password_Field" password="true" style="position: absolute; top: 219px; left: 70px; width: 221px;" />
+                <engine:TextField name="Password2_Field" password="true" style="position: absolute; top: 300px; left: 70px; width: 221px; color: black; border-radius: 8px;" />
+                <engine:TextField name="Password_Field" password="true" style="position: absolute; top: 219px; left: 70px; width: 221px; color: black; border-radius: 8px;" />
                 <engine:Label text="Repite la contraseña" style="position: absolute; top: 261px; left: 70px;" />
-                <engine:TextField name="mail_Field" style="position: absolute; top: 73px; left: 70px; width: 221px;" />
+                <engine:TextField name="mail_Field" style="position: absolute; top: 73px; left: 70px; width: 221px; color: black; border-radius: 8px;" />
                 <engine:Label text="Usuario" style="position: absolute; top: 117px; left: 70px;" />
-                <engine:TextField name="user_Field" style="position: absolute; top: 149px; left: 70px; width: 221px;" />
+                <engine:TextField name="user_Field" style="position: absolute; top: 149px; left: 70px; width: 221px; color: black; border-radius: 8px;" />
                 <engine:Label name="error_Label" style="position: absolute; top: 342px; left: 75px;" />
             </engine:VisualElement>
         </engine:Tab>
-        <engine:TabView tabindex="0" name="Friends_tabview" class="ventana_derecha" style="height: 100%; position: absolute; top: 0; left: auto; width: 416px; display: none; bottom: 0;">
-            <engine:Tab name="Friends_tab" closeable="false" enabled="true" class="ventana_derecha" style="position: absolute; top: 0; left: auto; height: 448px; width: 281px; display: none; right: 0; bottom: 0;">
-                <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 281px; height: 449px; background-color: rgb(173, 216, 230); right: 0; bottom: 0; top: 0;">
-                    <engine:Label text="Amigos" style="right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
-                    <engine:Button text="X" name="close_Button" style="width: 52px; left: auto; top: 1px; position: absolute; background-color: rgb(255, 255, 255); right: 0;" />
-                    <engine:Button text="Lista de amigos" name="Friends_List_Button" style="background-color: rgb(255, 255, 255);" />
-                    <engine:Button text="Solicitud de amistad" name="Solicitudes_Button" style="background-color: rgb(255, 255, 255);" />
+        <engine:TabView tabindex="0" name="Friends_tabview" class="ventana_derecha" style="height: 100%; position: absolute; top: 20px; right: 20px; width: 416px; display: none; bottom: 0;">
+            <engine:Tab name="Friends_tab" closeable="false" enabled="true" class="ventana_derecha" style="position: absolute; top: 20px; right: 20px; height: 448px; width: 281px; display: none; right: 0; bottom: 0;">
+                <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 281px; height: 449px; background-color: rgb(60, 60, 60); right: 0; bottom: 0; top: 0; color: white; font-weight: bold; border-radius: 8px; border: 1px solid #f0f0f0;">
+                    <engine:Label text="Amigos" style="margin-left: 20px; right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
+                    <engine:Button class="cm_profile_button" text="X" name="close_Button" style="width: 52px; left: auto; top: 1px; position: absolute; width: 45px; height: 45px; right: 0;" />
+                    <engine:Button class="cm_profile_button" text="Lista de amigos" name="Friends_List_Button" style="margin-left: 20px; width: 190px; height: 40px;" />
+                    <engine:Button class="cm_profile_button" text="Solicitud de amistad" name="Solicitudes_Button" style="margin-left: 20px; width: 190px; height: 40px;" />
                 </engine:VisualElement>
             </engine:Tab>
-            <engine:Tab name="Friends_list_tab" tabindex="1" class="ventana_derecha" style="position: relative; display: none; width: 100%; height: 400px; top: -1px; left: 0; bottom: auto;">
-                <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; background-color: rgb(173, 216, 230); width: 100%; height: 400px; bottom: 324px; display: flex;">
-                    <engine:Label text="Lista de amigos" style="right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
-                    <engine:Button text="X" name="atras_Button" style="width: 52px; left: auto; top: 0; position: absolute; background-color: rgb(255, 255, 255); right: 0;" />
-                    <engine:VisualElement style="flex-grow: 1; height: 60px; width: 266px; padding-bottom: 0; bottom: auto; left: 10px; right: 0;">
-                        <engine:TextField placeholder-text="Correo" name="friend_Field" style="width: 95px;" />
-                        <engine:Button text="Solicitar amistad" name="addFriend_Button" style="position: absolute; top: auto; left: 121px; background-color: rgb(255, 255, 255);" />
+            <engine:Tab name="Friends_list_tab" tabindex="1" class="ventana_derecha" style="position: relative; display: none; width: 100%; height: 400px; top: 20px; right: 20px; bottom: auto;">
+                <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; background-color: rgb(60, 60, 60); width: 100%; height: 400px; top: 20px; right: 20px; display: flex; color: white; font-weight: bold; border-radius: 8px; border: 1px solid #f0f0f0;">
+                    <engine:Label text="Lista de amigos" style="margin-left: 20px; right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
+                    <engine:Button class="cm_profile_button" text="X" name="atras_Button" style="width: 45px; height: 45px; left: auto; top: 0; position: absolute; right: 0;" />
+                    <engine:VisualElement style="flex-grow: 1; height: 60px; width: 266px; padding-bottom: 0; bottom: auto; left: 10px; right: 0; color: white; font-weight: bold;">
+                        <engine:TextField placeholder-text="Correo" name="friend_Field" style="width: 150px; color: black; border-radius: 8px;" />
+                        <engine:Button class="cm_profile_button" text="Solicitar amistad" name="addFriend_Button" style="width: 140px; height: 40px; position: absolute; top: auto; left: 200px;" />
                     </engine:VisualElement>
-                    <engine:ScrollView name="Friends_Scroll" style="position: relative; top: auto; left: 10px; width: 390px; height: 330px;" />
+                    <engine:ScrollView name="Friends_Scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" style="position: relative; top: auto; left: 10px; width: 390px; height: 330px;" />
                 </engine:VisualElement>
             </engine:Tab>
-            <engine:Tab name="Solicitudes_list_tab" tabindex="1" class="ventana_derecha" style="position: absolute; display: none; width: 417px; left: auto; right: 0; bottom: auto; top: 0;">
-                <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(173, 216, 230);">
-                    <engine:Label text="Solicitudes de amistad" name="Label" style="right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
-                    <engine:Button text="X" name="atras_Button" style="width: 52px; left: 80%; top: 0; position: absolute; background-color: rgb(255, 255, 255);" />
-                    <engine:ScrollView name="Friends_Scroll" style="position: absolute; top: 50px; left: 10px; width: 377px; height: 370px;" />
+            <engine:Tab name="Solicitudes_list_tab" tabindex="1" class="ventana_derecha" style="position: absolute; display: none; width: 417px; top: 20px; right: 20px; bottom: auto; top: 20;">
+                <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 100%; height: 436px; top: 20px; right: 20px; background-color: rgb(60, 60, 60); color: white; font-weight: bold; border-radius: 8px; border: 1px solid #f0f0f0;">
+                    <engine:Label text="Solicitudes de amistad" name="Label" style="margin-left: 20px; right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
+                    <engine:Button class="cm_profile_button" text="X" name="atras_Button" style="width: 45px; height: 45px; left: 80%; top: 0; position: absolute;" />
+                    <engine:ScrollView name="Friends_Scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" style="position: absolute; top: 50px; left: 10px; width: 377px; height: 370px;" />
                 </engine:VisualElement>
             </engine:Tab>
         </engine:TabView>
-        <engine:Tab name="Ranking_Tab" focusable="true" enabled="true" class="ventana_derecha" style="position: absolute; display: none; width: 415px; top: 0; left: auto; height: 446px;">
-            <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(173, 216, 230);">
-                <engine:Label text="Ranking" name="Label" style="right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
-                <engine:Button text="X" name="atras_Button" style="width: 52px; left: 80%; top: 0; position: absolute; background-color: rgb(255, 255, 255);" />
-                <engine:ScrollView name="Ranking_Scroll" style="position: absolute; top: 50px; left: 10px; width: 384px; height: 370px;" />
+        <engine:Tab name="Ranking_Tab" focusable="true" enabled="true" class="ventana_derecha" style="position: absolute; display: none; width: 415px; top: 20px; right: 20px; height: 446px;">
+            <engine:VisualElement name="VisualElement" class="ventana_derecha" style="flex-grow: 1; width: 100%; height: 436px; background-color: rgb(60, 60, 60); top: 20px; right: 20px; color: white; font-weight: bold; border-radius: 8px; border: 1px solid #f0f0f0;">
+                <engine:Label text="Ranking" name="Label" style="margin-left: 20px; right: auto; left: auto; width: 72px; height: 40px; -unity-font-style: bold;" />
+                <engine:Button class="cm_profile_button" text="X" name="atras_Button" style="left: 80%; top: 0; position: absolute; width: 45px; height: 45px;" />
+                <engine:ScrollView name="Ranking_Scroll" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" style="position: absolute; top: 50px; left: 10px; width: 384px; height: 370px;" />
             </engine:VisualElement>
         </engine:Tab>
     </engine:VisualElement>

@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Globalization;
 using ConsultasBD;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -720,7 +721,9 @@ public class UIManager : MonoBehaviour
             {
                 bool win = ((partida.jugadores[0].idUsuario == id && partida.jugadores[0].puntuacion > partida.jugadores[1].puntuacion) ||
                             (partida.jugadores[1].idUsuario == id && partida.jugadores[1].puntuacion > partida.jugadores[0].puntuacion));
-                SetHistoryElementInfo(resultado, partida.fecha_inicio, win,  "", partida.jugadores[0].nombre, partida.jugadores[1].nombre, "", partida.jugadores[0].puntuacion, partida.jugadores[1].puntuacion);
+                CultureInfo cultura = new CultureInfo("es-ES");
+                DateTime fecha = DateTime.Parse(partida.fecha_inicio);
+                SetHistoryElementInfo(resultado, fecha.ToString("dd/MM/yyyy HH:mm", cultura), win,  "", partida.jugadores[0].nombre, partida.jugadores[1].nombre, "", partida.jugadores[0].puntuacion, partida.jugadores[1].puntuacion);
             }
             else if (partida.jugadores.Length == 4)
             {
@@ -746,8 +749,9 @@ public class UIManager : MonoBehaviour
                 }
                 bool win = ((equipo == 1 && puntos1 > puntos2) ||
                             (equipo == 2 && puntos2 > puntos1));
-
-                SetHistoryElementInfo(resultado, partida.fecha_inicio, win, equipo1_1, equipo1_2, equipo2_1, equipo2_2, puntos1, puntos2);
+                CultureInfo cultura = new CultureInfo("es-ES");
+                DateTime fecha = DateTime.Parse(partida.fecha_inicio);
+                SetHistoryElementInfo(resultado, fecha.ToString("dd/MM/yyyy HH:mm", cultura), win, equipo1_1, equipo1_2, equipo2_1, equipo2_2, puntos1, puntos2);
             }
             else continue; //Caso erroneo
             scroll_historial.Add(resultado);

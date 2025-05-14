@@ -7,6 +7,8 @@ public class Carta : MonoBehaviour
     public int Puntos; // Puntos que vale la carta
     public bool enMano = false;
     public bool jugada = false;
+    public string[] traduccion = { "B", "C", "E", "O" };
+    public SpriteRenderer sr;
     private bool mouseEncima = false; //Evita errores al desactivar el collider cuando no es nuestro turno
 
     public string ToString()
@@ -47,9 +49,8 @@ public class Carta : MonoBehaviour
                 Puntos = 0;
                 break;
         }
-        string[] traduccion = { "B", "C", "E", "O" };
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        sr.sprite = Resources.Load<Sprite>("Sprites/Cartas/" + traduccion[Palo] + "_" + Numero.ToString());
+        sr = GetComponent<SpriteRenderer>();
+        sr.sprite = Resources.Load<Sprite>("Sprites/tipos_carta/" + UIManager.carta_picture);
     }
 
     private void OnMouseEnter()

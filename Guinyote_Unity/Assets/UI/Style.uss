@@ -2,23 +2,6 @@
     display: none;
 }
 
-.unity-button {
-    background-image: none;
-    border-radius: 10px;
-    padding: 10px;
-    border-width: 0;
-    border-color: transparent;
-    color: black;
-    font-size: 18px;
-    -unity-font-style: bold;
-}
-
-.inicio-button:hover:enabled {
-    background-color: rgb(158, 158, 158);
-    color: rgb(100, 108, 255);
-    scale: 1.1 1.1;
-}
-
 .ventana {
     background-color: rgb(195, 195, 195);
     border-radius: 10px;
@@ -35,7 +18,4 @@
     left: auto;
     height: 100%;
     border-radius: 10px;
-}
-
-.unity-text-element {
 }
