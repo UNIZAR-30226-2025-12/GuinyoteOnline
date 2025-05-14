@@ -9,11 +9,9 @@ import PlayerBase from "./PlayerBase";
 import Online_PlayerBase from "./Online_PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
 import BarajaClass from "./BarajaBase";
-import { useGameContext } from "../../context/GameContext";
-import { useSocket } from "../../context/SocketContext";
 
 class GameManager {
-    constructor(_numPlayers, esOnline, enviarFinRonda, enviarFinPartida) {
+    constructor(_numPlayers, esOnline) {
         this.state = {
             turnManager: null,
             players: Array(_numPlayers).fill(null),
@@ -30,15 +28,18 @@ class GameManager {
             finRonda: false,
             finJuego: false,
             myIndex: null,
-            enviarFinPartida: enviarFinPartida,
-            enviarFinRonda: enviarFinRonda
+            enviarFinPartida: null,
+            enviarFinRonda: null
         };
 
         this.Evaluar = this.Evaluar.bind(this);
         this.TurnChange = this.TurnChange.bind(this);
     }
 
-    Init(arrayDeCartas, primero, index) {
+    Init(arrayDeCartas, primero, index, enviarFinRonda, enviarFinPartida) {
+
+        this.state.enviarFinPartida = enviarFinPartida;
+        this.state.enviarFinRonda = enviarFinRonda;
 
         this.state.arrastre = false;
         this.state.segundaBaraja = false;

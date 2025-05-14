@@ -22,6 +22,25 @@ function OnlineGame() {
 
     const navigate = useNavigate() ; 
 
+    // * Recibe numJugadores, partida online true, enviarFinRonda para manejar el fin de ronda
+    const [gameManager] = useState(new GameManager(numJugadores, true));
+
+    // ! Ns si es necesario
+    const [iniciado, setIniciado] = useState(false); // Esta iniciado
+    // ! Ns si es necesario
+    const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
+    
+    // * Informa de lo que ocurre en la partida
+    const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
+
+    // * Para mostrar una pantalla de carga
+    const [cargando, setCargando] = useState(true); // Estado para carga inicial
+    
+    // * Para gestionar la inicialización del juego
+    const [arrayDeCartas, setArrayDeCartas] = useState(null); // Estado para la baraja
+    const [ordenRecibido, setOrdenRecibido] = useState(null) ;
+    const [players, setPlayers] = useState(gameManager.state.players) ; // Jugadores
+
     const enviarFinPartida = (gameManager) => {
 
         console.log("Enviando fin de partida")
@@ -44,25 +63,6 @@ function OnlineGame() {
         console.log("Enviado fin de partida") ;
         socket.emit("fin-partida", game.lobbyId);
     }
-
-    // * Recibe numJugadores, partida online true, enviarFinRonda para manejar el fin de ronda
-    const [gameManager] = useState(new GameManager(numJugadores, true, enviarFinRonda, enviarFinPartida));
-
-    // ! Ns si es necesario
-    const [iniciado, setIniciado] = useState(false); // Esta iniciado
-    // ! Ns si es necesario
-    const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
-    
-    // * Informa de lo que ocurre en la partida
-    const [informadorTexto, setInformadorTexto] = useState(""); // Estado para el texto del informador
-
-    // * Para mostrar una pantalla de carga
-    const [cargando, setCargando] = useState(true); // Estado para carga inicial
-    
-    // * Para gestionar la inicialización del juego
-    const [arrayDeCartas, setArrayDeCartas] = useState(null); // Estado para la baraja
-    const [ordenRecibido, setOrdenRecibido] = useState(null) ;
-    const [players, setPlayers] = useState(gameManager.state.players) ; // Jugadores
 
 
     /**
@@ -119,7 +119,13 @@ function OnlineGame() {
 
             console.log("Iniciando el juego") ;
             // Inciar el juego
-            gameManager.Init(arrayDeCartas, ordenRecibido.primero, ordenRecibido.index);
+            gameManager.Init(
+                arrayDeCartas,
+                ordenRecibido.primero,
+                ordenRecibido.index,
+                enviarFinRonda,
+                enviarFinPartida
+            );
             setTriunfo(gameManager.state.triunfo);
             setPlayers([...gameManager.state.players]);
             setIniciado(true);

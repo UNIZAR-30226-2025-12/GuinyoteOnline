@@ -32,7 +32,7 @@ function Game() {
         // * Init con aleatoriedad 
         //gameManager.Init(null, primeroAleatorio, indexAleatorio);
         // * Init fijo
-        gameManager.Init(null, 0, 0) ;
+        gameManager.Init(null, 0, 0, null, null) ;
 
         setPlayers([...gameManager.state.players]);
         setTriunfo(gameManager.state.triunfo);
