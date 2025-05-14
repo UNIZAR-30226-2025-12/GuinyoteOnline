@@ -50,20 +50,20 @@ class RegisterModal extends Component {
                             />
                         </label>
                         <label>
-                            Password:
-                            <input
-                                type="password"
-                                name="password"
-                                value={this.state.password}
-                                onChange={this.handleChange}
-                            />
-                        </label>
-                        <label>
                             Email:
                             <input
                                 type="email"
                                 name="email"
                                 value={this.state.email}
+                                onChange={this.handleChange}
+                            />
+                        </label>
+                        <label>
+                            Password:
+                            <input
+                                type="password"
+                                name="password"
+                                value={this.state.password}
                                 onChange={this.handleChange}
                             />
                         </label>
