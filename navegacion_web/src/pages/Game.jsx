@@ -14,7 +14,7 @@ function Game() {
     const { numPlayers } = useGameContext() ;
     const numJugadores = numPlayers; // Número de jugadores
 
-    const [gameManager] = useState(new GameManager(numJugadores, false)); // Componente GameManager con las funciones
+    const [gameManager] = useState(new GameManager(numJugadores, false, null, null)); // Componente GameManager con las funciones
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
     const [players, setPlayers] = useState(gameManager.state.players); // Jugadores
     const [triunfo, setTriunfo] = useState(gameManager.state.triunfo); // Triunfo
