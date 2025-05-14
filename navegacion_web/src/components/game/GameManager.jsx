@@ -224,15 +224,22 @@ class GameManager {
 
         if (this.state.finRonda) {
             this.state.players[this.state.orden[0]].state.puntos += 10;
+            // * Verificamos el fin de ronda o partida
             this.terminarRonda();
-            // * Si no es online, barajamos y reportimos
-            if (!this.state.esOnline) {
-                this.barajarYRepartir(null);
-            } else {
-                // * Si es online, 
-                // * Si el servidor me asigno miId 0, enviarFinRonda()
-                if (this.state.myIndex === 0) {
-                    enviarFinRonda() ;
+            
+            if(this.state.segundaBaraja) {
+                // * Si es fin de ronda
+                if (!this.state.esOnline) {
+                    // * Si es offline, barajamos y reportimos
+                    this.barajarYRepartir(null);
+                } else {
+                    // * Si es online, 
+                    // * Si el servidor me asigno miId 0, enviarFinRonda()
+                    if (this.state.myIndex === 0) {
+
+                        console.log("Enviar fin de ronda al servidor");
+                        enviarFinRonda() ;
+                    }
                 }
             }
             return;
@@ -275,6 +282,7 @@ class GameManager {
             socket.emit('fin-partida', wrapper) ;
 
         }
+
     }
 
     terminarRonda() {
@@ -291,6 +299,26 @@ class GameManager {
             if (this.state.players[0].state.puntos > 100) this.state.ganador = 1;
             else if (this.state.players[1].state.puntos > 100) this.state.ganador = 2;
             else {this.state.segundaBaraja = true; console.log("Segunda baraja");}
+        }
+        this.state.finRonda = false ;
+        this.state.finJuego = !this.state.segundaBaraja ;
+
+        if(this.state.finJuego && this.state.esOnline && this.state.myIndex === 0) {
+
+            const game = useGameContext() ; 
+
+            const socket = useSocket() ;
+
+            let wrapper = [{ 
+                puntos0: this.state.players[0].state.puntos,
+                puntos1: this.state.players[1].state.puntos,
+                puntos2: this.state.players[2].state.puntos,
+                puntos3: this.state.players[3].state.puntos,
+                lobby: game.lobbyId
+            }]
+
+            socket.emit('fin-partida', wrapper) ;
+
         }
     }
 
