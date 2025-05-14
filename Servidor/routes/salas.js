@@ -26,6 +26,7 @@ router.post("/crearPrivada", async (req, res) => {
   try {
     // Generar código único de 20 dígitos
     const codigoAcceso = crypto.randomBytes(10).toString('hex').toUpperCase();
+    console.log("Creando sala con maxPlayers: " + maxPlayers + "y código de acceso: "+ codigoAcceso);
     let sala = createLobby(maxPlayers, idCreador, 'privada', codigoAcceso);
     res.status(201).json(sala);
   } catch (error) {
