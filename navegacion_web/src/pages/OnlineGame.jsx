@@ -24,6 +24,8 @@ function OnlineGame() {
 
     const enviarFinPartida = (gameManager) => {
 
+        console.log("Enviando fin de partida")
+
         let wrapper = [{ 
             puntos0: gameManager.state.players[0].state.puntos,
             puntos1: gameManager.state.players[1].state.puntos,
@@ -31,6 +33,8 @@ function OnlineGame() {
             puntos3: gameManager.state.players[3].state.puntos,
             lobby: game.lobbyId
         }]
+
+        console.log(wrapper) ;
 
         socket.emit('fin-partida', wrapper) ;
     }
