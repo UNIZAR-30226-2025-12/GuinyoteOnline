@@ -12,7 +12,7 @@ import CartasChangeModal from './CartasChangeModal';
 import PasswordChangeModal from './PasswordChangeModal';
 import useFetch from '../../customHooks/useFetch';
 
-const avataresUrl = '/src/assets/avatares/';
+const avataresUrl = '/assets/avatares/';
 
 function ProfileModal() {
 

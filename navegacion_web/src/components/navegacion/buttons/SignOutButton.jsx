@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CommonButton from './base_buttons/CommonButton';
-import signOutIcon from '/src/assets/signOutIcon.png';
+import signOutIcon from '/assets/signOutIcon.png';
 import ConfirmLogoutModal from '../ConfirmLogoutModal';
 
 function SignOutButton({ className, onClick}) {

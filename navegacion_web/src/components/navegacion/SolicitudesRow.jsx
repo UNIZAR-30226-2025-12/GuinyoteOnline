@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '/src/styles/SolicitudesRow.css';
 
 import usePost from '../../customHooks/usePost';
-const avataresUrl = '/src/assets/avatares/';
+const avataresUrl = '/assets/avatares/';
 
 const SolicitudesRow = ({ foto_perfil, nombre, mail, myMail }) => {
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '/src/styles/RankingModal.css';
 
-const avataresUrl = '/src/assets/avatares/';
+const avataresUrl = '/assets/avatares/';
 
 class RankingRow extends Component {
     render() {

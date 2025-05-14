@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import Carta from "./Carta";
 import '/src/styles/Game.css';
-import { useSocket } from "/src/context/SocketContext";
 
 const Player = ({ controller, cartaJugada, handleCartaClick, handleCambiarSiete, handleCantar }) => {
-  const spriteSrc = `/src/assets/Mano.png`;
+  const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
   const [isHovered, setIsHovered] = useState([false, false, false, false, false]);
   const palos = [ "bastos", "copas", "espadas", "oros" ];

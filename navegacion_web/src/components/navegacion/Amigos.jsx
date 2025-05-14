@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import backButton from '/src/assets/back_button.png';
+import backButton from '/assets/back_button.png';
 import '/src/styles/FriendsModal.css';
 import '/src/styles/Amigos.css';
 import useFetch from '../../customHooks/useFetch';

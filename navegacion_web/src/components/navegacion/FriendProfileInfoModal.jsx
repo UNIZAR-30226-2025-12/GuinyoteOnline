@@ -5,9 +5,9 @@ import '/src/styles/ProfileModal.css';
 import { useUser } from '../../context/UserContext';
 import useFetch from '../../customHooks/useFetch';
 
-const avataresUrl = '/src/assets/avatares/';
-const tapetesUrl = '/src/assets/tapetes/';
-const cartasUrl = '/src/assets/tipos_carta/';
+const avataresUrl = '/assets/avatares/';
+const tapetesUrl = '/assets/tapetes/';
+const cartasUrl = '/assets/tipos_carta/';
 
 function FriendProfileInfoModal() {
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LobbySlots from './LobbySlots';
 import { useNavigate } from 'react-router-dom';
-import backButton from '/src/assets/back_button.png';
+import backButton from '/assets/back_button.png';
 import { useUser } from '/src/context/UserContext';
 import { useGameContext } from '../../context/GameContext';
 import '/src/styles/Lobby.css'

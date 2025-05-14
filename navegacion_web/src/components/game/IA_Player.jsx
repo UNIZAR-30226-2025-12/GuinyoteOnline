@@ -3,7 +3,8 @@ import Carta from "./Carta";
 import '/src/styles/Game.css';
 
 const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCambiarSiete, handleCantar }) => {
-  const spriteSrc = `/src/assets/Mano.png`;
+
+  const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
 
   const esperar = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // Espera
@@ -62,16 +63,6 @@ const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCam
         {controller.state.mano.map((carta, index) => (
             carta && (
               <div key={index} className={"carta " +  index}>
-                {esMiTurno ? (
-                  <Carta
-                    id={carta.palo + "_" + carta.numero}
-                    key={carta.palo + "_" + carta.numero}
-                    palo={carta.palo}
-                    numero={carta.numero}
-                    callbackClick={() => {}}
-                    enMano={true}
-                  />
-                ) : (
                   <Carta
                     id={carta.palo + "_" + carta.numero}
                     key={carta.palo + "_" + carta.numero}
@@ -79,8 +70,8 @@ const IA_Player = ({ controller, numIA, cartaJugada, handleCartaClick, handleCam
                     numero={carta.numero}
                     callbackClick={() => {}}
                     enMano={false}
+                    visible={false}
                   />
-                )}
               </div>
             )
           ))}

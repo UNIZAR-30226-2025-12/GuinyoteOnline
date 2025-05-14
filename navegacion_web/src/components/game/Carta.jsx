@@ -13,15 +13,18 @@
 
 import { useState } from "react";
 import '/src/styles/Carta.css'
+import { useUser } from "../../context/UserContext";
 
 const traduccion = ["B", "C", "E", "O"];
 
-const Carta = ({ palo, numero, callbackClick, enMano = false, puntos}) => {
+const Carta = ({ palo, numero, callbackClick, enMano = false, visible = true}) => {
   const [mouseEncima, setMouseEncima] = useState(false);
+
+  const { cartas } = useUser();
 
   let numeroReal = numero < 7 ? numero + 1 : numero + 3;
 
-  const spriteSrc = `/src/assets/cartas/${traduccion[palo]}_${numeroReal}.png`;
+  const spriteSrc = visible ? `/assets/cartas/${traduccion[palo]}_${numeroReal}.png` : `/assets/tipos_carta/${cartas}`;
 
   return (
     <div className={`carta`}

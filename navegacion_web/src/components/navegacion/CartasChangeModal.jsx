@@ -3,7 +3,7 @@ import { useUser,stackToCarta } from '../../context/UserContext';
 import '/src/styles/CartasChangeModal.css'; // Asegúrate de tener este CSS o copiar el del tapete y adaptarlo
 import usePut from '../../customHooks/usePut';
 
-const stacksUrl = '/src/assets/stacks/';
+const stacksUrl = '/assets/stacks/';
 const stack1 = 'default.png';
 const stack2 = 'stack2.png';
 const stack3 = 'stack3.png';

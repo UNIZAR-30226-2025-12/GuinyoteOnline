@@ -3,7 +3,7 @@ import '/src/styles/PicChangeModal.css';
 import { useUser } from '../../context/UserContext';
 import usePut from '../../customHooks/usePut';
 
-const avataresUrl = '/src/assets/avatares/';
+const avataresUrl = '/assets/avatares/';
 const av1 = 'av1.png';
 const av2 = 'av2.png';
 const av3 = 'av3.png';

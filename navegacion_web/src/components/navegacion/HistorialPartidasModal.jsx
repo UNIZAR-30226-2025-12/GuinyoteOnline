@@ -10,7 +10,7 @@ function HistorialPartidasModal({ myProfile, profileId }) {
   const encodedMail = encodeURIComponent(correoAUsar);
 
   const { data, loading, error, fetchData } = useFetch(`https://guinyoteonline-hkio.onrender.com/partidas/historial/${encodedMail}`);
-  const avatarUrl = "/src/assets/avatares/";
+  const avatarUrl = "/assets/avatares/";
 
   const [stats,setStats] = useState({ victorias: 0, derrotas: 0 });
 

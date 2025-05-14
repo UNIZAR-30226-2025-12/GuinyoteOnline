@@ -1,5 +1,5 @@
 import React from 'react';
-const avataresUrl = '/src/assets/avatares/';
+const avataresUrl = '/assets/avatares/';
 import '/src/styles/PlayerSlot.css'; // Create a CSS file for styling
 
 class PlayerSlot extends React.Component {

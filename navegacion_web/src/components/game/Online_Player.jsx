@@ -3,40 +3,8 @@ import Carta from "./Carta";
 import '/src/styles/Game.css';
 
 const Online_Player = ({ controller, numPlayer, cartaJugada }) => {
-  const spriteSrc = `/src/assets/Mano.png`;
+  const spriteSrc = `/assets/Mano.png`;
   const esMiTurno = controller.state.esMiTurno;
-
-
-  // * ESTO NO DEBERÍA HACER FALTA
-  /*useEffect(() => {
-    
-      if (esMiTurno) {
-
-        // RESET
-        controller.reset();
-
-        if(controller.state.ganador){
-          // CANTAR
-          controller.intentarCantar();
-          if (controller.state.cantadoEsteTurno) {
-            console.log("CANTANDO IA");
-            handleCantar(controller.state.paloCantadoEsteTurno);
-          }
-
-          // CAMBIO SIETE
-          controller.intentarCambiarSiete();
-          if (controller.state.sieteCambiado) {
-            console.log("SIETE CAMBIADO IA");
-            handleCambiarSiete();
-          }
-        }
-
-        // JUGAR CARTA
-        let index = controller.turnoLogic(null);
-        handleCartaClick(index);
-      }
-
-  }, [esMiTurno, controller.state.gameManager.state.turnManager.state.playerTurn]);*/
 
   return (
     <>
@@ -58,16 +26,6 @@ const Online_Player = ({ controller, numPlayer, cartaJugada }) => {
         {controller.state.mano.map((carta, index) => (
             carta && (
               <div key={index} className={"carta " +  index}>
-                {esMiTurno ? (
-                  <Carta
-                    id={carta.palo + "_" + carta.numero}
-                    key={carta.palo + "_" + carta.numero}
-                    palo={carta.palo}
-                    numero={carta.numero}
-                    callbackClick={() => {}}
-                    enMano={true}
-                  />
-                ) : (
                   <Carta
                     id={carta.palo + "_" + carta.numero}
                     key={carta.palo + "_" + carta.numero}
@@ -75,8 +33,8 @@ const Online_Player = ({ controller, numPlayer, cartaJugada }) => {
                     numero={carta.numero}
                     callbackClick={() => {}}
                     enMano={false}
+                    visible={false}
                   />
-                )}
               </div>
             )
           ))}

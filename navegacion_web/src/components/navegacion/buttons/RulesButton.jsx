@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CommonButton from './base_buttons/CommonButton';
-import rulesButtonIcon from '/src/assets/rules_button.png';
+import rulesButtonIcon from '/assets/rules_button.png';
 
 class RulesButton extends Component {
     render() {

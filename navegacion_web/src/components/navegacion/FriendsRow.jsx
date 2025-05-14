@@ -19,8 +19,8 @@ import usePost from '../../customHooks/usePost';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 
-const assetsUrl = '/src/assets/';
-const avataresUrl = '/src/assets/avatares/';
+const assetsUrl = '/assets/';
+const avataresUrl = '/assets/avatares/';
 
 const {postData}  = usePost('https://guinyoteonline-hkio.onrender.com/amigos/eliminarAmigo/');
 

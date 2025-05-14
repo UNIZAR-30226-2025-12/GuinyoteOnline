@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import backButton from '/src/assets/back_button.png';
 import LoginButton from '../components/navegacion/buttons/LoginButton'
 import GroupButtons from '../components/navegacion/buttons/GroupButtons'
 import GameButtons from '../components/navegacion/buttons/GameButtons'
@@ -9,12 +8,10 @@ import LoginModal from '../components/navegacion/LoginModal'
 import RegisterModal from '../components/navegacion/RegisterModal';
 import RankingModal from '../components/navegacion/RankingModal';
 import FriendsModal from '../components/navegacion/FriendsModal';
-import MatchFormatButtons from '../components/navegacion/buttons/MatchFormatButtons';
 import '/src/styles/Homepage.css'
 import '/src/styles/Lobby.css'
 import usePost from '../customHooks/usePost';
 import { cartaToStack, useUser } from '../context/UserContext';
-import ProfilePic from '../components/navegacion/ProfilePic';
 
 
 function Homepage() {

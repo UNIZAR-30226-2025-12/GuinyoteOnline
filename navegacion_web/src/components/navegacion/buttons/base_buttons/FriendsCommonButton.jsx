@@ -1,5 +1,5 @@
 import React from 'react';
-import punta_flecha from '/src/assets/punta_flecha.png';
+import punta_flecha from '/assets/punta_flecha.png';
 import '/src/styles/FriendsCommonButton.css';
 
 class FriendsCommonButton extends React.Component {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import backButton from '/src/assets/back_button.png';
+import backButton from '/assets/back_button.png';
 import useFetch from '../../customHooks/useFetch';
 import SolicitudesRow from './SolicitudesRow';
 
