@@ -13,7 +13,7 @@ import { useGameContext } from "../../context/GameContext";
 import { useSocket } from "../../context/SocketContext";
 
 class GameManager {
-    constructor(_numPlayers, esOnline) {
+    constructor(_numPlayers, esOnline, enviarFinRonda, enviarFinPartida) {
         this.state = {
             turnManager: null,
             players: Array(_numPlayers).fill(null),
@@ -30,6 +30,8 @@ class GameManager {
             finRonda: false,
             finJuego: false,
             myIndex: null,
+            enviarFinPartida: enviarFinPartida,
+            enviarFinRonda: enviarFinRonda
         };
 
         this.Evaluar = this.Evaluar.bind(this);
@@ -49,7 +51,7 @@ class GameManager {
             this.state.baraja = new BarajaClass(arrayDeCartas) ;
         } else {
             this.state.baraja = new BarajaClass() ;
-            //this.state.baraja.barajar();
+            this.state.baraja.barajar();
         }
         console.log("------------------- FINALIZADA INICIALIZACIÓN BARAJA -------------------")
         // * ----------------------------------------------------------------------
@@ -235,11 +237,7 @@ class GameManager {
                     // * Si el servidor me asigno miId 0, enviarFinRonda()
                     if (this.state.myIndex === 0) {
 
-                        const socket = useSocket() ;
-
-                        console.log("Enviar fin de ronda al servidor");
-                        
-                        socket.emit("fin-partida", game.lobbyId);
+                        this.state.enviarFinRonda() ;
                     }
                 }
             }
@@ -268,19 +266,7 @@ class GameManager {
         }
         if(this.state.finJuego && this.state.esOnline && this.state.myIndex === 0) {
 
-            const game = useGameContext() ; 
-
-            const socket = useSocket() ;
-
-            let wrapper = [{ 
-                puntos0: this.state.players[0].state.puntos,
-                puntos1: this.state.players[1].state.puntos,
-                puntos2: this.state.players[2].state.puntos,
-                puntos3: this.state.players[3].state.puntos,
-                lobby: game.lobbyId
-            }]
-
-            socket.emit('fin-partida', wrapper) ;
+            this.state.enviarFinPartida(this) ;
 
         }
 
@@ -306,19 +292,7 @@ class GameManager {
 
         if(this.state.finJuego && this.state.esOnline && this.state.myIndex === 0) {
 
-            const game = useGameContext() ; 
-
-            const socket = useSocket() ;
-
-            let wrapper = [{ 
-                puntos0: this.state.players[0].state.puntos,
-                puntos1: this.state.players[1].state.puntos,
-                puntos2: this.state.players[2].state.puntos,
-                puntos3: this.state.players[3].state.puntos,
-                lobby: game.lobbyId
-            }]
-
-            socket.emit('fin-partida', wrapper) ;
+            this.state.enviarFinPartida(this) ;
 
         }
     }

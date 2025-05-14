@@ -22,6 +22,19 @@ function OnlineGame() {
 
     const navigate = useNavigate() ; 
 
+    const enviarFinPartida = (gameManager) => {
+
+        let wrapper = [{ 
+            puntos0: gameManager.state.players[0].state.puntos,
+            puntos1: gameManager.state.players[1].state.puntos,
+            puntos2: gameManager.state.players[2].state.puntos,
+            puntos3: gameManager.state.players[3].state.puntos,
+            lobby: game.lobbyId
+        }]
+
+        socket.emit('fin-partida', wrapper) ;
+    }
+
     // * Debería funcionar
     const enviarFinRonda = () => {
         console.log("Enviado fin de partida") ;
@@ -29,7 +42,7 @@ function OnlineGame() {
     }
 
     // * Recibe numJugadores, partida online true, enviarFinRonda para manejar el fin de ronda
-    const [gameManager] = useState(new GameManager(numJugadores, true, enviarFinRonda));
+    const [gameManager] = useState(new GameManager(numJugadores, true, enviarFinRonda, enviarFinPartida));
 
     // ! Ns si es necesario
     const [iniciado, setIniciado] = useState(false); // Esta iniciado
