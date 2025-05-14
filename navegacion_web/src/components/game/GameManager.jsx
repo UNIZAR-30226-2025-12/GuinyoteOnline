@@ -10,11 +10,10 @@ import Online_PlayerBase from "./Online_PlayerBase";
 import IA_PlayerBase from "./IA_PlayerBase";
 import BarajaClass from "./BarajaBase";
 import { useGameContext } from "../../context/GameContext";
-import { Socket } from "socket.io-client";
 import { useSocket } from "../../context/SocketContext";
 
 class GameManager {
-    constructor(_numPlayers, esOnline, _enviarFinRonda) {
+    constructor(_numPlayers, esOnline) {
         this.state = {
             turnManager: null,
             players: Array(_numPlayers).fill(null),
@@ -31,7 +30,6 @@ class GameManager {
             finRonda: false,
             finJuego: false,
             myIndex: null,
-            enviarFinRonda: _enviarFinRonda
         };
 
         this.Evaluar = this.Evaluar.bind(this);
@@ -237,8 +235,11 @@ class GameManager {
                     // * Si el servidor me asigno miId 0, enviarFinRonda()
                     if (this.state.myIndex === 0) {
 
+                        const socket = useSocket() ;
+
                         console.log("Enviar fin de ronda al servidor");
-                        this.enviarFinRonda() ;
+                        
+                        socket.emit("fin-partida", game.lobbyId);
                     }
                 }
             }
