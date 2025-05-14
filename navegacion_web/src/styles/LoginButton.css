@@ -38,11 +38,11 @@
     }
 
     .login-button-icon {
-        filter: none; /* <-- No tocar la imagen */
+        filter: invert(1); /* <-- No tocar la imagen */
     }
 
     .login-button:hover .login-button-icon {
-        filter: none; /* o puedes poner un efecto suave, como brillo */
+        filter: invert(0); /* o puedes poner un efecto suave, como brillo */
     }
 }
 

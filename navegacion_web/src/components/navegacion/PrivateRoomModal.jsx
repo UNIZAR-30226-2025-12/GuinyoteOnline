@@ -10,16 +10,15 @@ const PrivateRoomModal = ({ onClose, onJoin, pairs }) => {
     const { mail } = useUser();
 
     const handleJoin = async () => {
-        if (!roomCode.trim()) return;
 
         try {
             const response = await postData({
                 idUsuario: mail,
                 maxPlayers: pairs ? '2v2' : '1v1',
-                codigoAcceso: generatedCOde.trim()
+                codigoAcceso: generatedCode.trim()
             }, '/salas/unirsePrivada');
 
-            onJoin(response.responseData.id); // navegar o unirse con ID recibido
+            onJoin(response.responseData.id, response.responseData.codigoAcceso); // navegar o unirse con ID recibido
         }
         catch (error) {
             alert("No se pudo unir a la sala. Verifica el código.");

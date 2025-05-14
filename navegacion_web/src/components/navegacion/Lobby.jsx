@@ -6,8 +6,9 @@ import { useSocket } from '../../context/SocketContext';
 import { useGameContext } from '../../context/GameContext';
 import { useNavigate } from 'react-router-dom';
 import PrivateRoomModal from './PrivateRoomModal';
+import backButton from '/assets/back_button.png';
 
-const Lobby = ({ pairs }) => {
+const Lobby = ({ pairs, onClickAtras }) => {
 
     const { postData } = usePost('https://guinyoteonline-hkio.onrender.com') ;
     
@@ -99,6 +100,10 @@ const Lobby = ({ pairs }) => {
 
     return (
         <>
+            <button className='lobby-back-button' onClick={onClickAtras} >
+                <img src={backButton} alt="Volver atrás" />
+            </button>
+
             <h1>{pairs ? "Sala de Partida 2 vs 2" : "Sala de Partida 1 vs 1"}</h1>
 
             <LobbySlots slotCount={maxPlayers} playerSlotArgs={users}/>
@@ -106,26 +111,30 @@ const Lobby = ({ pairs }) => {
             {!matchmaking ? (
                 <div className="lobby-buttons">
                     <button onClick={startMatchmaking}>Empezar</button>
+                    <button onClick={joinRoom}>Crear privada</button>
                 </div>
             ) : (
                 <div className="waiting-matchmaking-counter">
                     <h2>{counter}</h2>
                     <button onClick={stopMatchmaking}>
                         Cancelar
-                        <img />
                     </button>
                 </div>
             )}
 
             {showModal && (
                 <PrivateRoomModal
-                    onClose={() => setShowModal(false)}
-                    onJoin={(roomCode) => {
+                    onClose={closeModal}
+                    onJoin={(roomCode, codigoAcceso) => {
                         console.log("Unirse a sala con código:", roomCode);
+
+                        socket.emit('join-private-lobby', { lobbyId: roomCode, userId: username, codigoAcceso: codigoAcceso }) ;
+
+                        navigate('/online_match')
 
                         setShowModal(false);
                     }}
-                    pairs
+                    pairs={pairs}
                 />
             )}
         </>

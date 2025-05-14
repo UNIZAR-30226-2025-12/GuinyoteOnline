@@ -40,6 +40,8 @@ router.post("/unirsePrivada", (req, res) => {
     console.log(req.body);
     const { codigoAcceso, idUsuario, maxPlayers } = req.body;
     try {
+
+      console.log('Buscando sala con código:', codigoAcceso, 'y maxPlayers:', (maxPlayers === '1v1') ? 2 : 4);
       let sala = findAvailableCode((maxPlayers === '1v1') ? 2 : 4, codigoAcceso);
       joinPrivateLobby(sala.id, idUsuario, codigoAcceso);
       res.status(200).json(sala);

@@ -52,12 +52,7 @@
 .ranking-modal-exit-button img {
     width: 24px; 
     height: 24px; 
-    filter: invert(0); 
     transition: filter 0.3s ease; 
-}
-
-.ranking-modal-exit-button:hover img {
-    filter: invert(1); 
 }
 
 .ranking-overlay {
@@ -123,7 +118,7 @@
         background-color: #242424;
     }
     
-    .modal-exit-button img {
+    .ranking-modal-exit-button img {
         filter: invert(1);
     }
 

@@ -90,7 +90,7 @@ const FriendsRow = ({ img, username, mail, usrMail, onDelete }) => {
                 <div className="modal" style={{ left: modalPosition.left, top: modalPosition.top }}>
                     <p><b>Opciones de {username}</b></p>
                     <button onClick={onClickProfile} className="btn-profile">Ver perfil</button>
-                    <button onClick={onClickInviteGroup} className="btn-invite-friend">Invitar a grupo</button>
+                    {/*<button onClick={onClickInviteGroup} className="btn-invite-friend">Invitar a grupo</button>*/}
                     <button onClick={onClickDeleteFriend} className="btn-delete-friend">Eliminar amigo</button>
                 </div>
             )}

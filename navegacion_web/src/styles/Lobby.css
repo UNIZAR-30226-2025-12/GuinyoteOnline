@@ -1,24 +1,28 @@
+/* Título de la sala */
 .lobby-title {
     font-weight: bold;
-    font-size: 2rem; /* Larger font size for the title */
-    margin-bottom: 2rem;
-    color: #333; /* Dark gray text */
+    font-size: 2rem; /* Tamaño del texto */
+    margin-top: 0; /* Elimina el margen superior */
+    margin-bottom: 1rem; /* Ajusta el margen inferior */
+    color: #333; /* Texto oscuro */
 }
 
+/* Contenedor principal */
 .lobby-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2rem;
+    margin-top: 0.5rem; /* Reduce el margen superior */
     gap: 1rem;
-    background-color: rgba(245, 245, 245, 0.95); /* Softer light gray with slight transparency */
-    padding: 20px; /* Add padding for spacing */
-    border-radius: 12px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    position: relative; /* Make the container a positioning context */
+    background-color: rgba(245, 245, 245, 0.95); /* Fondo claro con transparencia */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 12px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    position: relative; /* Contexto de posicionamiento */
 }
 
+/* Botón de retroceso */
 .lobby-back-button {
     position: absolute;
     top: 1rem;
@@ -34,78 +38,163 @@
 }
 
 .lobby-back-button:hover {
-    background-color: #e0e0e0; /* Light gray background on hover */
+    background-color: #e0e0e0; /* Fondo gris claro al pasar el cursor */
+}
+
+/* Botones de la sala */
+.lobby-buttons {
+    display: flex;
+    justify-content: center; /* Centra los botones horizontalmente */
+    gap: 1rem; /* Espaciado entre botones */
+    margin-top: 1rem; /* Espaciado superior */
+}
+
+.lobby-buttons button {
+    padding: 0.8rem 1.5rem; /* Tamaño del botón */
+    font-size: 1rem; /* Tamaño del texto */
+    font-weight: bold;
+    color: #fff; /* Texto blanco */
+    background-color: #007bff; /* Azul */
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.lobby-buttons button:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el cursor */
+}
+
+.lobby-buttons button:active {
+    background-color: #003f7f; /* Azul aún más oscuro al hacer clic */
+}
+
+/* Contador de matchmaking */
+.waiting-matchmaking-counter {
+    display: flex;
+    align-items: center; /* Alinea el texto y el botón verticalmente */
+    justify-content: center; /* Centra el contador y el botón horizontalmente */
+    gap: 1rem; /* Espaciado entre el contador y el botón */
+}
+
+.waiting-matchmaking-counter h2 {
+    font-size: 1.5rem; /* Tamaño del texto del contador */
+    font-weight: bold;
+    color: #333; /* Texto oscuro */
+}
+
+.waiting-matchmaking-counter button {
+    padding: 0.8rem 1.5rem; /* Tamaño del botón */
+    font-size: 1rem; /* Tamaño del texto */
+    font-weight: bold;
+    color: #fff; /* Texto blanco */
+    background-color: #dc3545; /* Rojo */
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.waiting-matchmaking-counter button:hover {
+    background-color: #a71d2a; /* Rojo más oscuro al pasar el cursor */
+}
+
+.waiting-matchmaking-counter button:active {
+    background-color: #7f141f; /* Rojo aún más oscuro al hacer clic */
+}
+
+/* Modal de sala privada */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* Capa superior */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+}
+
+.modal-lobby-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(245, 245, 245, 0.98); /* Fondo claro */
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra */
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+    z-index: 1001; /* Por encima del overlay */
+}
+
+.modal-lobby-title {
+    font-weight: bold;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333; /* Texto oscuro */
+    text-align: center;
 }
 
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
 
     .lobby-title {
-        color: #ffffff; /* White text */
+        color: #ffffff; /* Texto blanco */
     }
 
     .lobby-container {
-        background-color: rgba(30, 30, 30, 0.99); /* Dark gray with slight transparency */
-        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Subtle shadow */
+        background-color: rgba(30, 30, 30, 0.99); /* Fondo oscuro */
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Sombra clara */
     }
-
 
     .lobby-back-button {
         background-color: rgba(30, 30, 30, 0.99);
     }
 
     .lobby-back-button:hover {
-        background-color: #444; /* Darker gray on hover */
+        background-color: #444; /* Gris más oscuro al pasar el cursor */
     }
 
     .lobby-back-button img {
-        filter: brightness(0) invert(1); /* Invert colors for dark mode */
+        filter: brightness(0) invert(1); /* Invertir colores para modo oscuro */
+    }
+
+    .lobby-buttons button {
+        background-color: #444; /* Gris oscuro */
+        color: #fff; /* Texto blanco */
+    }
+
+    .lobby-buttons button:hover {
+        background-color: #666; /* Gris más claro al pasar el cursor */
+    }
+
+    .waiting-matchmaking-counter h2 {
+        color: #fff; /* Texto blanco */
+    }
+
+    .waiting-matchmaking-counter button {
+        background-color: #a71d2a; /* Rojo oscuro */
+    }
+
+    .waiting-matchmaking-counter button:hover {
+        background-color: #7f141f; /* Rojo más oscuro al pasar el cursor */
     }
 
     .modal-lobby-container {
-        background-color: rgba(30, 30, 30, 0.98);
-        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        background-color: rgba(30, 30, 30, 0.98); /* Fondo oscuro */
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1); /* Sombra clara */
     }
 
     .modal-lobby-title {
-        color: #fff;
+        color: #fff; /* Texto blanco */
+    }
+
+    .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.8); /* Fondo más oscuro */
     }
 }
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000; /* Capa superior */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Contenedor del modal (adaptado a tus estilos existentes) */
-.modal-lobby-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(245, 245, 245, 0.98); /* Fondo sólido con ligera transparencia */
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  width: 80%;
-  max-width: 500px;
-  position: relative;
-  z-index: 1001; /* Por encima del overlay */
-}
-
-/* Título del modal */
-.modal-lobby-title {
-  font-weight: bold;
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  color: #333;
-  text-align: center;
-}
-

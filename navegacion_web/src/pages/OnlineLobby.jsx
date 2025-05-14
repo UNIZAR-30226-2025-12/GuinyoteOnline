@@ -49,15 +49,13 @@ function OnlineLobby() {
       
       {itemSelected && selectedItem === "1v1" && (
         <>
-          <button onClick={() => setItemSelected(false)}>Volver</button>
-          <Lobby pairs={false} />
+          <Lobby pairs={false} onClickAtras={() => setItemSelected(false)} />
         </>
       )}
 
       {itemSelected && selectedItem === "2v2" && (
         <>
-          <button onClick={() => setItemSelected(false)}>Volver</button>
-          <Lobby pairs={true} />
+          <Lobby pairs={true} onClickAtras={() => setItemSelected(false)}/>
         </>
       )}
     </>
