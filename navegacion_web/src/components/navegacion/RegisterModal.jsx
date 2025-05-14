@@ -41,7 +41,7 @@ class RegisterModal extends Component {
                 
                     <form onSubmit={handleRegisterSubmit} className='modal-form'>
                         <label>
-                            Username:
+                            Nombre de usuario:
                             <input
                                 type="text"
                                 name="username"
@@ -50,7 +50,7 @@ class RegisterModal extends Component {
                             />
                         </label>
                         <label>
-                            Email:
+                            Correo electrónico:
                             <input
                                 type="email"
                                 name="email"
@@ -59,7 +59,7 @@ class RegisterModal extends Component {
                             />
                         </label>
                         <label>
-                            Password:
+                            Contraseña:
                             <input
                                 type="password"
                                 name="password"

@@ -21,7 +21,7 @@ const Solicitudes = ({ show, handleBack, mail }) => {
             <h2 className='friend-list-title'>Solicitudes de amistad</h2>
         
             <div className="friends-table-container">
-                {loading && <p>Loading...</p>}
+                {loading && <p>Cargando...</p>}
                 {error && <p>Error: {error.message}</p>}
                 {data && data.length === 0 && (
                     <p>No tienes solicitudes de amistad.</p>
